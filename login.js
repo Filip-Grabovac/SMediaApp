@@ -1,0 +1,1 @@
+console.log(document.querySelector(".login-part.left"));
