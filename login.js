@@ -121,3 +121,36 @@ document
         console.error('Error:', error);
       });
   });
+
+// Check authentication status on the login page
+function checkLoginAuth() {
+  const authToken = localStorage.getItem('authToken');
+
+  if (authToken) {
+    // If a token exists, verify it with the API
+    fetch('https://xrux-avyn-v7a8.n7d.xano.io/api:7eX5OyVa/auth/me', {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.code !== 'ERROR_CODE_UNAUTHORIZED') {
+          // If the token is valid, redirect to the home page
+          window.location.href = '/';
+        } else {
+          // If the token is invalid, remove it and stay on the login page
+          localStorage.removeItem('authToken');
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        // Handle any network errors
+      });
+  }
+}
+
+// Call the function when the login page is loaded
+checkLoginAuth();
