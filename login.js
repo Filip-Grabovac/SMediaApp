@@ -6,9 +6,6 @@ let eyeHide = document.querySelector('.password-eye-icon.hide');
 const errorMessage = document.querySelector('.error-message');
 const inputs = document.querySelectorAll('.login-input');
 
-console.log('test');
-console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
-
 /**
   SHOW/HIDE PASSWORD
   **/
