@@ -32,3 +32,5 @@ function checkAuth() {
       });
   }
 }
+
+checkAuth();
