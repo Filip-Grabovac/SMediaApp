@@ -7,7 +7,12 @@ module.exports = {
     ['navbar']: './src/navbar.js',
     ['checkAuthentication']: './src/checkAuthentication.js',
     ['clients']: './src/clients.js',
-    ['newClientForm']: './src/newClientForm.js',
+    ['newClientModal']: './src/newClientModal.js',
+    ['loadClientHomepage']: './src/loadClientHomepage.js',
+    ['functions']: './src/functions.js',
+    ['loadMap']: './src/loadMap.js',
+    ['usStates']: './src/usStates.js',
+    ['searchMap']: './src/searchMap.js',
   },
   output: {
     path: path.resolve(__dirname, 'dist'),

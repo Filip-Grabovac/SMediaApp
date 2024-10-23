@@ -1,7 +1,11 @@
+/**
+ * THIS FILE LOADS ALL THE CLIENTS INTO TABLE
+ */
+
 let page = 1;
 let per_page = 5;
 let offset = 0;
-let search = ''; // Initialize search with an empty string
+let search = '';
 
 /**
 FETCH CLIENTS
@@ -43,6 +47,9 @@ async function loadClients(isInitialLoad, page, per_page, offset, search) {
     const data = await response.json();
 
     if (isInitialLoad) {
+      if (data.clients.itemsTotal === 0) {
+        document.querySelector('.add-new-client').click();
+      }
       document.querySelectorAll('.clients-number').forEach((num) => {
         num.textContent = data.clients.itemsTotal;
       });
@@ -84,7 +91,13 @@ async function loadClients(isInitialLoad, page, per_page, offset, search) {
       data.clients.items.forEach((client) => {
         rows += `
 <tr>
-<td class="dark">${client.full_name}</td>
+<td class="dark"><div class="client-table__link">${
+          client.image
+            ? `<img class="client-image" src="${client.image.url}" alt="Client image"></img>`
+            : `<div style="background-color: ${colorRandomizer()};" class="fullname-capital">${client.full_name
+                .slice(0, 1)
+                .toUpperCase()}</div>`
+        }${client.full_name}</div></td>
 <td class="light">${client.company_name}</td>
 <td><a href="${client.website}" target="_blank" class="website-link">${
           client.website

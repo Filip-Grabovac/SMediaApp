@@ -1,6 +1,6 @@
 /**
-    CHECK AUTH TOKEN AND REDIRECT IF NEEDED
-    **/
+* THIS FILE CHECKS IF THE USER IS AUTHENTICATED AND REDIRECT IF NEEDED
+**/
 // Check if the authToken exists and validate it
 function checkAuth() {
   const authToken = localStorage.getItem('authToken');
