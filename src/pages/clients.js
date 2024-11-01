@@ -2,7 +2,9 @@ import Client from '../Client';
 import User from '../User';
 
 const client = new Client();
-const user = new User();
+// const user = new User();
+import User from 'https://cdn.jsdelivr.net/gh/Filip-Grabovac/SMediaApp@56dff5fda28e80921ff40eb28e5a7c9e58d4811b/src/User.js';
+import Client from 'https://cdn.jsdelivr.net/gh/Filip-Grabovac/SMediaApp@56dff5fda28e80921ff40eb28e5a7c9e58d4811b/src/Client.js';
 
 let page = 1;
 let per_page = 5;
