@@ -103,11 +103,9 @@ newAddressBtn.addEventListener('click', (e) => {
 
 function addNewAddressField() {
   addressCount++;
-
   // Clone the last address input field
-  const lastAddressField = form.querySelector(
-    '.form-input__wrapper:last-child'
-  );
+  const lastInput = form.querySelectorAll('.form-input__wrapper');
+  const lastAddressField = lastInput[lastInput.length - 1];
   const newAddressField = lastAddressField.cloneNode(true);
 
   // Reset the cloned input field values and properties

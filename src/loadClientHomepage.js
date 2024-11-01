@@ -1,11 +1,15 @@
 /**
- * THIS FILE LOADS CLIENTS INTO NAVBAR, HANDLES DROPDOWN LOGIC WITH OVERLAY
+ * THIS FILE LOADS CLIENTS INTO NAVBAR, HANDLES DROPDOWN LOGIC
  */
+import Map from './Map';
 
 // Fetch the bearer token from local storage
 const authToken = localStorage.getItem('authToken');
 const apiEndpoint =
   'https://xrux-avyn-v7a8.n7d.xano.io/api:4o1s7k_j/clients_homepage';
+const urlParams = new URLSearchParams(window.location.search);
+const clientId = urlParams.get('client-id');
+const map = new Map();
 
 // Check if the token is available
 if (authToken) {
@@ -32,11 +36,15 @@ if (authToken) {
         navNoClients.style.display = 'none';
         navClients.style.display = 'flex';
 
-        // DRAW AND LOAD MAP
-        loadClientMap(JSON.parse(data.geojson_map.map));
-
         // Populate the client data dynamically
-        const firstClient = data.homepage_clients[0]; // Assuming you are using the first client
+        const firstClient = clientId
+          ? data.homepage_clients.find(
+              (client) => client.id === parseInt(clientId)
+            )
+          : data.homepage_clients[0];
+
+        map.drawMap(JSON.parse(firstClient.geojson_map.map));
+
         const clientName = document.querySelector('.client-nav__name');
         const clientImage = document.querySelector('.client-nav__image');
         const clientNum = document.querySelector('.clients-number');
@@ -59,7 +67,7 @@ if (authToken) {
 
         activeClientImage.src = firstClient.image.url;
         activeClientName.innerHTML = `${firstClient.full_name}<br>`;
-        activeClientCompany.textContent = firstClient.company_name; 
+        activeClientCompany.textContent = firstClient.company_name;
 
         navClients.classList.remove('hidden');
 
@@ -69,11 +77,18 @@ if (authToken) {
         clientsWrapper.innerHTML = '';
 
         // Iterate through the homepage_clients array
-        data.homepage_clients.slice(1).forEach((client) => {
+        data.homepage_clients.forEach((client) => {
+          if (
+            (clientId && client.id == clientId) ||
+            (!clientId && client.id == data.homepage_clients[0].id)
+          ) {
+            return;
+          }
           // Create a new client link element
-          const clientLink = document.createElement('div');
+          const clientLink = document.createElement('a');
           clientLink.classList.add('client-link', 'not-selected');
           clientLink.setAttribute('client-id', client.id);
+          clientLink.href = '?client-id=' + client.id;
 
           clientLink.innerHTML = `
   ${
@@ -101,49 +116,16 @@ if (authToken) {
   console.error('authToken not found in local storage');
 }
 
-// Show/hide clients dropdown with overlay transition
+// Show/hide clients dropdown
 const clientDropdown = document.querySelector('.clients-dropdown');
 const closeIcon = document.querySelector('.close-clients');
-const overlay = document.querySelector('.overlay');
-let isTransitioning = false;
 
-clientDropdown.addEventListener('click', (e) => toggleModal(e));
-closeIcon.addEventListener('click', (e) => toggleModal(e));
-overlay.addEventListener('click', (e) => toggleModal(e));
+clientDropdown.addEventListener('click', (e) => toggleDropdown(e));
+closeIcon.addEventListener('click', (e) => toggleDropdown(e));
 
-function toggleModal(event) {
+function toggleDropdown(event) {
   event.stopPropagation();
-  if (isTransitioning) return;
 
   const menu = document.querySelector('.clients-dropdown__menu');
-  isTransitioning = true;
   menu.classList.toggle('open');
-
-  if (menu.classList.contains('open')) {
-    overlay.style.display = 'block';
-    overlay.style.transition = 'opacity 200ms ease';
-    setTimeout(() => {
-      overlay.style.opacity = '0.5';
-    }, 10);
-
-    overlay.addEventListener(
-      'transitionend',
-      () => {
-        isTransitioning = false;
-      },
-      { once: true }
-    );
-  } else {
-    overlay.style.transition = 'opacity 500ms ease';
-    overlay.style.opacity = '0';
-
-    overlay.addEventListener(
-      'transitionend',
-      () => {
-        overlay.style.display = 'none';
-        isTransitioning = false;
-      },
-      { once: true }
-    );
-  }
 }

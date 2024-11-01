@@ -3,16 +3,17 @@ const path = require('path');
 module.exports = {
   mode: 'production',
   entry: {
-    ['login']: './src/login.js',
-    ['navbar']: './src/navbar.js',
-    ['checkAuthentication']: './src/checkAuthentication.js',
-    ['clients']: './src/clients.js',
     ['newClientModal']: './src/newClientModal.js',
     ['loadClientHomepage']: './src/loadClientHomepage.js',
     ['functions']: './src/functions.js',
-    ['loadMap']: './src/loadMap.js',
     ['usStates']: './src/usStates.js',
-    ['searchMap']: './src/searchMap.js',
+    ['searchState']: './src/searchState.js',
+    ['searchZip']: './src/searchZip.js',
+    ['selectionDone']: './src/selectionDone.js',
+    ['homepage']: './src/pages/homepage.js',
+    ['login']: './src/pages/login.js',
+    ['clients']: './src/pages/clients.js',
+    ['navbar']: './src/elements/navbar.js',
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
