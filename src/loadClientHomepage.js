@@ -1,7 +1,8 @@
 /**
  * THIS FILE LOADS CLIENTS INTO NAVBAR, HANDLES DROPDOWN LOGIC
  */
-import Map from './Map';
+// import Map from './Map';
+import Map from 'https://cdn.jsdelivr.net/gh/Filip-Grabovac/SMediaApp@56dff5fda28e80921ff40eb28e5a7c9e58d4811b/src/Map.js';
 
 // Fetch the bearer token from local storage
 const authToken = localStorage.getItem('authToken');
