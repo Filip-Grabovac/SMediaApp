@@ -11,11 +11,18 @@ let page = 1;
 let per_page = 5;
 let offset = 0;
 let search = '';
+const logoutBtn = document.querySelector('.logout-btn');
 
 // Load initial clients
 client.loadClients(true, page, per_page, offset, search);
 
 user.authenticate();
+
+logoutBtn.addEventListener('click', function (event) {
+  event.preventDefault();
+
+  user.logOut();
+});
 
 document
   .querySelector('.pagination-arrow.right')
