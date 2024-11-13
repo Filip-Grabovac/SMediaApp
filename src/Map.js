@@ -335,4 +335,63 @@ export default class Map {
       cityInfo.radius = newRadiusMiles; // Update radius in city info object
     };
   }
+
+  drawState(state) {
+    // Create a GeoJSON layer for the state polygon
+    const polygon = L.geoJSON(state, {
+      style: {
+        color: 'blue', // Set polygon color
+        weight: 2,
+      },
+      onEachFeature: (feature, layer) => {
+        if (layer instanceof L.Polygon) {
+          layer.on('add', () => {
+            L.DomUtil.addClass(layer._path, 'custom-polygon__searched'); // Add class to the polygon
+          });
+        }
+      },
+    }).addTo(window.map); // Add to the global map variable
+
+    window.nonEditableItems.addLayer(polygon); // Add the polygon to the drawnItems FeatureGroup
+    updateButtonState(); // Update the button state
+
+    const bounds = polygon.getBounds();
+    window.map.fitBounds(bounds); // Optional: Center and zoom the map to the polygon
+  }
+
+  async searchZip(zipInput, zipDropdown) {
+    const query = zipInput.value.trim();
+
+    if (query.length < 3) {
+      zipDropdown.innerHTML = '';
+      zipDropdown.style.display = 'none';
+      return;
+    }
+
+    try {
+      // Fetch matching locations based on the ZIP code
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?postalcode=${query}&countrycodes=us&format=json&addressdetails=1`
+      );
+      const results = await response.json();
+
+      const suggestions = results.map((location) => ({
+        name: location.display_name,
+        onSelect: () => {
+          zipInput.value = location.display_name;
+        },
+      }));
+
+      createDropdown(
+        suggestions,
+        zipDropdown,
+        zipInput,
+        false,
+        'zip-dropdown__link'
+      );
+    } catch (error) {
+      console.error('Error fetching location data:', error);
+      zipDropdown.style.display = 'none';
+    }
+  }
 }

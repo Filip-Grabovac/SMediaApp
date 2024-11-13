@@ -7,8 +7,6 @@ module.exports = {
     ['loadClientHomepage']: './src/loadClientHomepage.js',
     ['functions']: './src/functions.js',
     ['usStates']: './src/usStates.js',
-    ['searchState']: './src/searchState.js',
-    ['searchZip']: './src/searchZip.js',
     ['selectionDone']: './src/selectionDone.js',
     ['homepage']: './src/pages/homepage.js',
     ['login']: './src/pages/login.js',
