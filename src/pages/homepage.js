@@ -2,6 +2,10 @@
 // import Map from '../Map';
 // import Place from '../Place';
 
+import User from 'https://cdn.jsdelivr.net/gh/Filip-Grabovac/SMediaApp@56dff5fda28e80921ff40eb28e5a7c9e58d4811b/src/User.js';
+import Map from 'https://cdn.jsdelivr.net/gh/Filip-Grabovac/SMediaApp@56dff5fda28e80921ff40eb28e5a7c9e58d4811b/src/Map.js';
+import Place from 'https://cdn.jsdelivr.net/gh/Filip-Grabovac/SMediaApp@48c5da4913fd8eade81710de9bed422c393fd2a5/src/Place.js';
+
 const user = new User();
 const map = new Map();
 const place = new Place();
