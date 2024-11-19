@@ -1,1 +1,0 @@
-!function(e,o){"object"==typeof exports&&"object"==typeof module?module.exports={}:"function"==typeof define&&define.amd?define("selectionDone",[],o):"object"==typeof exports?exports.selectionDone={}:e.selectionDone={}}(this,(()=>({})));

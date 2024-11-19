@@ -1,13 +1,11 @@
+import Tool from './Tool';
+
 // User.js
 export default class Map {
   constructor() {
     this.activeTool = null;
-    this.deleteMode = null;
-    this.editMode = false;
-
-    this.disableActiveTool = this.disableActiveTool.bind(this);
-    this.drawElement = this.drawElement.bind(this);
-    this.deleteElement = this.deleteElement.bind(this);
+    this.updateButtonState = this.updateButtonState.bind(this);
+    this.tool = new Tool(this);
   }
 
   loadMap() {
@@ -40,27 +38,6 @@ export default class Map {
     window.map.addControl(drawControl);
   }
 
-  disableActiveTool() {
-    if (this.activeTool) {
-      this.activeTool.disable();
-      this.activeTool = null;
-    }
-    if (this.deleteMode) {
-      this.deleteMode.disable(); // Disable delete mode if it's active
-      this.deleteMode = null;
-    }
-    if (this.editMode) {
-      window.drawnItems.eachLayer(function (layer) {
-        if (layer.editing) {
-          layer.editing.disable(); // Disable editing for each layer in the FeatureGroup
-        }
-      });
-      this.editMode = false; // Reset edit mode state
-    }
-
-    document.querySelector('.town-radius__dropdown').classList.add('hidden');
-  }
-
   loadGeojson(geojson) {
     L.geoJSON(geojson, {
       onEachFeature: function (feature, layer) {
@@ -68,87 +45,15 @@ export default class Map {
         if (feature.properties && feature.properties.editable === false) {
           // Add non-editable shapes to nonEditableItems
           window.nonEditableItems.addLayer(layer);
-          updateButtonState();
         } else {
           // Add editable shapes to drawnItems
           window.drawnItems.addLayer(layer);
-          updateButtonState();
         }
       },
     }).addTo(window.map); // Add the loaded shapes to the map
   }
 
-  deleteElement() {
-    this.disableActiveTool();
-
-    // Enable the delete mode, allowing users to click shapes for removal
-    this.deleteMode = new L.EditToolbar.Delete(window.map, {
-      featureGroup: window.drawnItems, // Include drawnItems for deletion
-    });
-    this.deleteMode.enable();
-
-    // Listen for the 'click' event on each layer in drawnItems
-    window.drawnItems.eachLayer(function (layer) {
-      layer.on('click', function () {
-        removeLayer(layer); // Call the function to remove from both groups and update dropdown
-      });
-    });
-
-    // Also listen for the 'click' event on each layer in nonEditableItems
-    window.nonEditableItems.eachLayer(function (layer) {
-      layer.on('click', function () {
-        removeLayer(layer); // Call the function to remove from both groups and update dropdown
-      });
-    });
-  }
-
-  drawElement(element) {
-    const layer = element.layer;
-
-    // Add the layer to the FeatureGroup
-    window.drawnItems.addLayer(layer);
-    updateButtonState();
-
-    // Add a custom class based on the shape type
-    if (element.layerType === 'polygon') {
-      L.DomUtil.addClass(layer._path, 'custom-polygon'); // Add class to polygon
-    } else if (element.layerType === 'rectangle') {
-      L.DomUtil.addClass(layer._path, 'custom-rectangle'); // Add class to rectangle
-    } else if (element.layerType === 'circle') {
-      L.DomUtil.addClass(layer._path, 'custom-circle'); // Add class to circle
-    }
-
-    // ** Remove 'active' class from all .tool-wrapper elements when shape drawing is finished **
-    document.querySelectorAll('.tool-wrapper').forEach(function (wrapper) {
-      wrapper.classList.remove('active');
-    });
-  }
-
-  edit() {
-    if (this.editMode) {
-      // If already in edit mode, disable it
-      window.drawnItems.eachLayer(function (layer) {
-        if (layer.editing) {
-          layer.editing.disable(); // Disable editing for each layer in the editable group
-        }
-      });
-      this.editMode = false; // Reset edit mode state
-    } else {
-      // Enable edit mode for drawnItems only
-      window.drawnItems.eachLayer(function (layer) {
-        if (layer.editing) {
-          layer.editing.enable(); // Enable editing for editable layers only
-
-          layer.on('edit', function () {
-            updateButtonState();
-          });
-        }
-      });
-      this.editMode = true; // Set edit mode state
-    }
-  }
-
-  drawMap(geojson) {
+  drawMap(geojson, place) {
     // Initialize the map
     this.loadMap();
 
@@ -174,7 +79,7 @@ export default class Map {
     document.getElementById('polygon').addEventListener(
       'click',
       function () {
-        this.disableActiveTool();
+        this.tool.disableActiveTool();
         this.activeTool = new L.Draw.Polygon(window.map); // Activate the new tool
         this.activeTool.enable();
       }.bind(this)
@@ -184,7 +89,7 @@ export default class Map {
     document.getElementById('square').addEventListener(
       'click',
       function () {
-        this.disableActiveTool();
+        this.tool.disableActiveTool();
         this.activeTool = new L.Draw.Rectangle(window.map); // Activate the new tool
         this.activeTool.enable();
       }.bind(this)
@@ -194,7 +99,7 @@ export default class Map {
     document.getElementById('circle').addEventListener(
       'click',
       function () {
-        this.disableActiveTool();
+        this.tool.disableActiveTool();
         this.activeTool = new L.Draw.Circle(window.map); // Activate the new tool
         this.activeTool.enable();
       }.bind(this)
@@ -204,7 +109,7 @@ export default class Map {
     document.getElementById('trash').addEventListener(
       'click',
       function () {
-        this.deleteElement();
+        this.tool.deleteElement();
       }.bind(this)
     );
 
@@ -212,7 +117,7 @@ export default class Map {
     window.map.on(
       L.Draw.Event.CREATED,
       function (e) {
-        this.drawElement(e);
+        this.tool.drawElement(e, place);
       }.bind(this)
     );
 
@@ -220,8 +125,8 @@ export default class Map {
     document.getElementById('edit').addEventListener(
       'click',
       function () {
-        this.disableActiveTool();
-        this.edit();
+        this.tool.disableActiveTool();
+        this.tool.edit();
       }.bind(this)
     );
   }
@@ -244,9 +149,9 @@ export default class Map {
           name: city.display_name, // Extract city names
           lat: city.lat, // Extract latitude
           lon: city.lon, // Extract longitude
-          onSelect: () => this.drawTownCircle(city), // Define the action on selection
+          onSelect: () => this.tool.drawTownCircle(city), // Define the action on selection
         }));
-        createDropdown(
+        this.tool.createDropdown(
           suggestions,
           townDropdown,
           townInput,
@@ -255,42 +160,6 @@ export default class Map {
         ); // Call function to create the dropdown
       })
       .catch((error) => console.error('Error fetching cities:', error));
-  }
-
-  drawTownCircle(cityData) {
-    const lat = cityData.lat;
-    const lon = cityData.lon;
-
-    window.map.setView([lat, lon], 9); // Center the map on the town
-
-    const radiusMiles = 25; // Default radius in miles
-    const radiusMeters = radiusMiles * 1609.34; // Convert miles to meters
-
-    const circle = L.circle([lat, lon], {
-      color: 'blue',
-      fillColor: '#30f',
-      fillOpacity: 0.3,
-      radius: radiusMeters,
-      editable: false,
-    }).addTo(window.map); // Add circle to the map
-
-    window.nonEditableItems.addLayer(circle);
-    updateButtonState();
-
-    // Save the drawn circle along with the city name and radius
-    const cityInfo = {
-      circle: circle,
-      name: cityData.display_name,
-      radius: radiusMiles, // Store the radius in miles
-    };
-
-    window.drawnCities.push(cityInfo);
-
-    // Optionally set a custom class to style the circle
-    const pathElement = circle.getElement();
-    if (pathElement) {
-      L.DomUtil.addClass(pathElement, 'custom-circle__searched');
-    }
   }
 
   showDrawnCities(townDropdown, townInput) {
@@ -304,11 +173,11 @@ export default class Map {
         townDropdown.style.display = 'none';
 
         // Display and set up radius adjustment for the selected city
-        this.setupRadiusAdjustment(cityInfo);
+        this.tool.setupRadiusAdjustment(cityInfo);
       },
     }));
 
-    createDropdown(
+    this.tool.createDropdown(
       suggestions,
       townDropdown,
       townInput,
@@ -317,46 +186,6 @@ export default class Map {
     );
 
     document.querySelector('.town-radius__dropdown').classList.add('hidden');
-  }
-
-  setupRadiusAdjustment(cityInfo) {
-    const rangeInput = document.querySelector('.town-dropdown__range');
-    rangeInput.value = cityInfo.radius; // Set initial value to current radius
-    rangeInput.max = 50; // Max radius 50 miles
-    rangeInput.min = 0; // Min radius 0 miles
-
-    // Show the radius input and set event listener for change
-    rangeInput.style.display = 'block'; // Ensure input is visible
-    rangeInput.oninput = function () {
-      const newRadiusMiles = parseInt(rangeInput.value);
-      const newRadiusMeters = newRadiusMiles * 1609.34; // Convert miles to meters
-
-      cityInfo.circle.setRadius(newRadiusMeters); // Update circle radius on the map
-      cityInfo.radius = newRadiusMiles; // Update radius in city info object
-    };
-  }
-
-  drawState(state) {
-    // Create a GeoJSON layer for the state polygon
-    const polygon = L.geoJSON(state, {
-      style: {
-        color: 'blue', // Set polygon color
-        weight: 2,
-      },
-      onEachFeature: (feature, layer) => {
-        if (layer instanceof L.Polygon) {
-          layer.on('add', () => {
-            L.DomUtil.addClass(layer._path, 'custom-polygon__searched'); // Add class to the polygon
-          });
-        }
-      },
-    }).addTo(window.map); // Add to the global map variable
-
-    window.nonEditableItems.addLayer(polygon); // Add the polygon to the drawnItems FeatureGroup
-    updateButtonState(); // Update the button state
-
-    const bounds = polygon.getBounds();
-    window.map.fitBounds(bounds); // Optional: Center and zoom the map to the polygon
   }
 
   async searchZip(zipInput, zipDropdown) {
@@ -382,7 +211,7 @@ export default class Map {
         },
       }));
 
-      createDropdown(
+      this.tool.createDropdown(
         suggestions,
         zipDropdown,
         zipInput,
@@ -392,6 +221,78 @@ export default class Map {
     } catch (error) {
       console.error('Error fetching location data:', error);
       zipDropdown.style.display = 'none';
+    }
+  }
+
+  hideDropdownOnClick(dropdown, input) {
+    document.addEventListener('click', (event) => {
+      if (
+        !dropdown.contains(event.target) &&
+        event.target !== input &&
+        !event.target.classList.contains('search-input__arrow')
+      ) {
+        dropdown.style.display = 'none'; // Hide dropdown if clicking outside
+      }
+    });
+  }
+
+  disableTools() {
+    if (map && map.dragging) {
+      document.querySelectorAll('.tool-wrapper').forEach((wrapper) => {
+        wrapper.classList.remove('active');
+      });
+
+      // Set the map to "hand" mode (replace with your map's hand mode function)
+      map.dragging.enable();
+      map.boxZoom.disable();
+      map.doubleClickZoom.enable();
+    }
+  }
+
+  updateButtonState() {
+    const button = document.querySelector('.main-button.submit-selection');
+
+    // Get the count of drawn items
+    const drawnItemsCount = Object.keys(window.drawnItems._layers).length;
+
+    // Get the count of non-editable items
+    const nonEditableItemsCount = Object.keys(
+      window.nonEditableItems._layers
+    ).length;
+
+    const hasItems = drawnItemsCount > 0 || nonEditableItemsCount > 0;
+
+    if (hasItems) {
+      button.classList.add('active');
+    } else {
+      button.classList.remove('active');
+    }
+  }
+
+  toggleModal() {
+    const overlay = document.querySelector('.overlay.homepage');
+    const modal = document.querySelector('.selected-area__modal');
+
+    if (overlay.style.display === 'block' && modal.style.display === 'block') {
+      // Hide the overlay and modal
+      overlay.style.opacity = '0';
+      modal.style.opacity = '0';
+
+      // Use a timeout to wait for the opacity transition before setting display to none
+      setTimeout(() => {
+        overlay.style.display = 'none';
+        modal.style.display = 'none';
+      }, 300); // Adjust based on your CSS transition duration
+    } else {
+      // Show the overlay and modal
+      overlay.style.display = 'block';
+      modal.style.display = 'block';
+
+      // Force a reflow to apply the opacity transition
+      setTimeout(() => {
+        overlay.style.opacity = '1';
+        modal.style.opacity = '1';
+      }, 10);
     }
   }
 }

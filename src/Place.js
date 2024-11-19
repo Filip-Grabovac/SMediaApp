@@ -1,7 +1,10 @@
+import Map from "./Map";
+
 export default class Place {
     constructor() {
         this.displayedCities = new Set();
         this.pendingRequests = 0;
+        this.map = new Map();
     }
 
     processLayer(layer) {
@@ -60,6 +63,8 @@ export default class Place {
                 const cities = data.elements.filter(el => el.tags && el.tags.name);
                 const citiesWrapper = document.querySelector('.selected-cities__wrapper');
 
+                console.log(cities);
+
                 if (citiesWrapper && cities.length > 0) {
                     cities.forEach(city => {
                         const cityName = city.tags.name;
@@ -94,13 +99,13 @@ export default class Place {
                 this.pendingRequests--;
                 if (this.pendingRequests === 0) {
                     document.querySelector('.blue-loader').classList.add('hidden');
-                    toggleModal();
+                    this.map.toggleModal();
                 }
             });
     }
 
     fetchPlacesFromAllShapes(e) {
-        e.target.classList.remove('active');
+        // e.target.classList.remove('active');
         document.querySelector('.blue-loader').classList.remove('hidden');
         document.querySelector('.selected-cities__wrapper').innerHTML = '';
 

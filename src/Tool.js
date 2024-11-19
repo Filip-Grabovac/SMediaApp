@@ -1,0 +1,431 @@
+export default class Tool {
+  constructor(mapInstance) {
+    this.mapInstance = mapInstance;
+    this.disableActiveTool = this.disableActiveTool.bind(this);
+    this.createDropdown = this.createDropdown.bind(this);
+    this.updateTooltipPosition = this.updateTooltipPosition.bind(this);
+
+    this.deleteMode = null;
+    this.editMode = false;
+
+    this.deleteElement = this.deleteElement.bind(this);
+    this.drawElement = this.drawElement.bind(this);
+
+    this.excludedBtn = document.querySelector('.option_button.exclude');
+  }
+
+  disableActiveTool() {
+    if (this.mapInstance.activeTool) {
+      this.mapInstance.activeTool.disable();
+      this.mapInstance.activeTool = null;
+    }
+
+    if (this.deleteMode) {
+      this.deleteMode.disable();
+      this.deleteMode = null;
+    }
+
+    if (this.editMode) {
+      window.drawnItems.eachLayer(function (layer) {
+        if (layer.editing) {
+          layer.editing.disable();
+        }
+      });
+      this.editMode = false;
+    }
+
+    document.querySelector('.town-radius__dropdown').classList.add('hidden');
+  }
+
+  deleteElement() {
+    this.disableActiveTool();
+
+    // Enable the delete mode, allowing users to click shapes for removal
+    this.deleteMode = new L.EditToolbar.Delete(window.map, {
+      featureGroup: window.drawnItems, // Include drawnItems for deletion
+    });
+    this.deleteMode.enable();
+
+    // Listen for the 'click' event on each layer in drawnItems
+    window.drawnItems.eachLayer((layer) => {
+      // Use arrow function
+      layer.on('click', () => {
+        // Use arrow function here too
+        this.removeLayer(layer); // 'this' now refers to the Map instance
+      });
+    });
+
+    // Also listen for the 'click' event on each layer in nonEditableItems
+    window.nonEditableItems.eachLayer((layer) => {
+      // Use arrow function
+      layer.on('click', () => {
+        // Use arrow function here too
+        this.removeLayer(layer); // 'this' now refers to the Map instance
+      });
+    });
+  }
+
+  removeLayer(layer) {
+    // Check if the layer is part of drawnItems
+    if (window.drawnItems.hasLayer(layer)) {
+      window.drawnItems.removeLayer(layer);
+    }
+
+    // Check if the layer is part of nonEditableItems
+    if (window.nonEditableItems.hasLayer(layer)) {
+      window.nonEditableItems.removeLayer(layer);
+    }
+
+    // Also remove the layer from the map
+    window.map.removeLayer(layer);
+
+    // Remove the city from the drawnCities array if it matches the deleted layer
+    window.drawnCities = window.drawnCities.filter(
+      (cityInfo) => cityInfo.circle !== layer
+    );
+
+    this.mapInstance.updateButtonState();
+  }
+
+  drawElement(element, place) {
+    const layer = element.layer;
+
+    // Add the layer to the FeatureGroup
+    window.drawnItems.addLayer(layer);
+    this.mapInstance.updateButtonState();
+
+    // Add a custom class based on the shape type
+    if (element.layerType === 'polygon') {
+      L.DomUtil.addClass(layer._path, 'custom-polygon'); // Add class to polygon
+    } else if (element.layerType === 'rectangle') {
+      L.DomUtil.addClass(layer._path, 'custom-rectangle'); // Add class to rectangle
+    } else if (element.layerType === 'circle') {
+      L.DomUtil.addClass(layer._path, 'custom-circle'); // Add class to circle
+    }
+
+    if (this.excludedBtn.classList.contains('active')) {
+      L.DomUtil.addClass(layer._path, 'excluded');
+    }
+
+    // ** Remove 'active' class from all .tool-wrapper elements when shape drawing is finished **
+    document.querySelectorAll('.tool-wrapper').forEach(function (wrapper) {
+      wrapper.classList.remove('active');
+    });
+
+    place.fetchPlacesFromAllShapes();
+  }
+
+  edit() {
+    if (this.editMode) {
+      // If already in edit mode, disable it
+      window.drawnItems.eachLayer(function (layer) {
+        if (layer.editing) {
+          layer.editing.disable(); // Disable editing for each layer in the editable group
+        }
+      });
+      this.editMode = false; // Reset edit mode state
+    } else {
+      // Enable edit mode for drawnItems only
+      window.drawnItems.eachLayer(function (layer) {
+        if (layer.editing) {
+          layer.editing.enable(); // Enable editing for editable layers only
+
+          layer.on('edit', function () {
+            this.mapInstance.updateButtonState();
+          });
+        }
+      });
+      this.editMode = true; // Set edit mode state
+    }
+  }
+
+  drawTownCircle(cityData) {
+    const lat = cityData.lat;
+    const lon = cityData.lon;
+
+    window.map.setView([lat, lon], 9); // Center the map on the town
+
+    const radiusMiles = 25; // Default radius in miles
+    const radiusMeters = radiusMiles * 1609.34; // Convert miles to meters
+
+    const circle = L.circle([lat, lon], {
+      color: 'blue',
+      fillColor: '#30f',
+      fillOpacity: 0.3,
+      radius: radiusMeters,
+      editable: false,
+    }).addTo(window.map); // Add circle to the map
+
+    window.nonEditableItems.addLayer(circle);
+    this.mapInstance.updateButtonState();
+
+    // Save the drawn circle along with the city name and radius
+    const cityInfo = {
+      circle: circle,
+      name: cityData.display_name,
+      radius: radiusMiles, // Store the radius in miles
+    };
+
+    window.drawnCities.push(cityInfo);
+
+    // Optionally set a custom class to style the circle
+    const pathElement = circle.getElement();
+    if (pathElement) {
+      L.DomUtil.addClass(pathElement, 'custom-circle__searched');
+      if (this.excludedBtn.classList.contains('active')) {
+        L.DomUtil.addClass(pathElement, 'excluded');
+      }
+    }
+  }
+
+  drawState(state, map) {
+    // Create a GeoJSON layer for the state polygon
+    const polygon = L.geoJSON(state, {
+      style: {
+        color: 'blue', // Set polygon color
+        weight: 2,
+      },
+      onEachFeature: (feature, layer) => {
+        if (layer instanceof L.Polygon) {
+          layer.on('add', () => {
+            L.DomUtil.addClass(layer._path, 'custom-polygon__searched'); // Add class to the polygon
+            if (this.excludedBtn.classList.contains('active')) {
+              L.DomUtil.addClass(layer._path, 'excluded');
+            }
+          });
+        }
+      },
+    }).addTo(window.map); // Add to the global map variable
+
+    window.nonEditableItems.addLayer(polygon); // Add the polygon to the drawnItems FeatureGroup
+    map.updateButtonState();
+
+    const bounds = polygon.getBounds();
+    window.map.fitBounds(bounds); // Center and zoom the map to the polygon
+  }
+
+  createDropdown(
+    items,
+    dropdown,
+    input,
+    isSelectedCity,
+    dropdownItemClass,
+    highlightColor = '#0c0b0e'
+  ) {
+    dropdown.innerHTML = ''; // Clear previous items
+    const query = input.value.trim(); // Get current input value
+
+    if (query.length > 0) {
+      const regex = new RegExp(`(${query})`, 'gi'); // Case-insensitive regex for matching query
+
+      items.forEach((itemData) => {
+        const item = document.createElement('div');
+        item.className = 'dropdown-item';
+        item.classList.add(dropdownItemClass);
+
+        const parts = itemData.name.split(regex);
+
+        parts.forEach((part) => {
+          const span = document.createElement('span');
+          if (part.toLowerCase() === query.toLowerCase()) {
+            span.style.color = highlightColor;
+            span.textContent = part;
+          } else {
+            span.textContent = part;
+          }
+          item.appendChild(span);
+        });
+        if (item.classList.contains('zip-dropdown__link')) {
+          item.addEventListener('click', () => {
+            this.zipDraw(itemData);
+          });
+        }
+
+        // Handle city selection
+        item.addEventListener('click', () => {
+          itemData.onSelect(); // Draw the town circle on map
+          if (isSelectedCity) {
+            document
+              .querySelector('.town-radius__dropdown')
+              .classList.toggle('hidden');
+          }
+
+          // Here, we pass the specific cityInfo of the clicked item
+          const selectedCityInfo = window.drawnCities.find(
+            (city) => city.name === itemData.name
+          );
+
+          // Adjust the radius for the selected city
+          if (selectedCityInfo) {
+            this.setupRadiusAdjustment(selectedCityInfo);
+          }
+
+          input.value = itemData.name;
+          dropdown.style.display = 'none';
+          input.value = '';
+        });
+
+        dropdown.appendChild(item);
+      });
+    } else {
+      items.forEach((itemData) => {
+        const item = document.createElement('div');
+        item.className = 'dropdown-item';
+        if (isSelectedCity) item.classList.add('selected-city');
+        item.textContent = itemData.name;
+
+        item.addEventListener('click', () => {
+          itemData.onSelect(); // Draw the town circle on map
+          if (item.classList.contains('selected-city')) {
+            document
+              .querySelector('.town-radius__dropdown')
+              .classList.toggle('hidden');
+          }
+
+          // Here, we pass the specific cityInfo of the clicked item
+          const selectedCityInfo = window.drawnCities.find(
+            (city) => city.name === itemData.name
+          );
+
+          // Adjust the radius for the selected city
+          if (selectedCityInfo) {
+            this.setupRadiusAdjustment(selectedCityInfo);
+          }
+
+          input.value = itemData.name;
+          dropdown.style.display = 'none';
+          input.value = '';
+        });
+
+        dropdown.appendChild(item);
+      });
+    }
+
+    dropdown.style.display = items.length > 0 ? 'block' : 'none';
+  }
+
+  setupRadiusAdjustment(cityInfo) {
+    const rangeInput = document.querySelector('.town-dropdown__range');
+    const tooltip = document.querySelector('.town-radius__tooltip');
+
+    rangeInput.value = cityInfo.radius; // Set initial value to current radius
+    rangeInput.max = 50; // Max radius 50 miles
+    rangeInput.min = 0; // Min radius 0 miles
+
+    // Initialize tooltip position and content based on current radius
+    tooltip.textContent = `${cityInfo.radius} mi`;
+    this.updateTooltipPosition(rangeInput, tooltip);
+
+    // Show the radius input and set event listener for change
+    rangeInput.style.display = 'block'; // Ensure input is visible
+    rangeInput.oninput = () => {
+      // Use arrow function to preserve 'this'
+      const newRadiusMiles = parseInt(rangeInput.value);
+      const newRadiusMeters = newRadiusMiles * 1609.34; // Convert miles to meters
+
+      // Update circle radius on the map and radius in city info object
+      cityInfo.circle.setRadius(newRadiusMeters);
+      cityInfo.radius = newRadiusMiles;
+
+      // Update tooltip content and position
+      tooltip.textContent = `${newRadiusMiles} mi`;
+      this.updateTooltipPosition(rangeInput, tooltip);
+      this.mapInstance.updateButtonState();
+    };
+  }
+
+  updateTooltipPosition(rangeInput, tooltip) {
+    // Width of the range input and tooltip
+    const rangeWidth = rangeInput.offsetWidth;
+    const tooltipWidth = tooltip.offsetWidth;
+
+    // Calculate the thumb position based on the range value and width
+    const thumbPosition =
+      (rangeInput.value / rangeInput.max) * (rangeWidth - 20); // -20 to account for thumb width
+
+    // Center the tooltip above the thumb
+    tooltip.style.left = `${thumbPosition - tooltipWidth / 2 + 33}px`; // +10 centers it relative to the thumb
+  }
+
+  zipDraw(itemData) {
+    const zipCode = itemData.name.match(/^\d+/)?.[0];
+    const authToken = localStorage.getItem('authToken');
+
+    if (zipCode) {
+      // Fetch ZIP code boundary data from Xano
+      fetch(
+        `https://xrux-avyn-v7a8.n7d.xano.io/api:4o1s7k_j/get_zip_geojson?zipCode=${zipCode}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(
+              'Network response was not ok: ' + response.statusText
+            );
+          }
+          return response.json();
+        })
+        .then((data) => {
+          // Check if the response has the expected structure
+          if (
+            data.response &&
+            data.response.result &&
+            data.response.result.features &&
+            data.response.result.features.length > 0
+          ) {
+            // Extract coordinates from the response
+            const coordinates =
+              data.response.result.features[0].geometry.coordinates[0];
+
+            // Convert coordinates to [latitude, longitude] format for Leaflet
+            const latLngs = coordinates.map((coord) => [coord[1], coord[0]]);
+
+            // Create and add polygon to the map
+            const boundaryPolygon = L.polygon(latLngs, {
+              color: 'blue',
+              fillColor: '#3388ff',
+              fillOpacity: 0.3,
+            }).addTo(map);
+
+            boundaryPolygon
+              .getElement()
+              .classList.add('custom-polygon__searched');
+
+            if (this.excludedBtn.classList.contains('active')) {
+              boundaryPolygon.getElement().classList.add('excluded');
+            }
+
+            // Fit map bounds to the polygon and add to non-editable items
+            map.fitBounds(boundaryPolygon.getBounds());
+            window.nonEditableItems.addLayer(boundaryPolygon);
+            // updateButtonState();
+          } else {
+            console.error('No features found in the response data');
+          }
+        })
+        .catch((error) => {
+          console.error('Error fetching ZIP code boundaries from Xano:', error);
+        });
+    } else {
+      console.error('ZIP code not found in itemData name');
+    }
+  }
+
+  debounce(func, delay) {
+    let timeoutId;
+    return function (...args) {
+      if (timeoutId) {
+        clearTimeout(timeoutId); // Clear the previous timeout
+      }
+      timeoutId = setTimeout(() => {
+        func.apply(this, args); // Call the original function with the latest arguments
+      }, delay);
+    };
+  }
+}
