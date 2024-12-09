@@ -2,11 +2,13 @@ import Map from './Map';
 import Place from './Place';
 
 export default class Client {
-  constructor() {
+  constructor(tool) {
     this.authToken = localStorage.getItem('authToken');
     this.colorRandomizer = this.colorRandomizer.bind(this);
+    this.removeOffice = this.removeOffice.bind(this);
     this.map = new Map();
     this.place = new Place();
+    this.tool = tool;
   }
 
   loadClients(isInitialLoad, page, per_page, offset, search) {
@@ -75,39 +77,37 @@ export default class Client {
         // Check if there are clients to display
         if (data.clients.items.length === 0) {
           rows = `
-            <tr>
-              <td colspan="8" class="no-data-message">No data</td>
-            </tr>`;
+        <tr>
+          <td colspan="8" class="no-data-message">No data</td>
+        </tr>`;
         } else {
           // Populate the rows with fetched data
           data.clients.items.forEach((client) => {
-            console.log(client);
             rows += `
-              <tr>
-                <td class="dark"><a href="/client?client_id=${
-                  client.id
-                }" class="client-table__link">${
+          <tr>
+            <td class="dark"><a href="/?client_id=${
+              client.id
+            }" class="client-table__link">${
               client.image
                 ? `<img class="client-image" src="${client.image.url}" alt="Client image">`
-                : `<div style="background-color: ${this.colorRandomizer()};" class="fullname-capital">${client.full_name
+                : `<div style="background-color: ${this.colorRandomizer()};" class="fullname-capital">${client.company_name
                     .slice(0, 1)
                     .toUpperCase()}</div>`
-            }${client.full_name}</a></td>
-                <td class="light">${client.company_name}</td>
-                <td><a href="${
-                  client.website
-                }" target="_blank" class="website-link">${
+            }${client.company_name}</a></td>
+            <td><a href="${
               client.website
-            }</a></td>
-                <td><a href="mailto:${client.email}" class="email-link">${
+            }" target="_blank" class="website-link">${client.website}</a></td>
+            <td><a href="mailto:${client.email}" class="email-link">${
               client.email
             }</a></td>
-                <td class="light">${client.phone_number}</td>
-                <td class="light">${new Date(
-                  client.created_at
-                ).toLocaleDateString()}</td>
-                <td><img class="edit-client__btn" src="https://cdn.prod.website-files.com/66eab8d4420be36698ed221a/6706654e169e0a1ab9a12e73_pencil-icon.svg"></td>
-              </tr>`;
+            <td class="light">${client.phone_number}</td>
+            <td class="light">${new Date(
+              client.created_at
+            ).toLocaleDateString()}</td>
+            <td><a href="/client?client_id=${
+              client.id
+            }"><img class="edit-client__btn" src="https://cdn.prod.website-files.com/66eab8d4420be36698ed221a/6706654e169e0a1ab9a12e73_pencil-icon.svg"></a></td>
+          </tr>`;
           });
         }
 
@@ -192,7 +192,11 @@ export default class Client {
                 )
               : data.homepage_clients[0];
 
-            this.map.drawMap(JSON.parse(firstClient.geojson_map.map), this.place);
+            this.map.drawMap(
+              JSON.parse(firstClient.geojson_map.map),
+              this.place,
+              data.homepage_clients[0].client_offices
+            );
 
             const clientName = document.querySelector('.client-nav__name');
             const clientImage = document.querySelector('.client-nav__image');
@@ -207,16 +211,12 @@ export default class Client {
             const activeClientName = document.querySelector(
               '.client-link.active .client-link__info'
             );
-            const activeClientCompany = document.querySelector(
-              '.client-link.active .client-link__company'
-            );
 
-            clientName.textContent = firstClient.full_name;
+            clientName.textContent = firstClient.company_name;
             clientImage.src = firstClient.image.url;
 
             activeClientImage.src = firstClient.image.url;
-            activeClientName.innerHTML = `${firstClient.full_name}<br>`;
-            activeClientCompany.textContent = firstClient.company_name;
+            activeClientName.innerHTML = `${firstClient.company_name}<br>`;
 
             navClients.classList.remove('hidden');
 
@@ -237,23 +237,20 @@ export default class Client {
               const clientLink = document.createElement('a');
               clientLink.classList.add('client-link', 'not-selected');
               clientLink.setAttribute('client-id', client.id);
-              clientLink.href = '?client-id=' + client.id;
+              clientLink.href = '?client_id=' + client.id;
 
               clientLink.innerHTML = `
-      ${
-        client.image
-          ? `<img src="${client.image.url}" loading="lazy" alt="" class="client-nav__image">`
-          : `<div class="client-avatar" style="background-color: ${client.colorRandomizer()} ;">${client.full_name
-              .charAt(0)
-              .toUpperCase()}</div>`
-      }
-      <p class="client-link__info">
-        ${client.full_name}<br>
-        <span class="client-link__company inactive">${
-          client.company_name
-        }</span>
-      </p>
-    `;
+  ${
+    client.image
+      ? `<img src="${client.image.url}" loading="lazy" alt="" class="client-nav__image">`
+      : `<div class="client-avatar" style="background-color: ${client.colorRandomizer()} ;">${client.company_name
+          .charAt(0)
+          .toUpperCase()}</div>`
+  }
+  <p class="client-link__info">
+    ${client.company_name}
+  </p>
+`;
 
               // Append the new client link to the clients wrapper
               clientsWrapper.appendChild(clientLink);
@@ -292,7 +289,6 @@ export default class Client {
   }
 
   gatherClientData(client) {
-    client.full_name = document.getElementById('full-name').value;
     client.company_name = document.getElementById('company').value;
     client.email = document.getElementById('email').value;
     client.website = document.getElementById('website').value;
@@ -310,7 +306,6 @@ export default class Client {
     const authToken = localStorage.getItem('authToken');
 
     const clientData = {
-      full_name: client.full_name,
       company_name: client.company_name,
       email: client.email,
       website: client.website,
@@ -336,12 +331,69 @@ export default class Client {
       },
       body: JSON.stringify(clientData),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to add client');
+        }
+        return response.json();
+      })
       .then((data) => {
+        // Extract the client ID from the response
+        const clientId = data.id;
+
+        // Get all office address inputs
+        const addressInputs = document.querySelectorAll(
+          '.form-input.company-office-address'
+        );
+
+        // Prepare the payload for the new_offices API
+        const locations = Array.from(addressInputs)
+          .map((input) => {
+            const officeAddress = input.value
+              .trim()
+              .replaceAll(', United States', '');
+            const latitude = input.getAttribute('data-latitude');
+            const longitude = input.getAttribute('data-longitude');
+
+            if (officeAddress && latitude && longitude) {
+              // Convert to the required string format
+              return `{'office_address': '${officeAddress}', 'lan': '${latitude}', 'lon': '${longitude}'}`;
+            }
+            return null; // Skip inputs with missing data
+          })
+          .filter((location) => location); // Filter out null values
+
+        const officeData = {
+          client_id: clientId,
+          location: '', // Leave location empty as per your requirement
+          locations: locations,
+        };
+
+        // Call the new_offices API
+        return fetch(
+          'https://xrux-avyn-v7a8.n7d.xano.io/api:4o1s7k_j/new_offices',
+          {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(officeData),
+          }
+        );
+      })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to add office addresses');
+        }
+        return response.json();
+      })
+      .then((officeResponse) => {
         location.reload();
+        localStorage.setItem('notification', 'Client created successfully');
       })
       .catch((error) => {
-        console.error('Error adding client:', error);
+        console.error('Error:', error);
       });
   }
 
@@ -385,10 +437,16 @@ export default class Client {
     // Reset the cloned input field values and properties
     const newInput = newAddressField.querySelector('input');
     newInput.value = '';
-    newInput.placeholder = `Company Office Address ${addressCount}`;
     newInput.id = `field-address-${addressCount}`;
     newInput.name = `address-${addressCount}`;
     newInput.removeAttribute('required');
+
+    // Update the label text
+    const label = newAddressField.querySelector('label');
+    if (label) {
+      label.textContent = `Company Office Address ${addressCount}`;
+      label.setAttribute('for', `field-address-${addressCount}`); // Update the label's `for` attribute
+    }
 
     // Remove the red star
     const redStar = newAddressField.querySelector('.red-star');
@@ -396,10 +454,25 @@ export default class Client {
 
     form.appendChild(newAddressField);
 
+    // Add input event listener to the new input field
+    newInput.addEventListener(
+      'input',
+      this.tool.debounce((event) => {
+        this.getAddressSuggestion(event.target); // Trigger address suggestion for the new input
+      }, 300)
+    );
+
     return addressCount;
   }
 
   validateSecondStepInput() {
+    let hasIntermediate = false; // To track values between 0.1 and 0.9
+    let hasOne = false;
+    let hasZero = false;
+
+    let zeroCount = 0;
+    let oneCount = 0;
+
     const inputs = [
       document.getElementById('population'),
       document.getElementById('avg-income'),
@@ -407,34 +480,294 @@ export default class Client {
       document.getElementById('avg-home-value'),
       document.getElementById('distance-hq'),
     ];
-  
-    const allValid = inputs.every((input) => {
+
+    inputs.forEach((input) => {
       const value = parseFloat(input.value);
-      return !isNaN(value) && value >= 0 && value <= 1;
+
+      if (value === 1) {
+        oneCount++; // Count how many 1's
+        hasOne = true;
+      } else if (value === 0) {
+        zeroCount++; // Count how many 0's
+        hasZero = true;
+      } else if (value > 0 && value < 1) {
+        hasIntermediate = true; // Found an intermediate value
+      }
     });
-  
-    document.querySelector('.add-client').classList.toggle('active', allValid);
+
+    // Ensure there is at least one 1 and one 0, and no more than two 1's or 0's
+    const hasTooManyOnesOrZeros = oneCount > 2 || zeroCount > 2;
+
+    // Check if all conditions are met
+    if (hasOne && hasZero && !hasTooManyOnesOrZeros && hasIntermediate) {
+      document.querySelector('.add-client').classList.add('active');
+    } else {
+      document.querySelector('.add-client').classList.remove('active');
+    }
   }
 
   uploadClientImage(files, preview, client) {
     preview.innerHTML = '';
-  
+
     // Update the file type check to include SVG
     if (
       files.length > 0 &&
       (files[0].type.startsWith('image/') || files[0].type === 'image/svg+xml')
     ) {
       const reader = new FileReader();
-  
+
       reader.onloadend = () => {
         client.client_img = reader.result;
-  
+
         const img = document.createElement('img');
         img.src = client.client_img;
         preview.appendChild(img);
       };
-  
+
       reader.readAsDataURL(files[0]);
+    }
+  }
+
+  loadSingleClient(clientId, authToken) {
+    fetch(
+      `https://xrux-avyn-v7a8.n7d.xano.io/api:4o1s7k_j/clients/${clientId}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch client data');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        const company = document.getElementById('profile-company');
+        const email = document.getElementById('profile-email');
+        const website = document.getElementById('profile-website');
+        const phone = document.getElementById('profile-phone');
+        const companyTitle = document.querySelector('.client_name_text');
+        const { client_offices } = data;
+
+        const img = document.getElementById('client-img');
+
+        // Populate text fields
+        company.value = data.company_name;
+        email.value = data.email;
+        website.value = data.website;
+        phone.value = data.phone_number;
+        companyTitle.textContent = data.company_name;
+
+        // Populate client offices
+        this.populateClientOffices(client_offices);
+
+        // Set up the image loading behavior
+        img.onload = () => {
+          // Image is fully loaded, reveal content
+          document.getElementById('single-client-section').style.opacity = '1';
+          document.querySelector('.clients-table__loader').remove();
+        };
+
+        // Set the image source to start loading
+        img.src = data.image.url;
+      });
+  }
+
+  populateClientOffices(offices) {
+    const officeWrapper = document.querySelector('.office-address-wrap'); // Select the base element to clone
+    const addOfficeWrapper = document.querySelector('.add-office_wrapper'); // Reference to insert cloned nodes before
+
+    document.querySelectorAll('.office-address-wrap')[0].remove();
+
+    // Parse and loop through each office
+    offices.forEach((office) => {
+      const parsedLocation = JSON.parse(office.location.replace(/'/g, '"')); // Correct JSON format
+      const officeAddress = parsedLocation.office_address;
+
+      // Clone the base element
+      const clonedOffice = officeWrapper.cloneNode(true);
+
+      // Find and set the value of the input inside the cloned element
+      const inputField = clonedOffice.querySelector('input');
+      inputField.value = officeAddress;
+
+      // Add the office ID to the remove icon
+      const removeIcon = clonedOffice.querySelector('.remove-office');
+      removeIcon.setAttribute('data-office-id', office.id);
+
+      removeIcon.addEventListener('click', (event) => {
+        const officeId = removeIcon.getAttribute('data-office-id');
+        this.removeOffice(officeId, clonedOffice); // Call the function to remove the office by its ID
+      });
+
+      // Append the cloned element before the "Add new office address" link
+      addOfficeWrapper.parentNode.insertBefore(clonedOffice, addOfficeWrapper);
+    });
+  }
+
+  removeOffice(officeId, officeElement) {
+    console.log('Attempting to delete office with ID:', officeId);
+
+    // Get the auth token from localStorage
+    const authToken = localStorage.getItem('authToken');
+    if (!authToken) {
+      console.error('No auth token found in localStorage');
+      return;
+    }
+
+    // Make the DELETE request to the API
+    fetch(
+      `https://xrux-avyn-v7a8.n7d.xano.io/api:4o1s7k_j/offices/${officeId}`,
+      {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to delete office');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        officeElement.remove();
+      })
+      .catch((error) => {
+        console.error('Error deleting office:', error);
+      });
+  }
+
+  addNewOfficeField(tool) {
+    // Select the reference point to insert new offices before it
+    const addOfficeWrapper = document.querySelector('.add-office_wrapper');
+
+    // Create a new div element for the new office input
+    const newOfficeDiv = document.createElement('div');
+    newOfficeDiv.classList.add('form-input__wrapper');
+
+    // Create the label for the new office input
+    const label = document.createElement('label');
+    label.classList.add('client-input-label');
+    label.textContent = 'Company Office Address';
+    newOfficeDiv.appendChild(label);
+
+    // Create the new input field for the office address
+    const input = document.createElement('input');
+    input.classList.add('full_name_input', 'w-input');
+    input.setAttribute('type', 'text');
+    input.setAttribute('maxlength', '256');
+    input.setAttribute('name', 'field-2');
+    input.setAttribute('data-name', 'Field 2');
+    input.setAttribute('placeholder', '');
+    input.required = true;
+
+    input.addEventListener(
+      'input',
+      tool.debounce((event) => {
+        this.getAddressSuggestion(event.target); // Trigger address suggestion for the new input
+      }, 300)
+    );
+
+    newOfficeDiv.appendChild(input);
+
+    // Create the dropdown suggestion container (empty for now)
+    const dropdown = document.createElement('div');
+    dropdown.classList.add('client-address__dropdown-suggestion');
+    newOfficeDiv.appendChild(dropdown);
+
+    // Insert the new office div before the "Add new office address" link
+    addOfficeWrapper.parentNode.insertBefore(newOfficeDiv, addOfficeWrapper);
+  }
+
+  getAddressSuggestion(inputElement) {
+    let query = inputElement.value;
+    const modifiedQuery = `${query}, United States`;
+    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+      modifiedQuery
+    )}&format=json&addressdetails=1&limit=3`;
+
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        const dropdown = inputElement
+          .closest('.form-input__wrapper')
+          .querySelector('.client-address__dropdown-suggestion');
+        dropdown.innerHTML = ''; // Clear previous suggestions
+
+        if (data && data.length > 0) {
+          data.forEach((item) => {
+            const dropdownItem = document.createElement('div');
+            dropdownItem.classList.add('dropdown-item', 'client-address__item');
+            dropdownItem.innerHTML = `<span>${item.display_name}</span>`;
+
+            // When a suggestion is clicked, add it to the corresponding input
+            dropdownItem.addEventListener('click', () => {
+              inputElement.value = item.display_name; // Set input value to the selected address
+              dropdown.innerHTML = ''; // Clear the dropdown after selection
+
+              // Add custom properties to the input element (latitude and longitude)
+              inputElement.dataset.latitude = item.lat;
+              inputElement.dataset.longitude = item.lon;
+
+              // If you want to directly add them as properties, you can do:
+              inputElement.lat = item.lat;
+              inputElement.lon = item.lon;
+            });
+
+            dropdown.appendChild(dropdownItem);
+          });
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching address data:', error);
+      });
+  }
+
+  deleteClient() {
+    // Get the client_id from the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const clientId = urlParams.get('client_id'); // Extracts client_id from the query parameter
+
+    // Get the authToken from local storage
+    const authToken = localStorage.getItem('authToken');
+
+    if (clientId && authToken) {
+      // Make the DELETE request
+      fetch(
+        `https://xrux-avyn-v7a8.n7d.xano.io/api:4o1s7k_j/clients/${clientId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Failed to delete client');
+          }
+          return response.json();
+        })
+        .then(() => {
+          // Set the notification in local storage
+          localStorage.setItem('notification', 'Client deleted successfully');
+
+          // Redirect to the /clients page
+          window.location.href = '/clients';
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    } else {
+      console.error('Missing client_id or authToken');
     }
   }
 }

@@ -8,7 +8,7 @@ const user = new User();
 const map = new Map();
 const place = new Place();
 const client = new Client();
-const tool = new Tool();
+const tool = new Tool(map, place);
 
 const logoutBtn = document.querySelector('.logout-btn');
 const townInput = document.getElementById('town-input');
@@ -23,7 +23,7 @@ const zipInput = document.getElementById('zip-input');
 const zipDropdown = document.getElementById('zip-dropdown');
 
 const urlParams = new URLSearchParams(window.location.search);
-const clientId = urlParams.get('client-id');
+const clientId = urlParams.get('client_id');
 const clientApiEndpoint =
   'https://xrux-avyn-v7a8.n7d.xano.io/api:4o1s7k_j/clients_homepage';
 
@@ -77,7 +77,7 @@ townInput.addEventListener(
       return;
     }
 
-    map.fetchCitySuggestions(query, townInput, townDropdown);
+    map.fetchCitySuggestions(query, townInput, townDropdown, place);
   }, 300)
 );
 
@@ -148,21 +148,6 @@ zipInput.addEventListener(
 );
 
 /**
- * SELECTION DONE
- */
-
-selectionDoneButton.addEventListener('click', (e) => {
-  place.fetchPlacesFromAllShapes(e);
-});
-
-document.querySelector('.close-modal').addEventListener('click', () => {
-  map.toggleModal();
-});
-document.querySelector('.overlay.homepage').addEventListener('click', () => {
-  map.toggleModal();
-});
-
-/**
  * NAVBAR SEARCH FUNCTIONALITY
  */
 document.getElementById('Search').addEventListener('input', function (e) {
@@ -205,3 +190,6 @@ document.querySelectorAll('.option_button').forEach((btn) => {
     e.currentTarget.classList.add('active');
   });
 });
+
+place.searchIncludedExcludedPlaces('.input-search.included-search', '.states_wrap.included');
+place.searchIncludedExcludedPlaces('.input-search.excluded-search', '.states_wrap.excluded');

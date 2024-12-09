@@ -28,7 +28,7 @@ export default class User {
           }
         } else {
           // If the token is valid and on the `/clients` page, stay on `/clients`
-          if (window.location.pathname === '/clients') {
+          if (window.location.pathname === '/clients' || window.location.pathname === '/client') {
             return; // Do nothing, remain on `/clients`
           }
 

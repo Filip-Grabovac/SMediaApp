@@ -1,7 +1,9 @@
 import Client from '../Client';
 import User from '../User';
+import Tool from '../Tool';
 
-const client = new Client();
+let tool = new Tool();
+const client = new Client(tool);
 const user = new User();
 
 let page = 1;
@@ -17,9 +19,10 @@ const newAddressBtn = document.querySelector('.new-address__btn');
 const uploadArea = document.getElementById('upload-area');
 const fileInput = document.getElementById('fileElem');
 const preview = document.getElementById('preview');
+const rangeTooltips = document.querySelectorAll('.factor-range');
+const addressInput = document.querySelector('.company-office-address');
 
 let clientData = {
-  full_name: '',
   company_name: '',
   email: '',
   website: '',
@@ -32,6 +35,11 @@ let clientData = {
   avg_home_value_f: 0,
   distance_from_hq_f: 0,
 };
+
+/**
+ * SHOW NOTIFICATION AFTER USER DELETION
+ */
+tool.showNotification();
 
 // Load initial clients
 client.loadClients(true, page, per_page, offset, search);
@@ -90,6 +98,25 @@ nextStepButton.addEventListener('click', (e) => {
   }
   client.modalNextStep(step);
   client.updateModalContent(e);
+
+  // UPDATE RANGE TOOLTIP POPULATION
+  rangeTooltips.forEach((toolt) => {
+    // Get the tooltip corresponding to this range input
+    let tooltip = document.querySelector(
+      `[tooltip-id="${toolt.getAttribute('range-id')}"]`
+    );
+
+    tool.updateTooltipPosition(toolt, tooltip);
+
+    toolt.addEventListener('input', function (e) {
+      tooltip.textContent = e.target.value;
+      client.validateSecondStepInput();
+
+      if (tooltip) {
+        tool.updateTooltipPosition(e.target, tooltip);
+      }
+    });
+  });
 });
 
 form.addEventListener('input', () => {
@@ -99,17 +126,6 @@ form.addEventListener('input', () => {
 newAddressBtn.addEventListener('click', (e) => {
   e.preventDefault();
   addressCount = client.addNewAddressField(addressCount, form);
-});
-
-document.querySelectorAll('.form-input__scnd').forEach((input) => {
-  input.addEventListener('input', () => {
-    client.validateSecondStepInput();
-
-    const value = parseFloat(input.value);
-    if (isNaN(value) || value < 0 || value > 1) {
-      input.value = '';
-    }
-  });
 });
 
 /**
@@ -133,3 +149,13 @@ uploadArea.addEventListener('drop', (e) => {
 fileInput.addEventListener('change', (e) => {
   client.uploadClientImage(e.target.files, preview, clientData);
 });
+
+/**
+ * ADDRESS SUGGESTION INPUT
+ */
+addressInput.addEventListener(
+  'input',
+  tool.debounce((event) => {
+    client.getAddressSuggestion(event.target); // Trigger address suggestion for the new input
+  }, 300)
+);

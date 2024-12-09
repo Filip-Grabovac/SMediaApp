@@ -1,5 +1,5 @@
 export default class Tool {
-  constructor(mapInstance) {
+  constructor(mapInstance, place) {
     this.mapInstance = mapInstance;
     this.disableActiveTool = this.disableActiveTool.bind(this);
     this.createDropdown = this.createDropdown.bind(this);
@@ -12,6 +12,8 @@ export default class Tool {
     this.drawElement = this.drawElement.bind(this);
 
     this.excludedBtn = document.querySelector('.option_button.exclude');
+    this.place = place;
+    this.drawTownCircle = this.drawTownCircle.bind(this);
   }
 
   disableActiveTool() {
@@ -66,6 +68,7 @@ export default class Tool {
   }
 
   removeLayer(layer) {
+    console.log(layer);
     // Check if the layer is part of drawnItems
     if (window.drawnItems.hasLayer(layer)) {
       window.drawnItems.removeLayer(layer);
@@ -76,7 +79,7 @@ export default class Tool {
       window.nonEditableItems.removeLayer(layer);
     }
 
-    // Also remove the layer from the map
+    // Remove the layer from the map
     window.map.removeLayer(layer);
 
     // Remove the city from the drawnCities array if it matches the deleted layer
@@ -84,17 +87,52 @@ export default class Tool {
       (cityInfo) => cityInfo.circle !== layer
     );
 
+    let shapeId;
+
+    // Handle individual layers or groups
+    if (layer._path) {
+      // Single shape (e.g., a polygon, rectangle, or circle)
+      shapeId = layer.shapeId || layer._path.getAttribute('shapeId');
+    } else if (layer._layers) {
+      // Grouped layers (e.g., GeoJSON with multiple features)
+      Object.values(layer._layers).forEach((subLayer) => {
+        if (subLayer._path) {
+          shapeId = subLayer.shapeId || subLayer._path.getAttribute('shapeId');
+          // Perform any cleanup for subLayer here if needed
+        }
+      });
+    }
+
+    if (shapeId) {
+      // Find and remove all state-row elements with the same shapeId
+      const rows = document.querySelectorAll(
+        `.state-row[shapeId="${shapeId}"]`
+      );
+      rows.forEach((row) => row.remove());
+    }
+
+    // Update the placeholders for included and excluded items
+    document.querySelector('.included-num__placeholder').textContent =
+      document.querySelectorAll('.states_wrap.included .state-row').length;
+    document.querySelector('.excluded-num__placeholder').textContent =
+      document.querySelectorAll('.states_wrap.excluded .state-row').length;
+
     this.mapInstance.updateButtonState();
   }
 
   drawElement(element, place) {
     const layer = element.layer;
 
+    // Generate a unique shapeId
+    const shapeId = `shape-${Date.now()}-${Math.random()
+      .toString(36)
+      .substr(2, 9)}`;
+
     // Add the layer to the FeatureGroup
     window.drawnItems.addLayer(layer);
     this.mapInstance.updateButtonState();
 
-    // Add a custom class based on the shape type
+    // Add a custom class and shapeId attribute based on the shape type
     if (element.layerType === 'polygon') {
       L.DomUtil.addClass(layer._path, 'custom-polygon'); // Add class to polygon
     } else if (element.layerType === 'rectangle') {
@@ -103,16 +141,22 @@ export default class Tool {
       L.DomUtil.addClass(layer._path, 'custom-circle'); // Add class to circle
     }
 
+    // Assign the unique shapeId to the layer
+    layer._path.setAttribute('shapeId', shapeId);
+
     if (this.excludedBtn.classList.contains('active')) {
       L.DomUtil.addClass(layer._path, 'excluded');
     }
 
-    // ** Remove 'active' class from all .tool-wrapper elements when shape drawing is finished **
+    // Remove 'active' class from all .tool-wrapper elements when shape drawing is finished
     document.querySelectorAll('.tool-wrapper').forEach(function (wrapper) {
       wrapper.classList.remove('active');
     });
 
-    place.fetchPlacesFromAllShapes();
+    // Save shapeId to layer for reference
+    layer.shapeId = shapeId;
+
+    place.processLayer(layer, shapeId);
   }
 
   edit() {
@@ -139,9 +183,12 @@ export default class Tool {
     }
   }
 
-  drawTownCircle(cityData) {
+  drawTownCircle(cityData, place) {
     const lat = cityData.lat;
     const lon = cityData.lon;
+    const shapeId = `shape-${Date.now()}-${Math.random()
+      .toString(36)
+      .substr(2, 9)}`;
 
     window.map.setView([lat, lon], 9); // Center the map on the town
 
@@ -172,13 +219,21 @@ export default class Tool {
     const pathElement = circle.getElement();
     if (pathElement) {
       L.DomUtil.addClass(pathElement, 'custom-circle__searched');
+      pathElement.setAttribute('shapeId', shapeId);
       if (this.excludedBtn.classList.contains('active')) {
         L.DomUtil.addClass(pathElement, 'excluded');
       }
     }
+
+    // Process the circle with the provided shapeId
+    place.processLayer(circle, shapeId);
   }
 
   drawState(state, map) {
+    const shapeId = `shape-${Date.now()}-${Math.random()
+      .toString(36)
+      .substr(2, 9)}`;
+
     // Create a GeoJSON layer for the state polygon
     const polygon = L.geoJSON(state, {
       style: {
@@ -189,10 +244,14 @@ export default class Tool {
         if (layer instanceof L.Polygon) {
           layer.on('add', () => {
             L.DomUtil.addClass(layer._path, 'custom-polygon__searched'); // Add class to the polygon
+            layer._path.setAttribute('shapeId', shapeId);
+
             if (this.excludedBtn.classList.contains('active')) {
               L.DomUtil.addClass(layer._path, 'excluded');
             }
           });
+
+          this.place.processLayer(layer, shapeId);
         }
       },
     }).addTo(window.map); // Add to the global map variable
@@ -427,5 +486,29 @@ export default class Tool {
         func.apply(this, args); // Call the original function with the latest arguments
       }, delay);
     };
+  }
+
+  showNotification(text, manual) {
+    const notificationText = localStorage.getItem('notification') || text;
+
+    if (notificationText) {
+      const notificationElement = document.querySelector('.notification');
+
+      if (notificationElement) {
+        notificationElement.textContent = notificationText;
+
+        notificationElement.classList.remove('hidden');
+
+        localStorage.removeItem('notification');
+
+        if (!manual) {
+          setTimeout(() => {
+            notificationElement.classList.add('hidden');
+          }, 3500);
+        }
+      } else {
+        console.error('Notification element not found in DOM.');
+      }
+    }
   }
 }

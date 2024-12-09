@@ -7,6 +7,7 @@ module.exports = {
     ['homepage']: './src/pages/homepage.js',
     ['login']: './src/pages/login.js',
     ['clients']: './src/pages/clients.js',
+    ['single-client']: './src/pages/single-client.js',
   },
   output: {
     path: path.resolve(__dirname, 'dist'),

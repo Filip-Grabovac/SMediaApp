@@ -53,7 +53,7 @@ export default class Map {
     }).addTo(window.map); // Add the loaded shapes to the map
   }
 
-  drawMap(geojson, place) {
+  drawMap(geojson, place, locations) {
     // Initialize the map
     this.loadMap();
 
@@ -62,6 +62,11 @@ export default class Map {
       if (Object.keys(geojson).length !== 0) {
         this.loadGeojson(geojson); // Call loadGeoJSON to handle the GeoJSON shapes
       }
+    }
+
+    // Add pins to the map based on locations
+    if (locations && locations.length > 0) {
+      this.addPinsToMap(locations);
     }
 
     // ** Custom Map Controls **
@@ -131,7 +136,38 @@ export default class Map {
     );
   }
 
-  fetchCitySuggestions(query, townInput, townDropdown) {
+  addPinsToMap(locations) {
+    let firstMarkerCoords = null; // Variable to store the first marker's coordinates
+
+    locations.forEach((location, index) => {
+      try {
+        const locationData = JSON.parse(location.location.replace(/'/g, '"')); // Parse location JSON
+        const lat = parseFloat(locationData.lan); // Extract latitude
+        const lon = parseFloat(locationData.lon); // Extract longitude
+        const address = locationData.office_address; // Extract address
+
+        if (!isNaN(lat) && !isNaN(lon)) {
+          // Add a circle marker with custom style
+          const marker = L.marker([lat, lon]).addTo(window.map);
+          marker.bindPopup(`<strong>${address}</strong>`); // Add popup with address
+
+          // Save the first marker's coordinates
+          if (index === 0) {
+            firstMarkerCoords = [lat, lon];
+          }
+        }
+      } catch (error) {
+        console.error('Error parsing location:', location, error);
+      }
+    });
+
+    // Zoom to the first marker if it exists
+    // if (firstMarkerCoords) {
+    //   window.map.setView(firstMarkerCoords, 10); // Set the map view (adjust zoom level as needed)
+    // }
+  }
+
+  fetchCitySuggestions(query, townInput, townDropdown, place) {
     const modifiedQuery = `${query}, United States`;
     const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
       modifiedQuery
@@ -149,7 +185,7 @@ export default class Map {
           name: city.display_name, // Extract city names
           lat: city.lat, // Extract latitude
           lon: city.lon, // Extract longitude
-          onSelect: () => this.tool.drawTownCircle(city), // Define the action on selection
+          onSelect: () => this.tool.drawTownCircle(city, place), // Define the action on selection
         }));
         this.tool.createDropdown(
           suggestions,
@@ -266,33 +302,6 @@ export default class Map {
       button.classList.add('active');
     } else {
       button.classList.remove('active');
-    }
-  }
-
-  toggleModal() {
-    const overlay = document.querySelector('.overlay.homepage');
-    const modal = document.querySelector('.selected-area__modal');
-
-    if (overlay.style.display === 'block' && modal.style.display === 'block') {
-      // Hide the overlay and modal
-      overlay.style.opacity = '0';
-      modal.style.opacity = '0';
-
-      // Use a timeout to wait for the opacity transition before setting display to none
-      setTimeout(() => {
-        overlay.style.display = 'none';
-        modal.style.display = 'none';
-      }, 300); // Adjust based on your CSS transition duration
-    } else {
-      // Show the overlay and modal
-      overlay.style.display = 'block';
-      modal.style.display = 'block';
-
-      // Force a reflow to apply the opacity transition
-      setTimeout(() => {
-        overlay.style.opacity = '1';
-        modal.style.opacity = '1';
-      }, 10);
     }
   }
 }
