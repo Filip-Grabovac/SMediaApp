@@ -1,6 +1,10 @@
-import Client from '../Client';
-import User from '../User';
-import Tool from '../Tool';
+// import Client from '../Client';
+// import User from '../User';
+// import Tool from '../Tool';
+import Client from 'https://smediaapp.pages.dev/src/Client.js';
+import User from 'https://smediaapp.pages.dev/src/User.js';
+import Tool from 'https://smediaapp.pages.dev/src/Tool.js';
+
 
 let tool = new Tool();
 const client = new Client(tool);

@@ -1,4 +1,6 @@
-import User from '../User';
+//import User from '../User';
+
+import User from 'https://smediaapp.pages.dev/src/User.js';
 
 const user = new User();
 

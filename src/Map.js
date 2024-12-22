@@ -1,4 +1,6 @@
-import Tool from './Tool';
+//import Tool from './Tool';
+
+import Tool from 'https://smediaapp.pages.dev/src/Tool.js';
 
 // User.js
 export default class Map {

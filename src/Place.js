@@ -1,5 +1,8 @@
-import Map from './Map';
-import Tool from './Tool';
+// import Map from './Map';
+// import Tool from './Tool';
+
+import Map from 'https://smediaapp.pages.dev/src/Map.js';
+import Tool from 'https://smediaapp.pages.dev/src/Tool.js';
 
 export default class Place {
   constructor() {

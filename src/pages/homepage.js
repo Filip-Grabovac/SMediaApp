@@ -1,8 +1,14 @@
-import User from '../User';
-import Map from '../Map';
-import Place from '../Place';
-import Client from '../Client';
-import Tool from '../Tool';
+// import User from '../User';
+// import Map from '../Map';
+// import Place from '../Place';
+// import Client from '../Client';
+// import Tool from '../Tool';
+
+import User from 'https://smediaapp.pages.dev/src/User.js';
+import Map from 'https://smediaapp.pages.dev/src/Map.js';
+import Place from 'https://smediaapp.pages.dev/src/Place.js';
+import Client from 'https://smediaapp.pages.dev/src/Client.js';
+import Tool from 'https://smediaapp.pages.dev/src/Tool.js';
 
 const user = new User();
 const map = new Map();

@@ -1,5 +1,10 @@
-import Map from './Map';
-import Place from './Place';
+// import Map from './Map';
+// import Place from './Place';
+
+import Map from 'https://smediaapp.pages.dev/src/Map.js';
+import Place from 'https://smediaapp.pages.dev/src/Place.js';
+
+
 
 export default class Client {
   constructor(tool) {
