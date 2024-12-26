@@ -117,7 +117,7 @@ $(document).ready(function () {
           "$" + medianHouseholdIncome, // Avg. Household Income
           singleFamilyHomes, // Approx. # of Single Family Homes
           "$" + medianHomeValue, // Avg. Home Value
-          '', // Total Home Value (Empty for now)
+          medianHomeValue * singleFamilyHomes, // Total Home Value (Empty for now)
           '', // Closest Office (Empty for now)
           '', // % of Total Pop (Empty for now)
           '', // Cumulative Pop (Empty for now)
