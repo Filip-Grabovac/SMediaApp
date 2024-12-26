@@ -193,7 +193,7 @@ $(document).ready(function () {
 
       data[9] = `${percentage}%`; // % of Total Pop
       data[10] = `${cumulativePercentage.toFixed(2)}%`; // Cumulative Pop %
-      data[11] = normalizedPopulation; // Norm. Pop
+      data[12] = normalizedPopulation; // Norm. Pop
 
       this.data(data);
     });
