@@ -83,7 +83,7 @@ $(document).ready(function () {
       }
 
       // Fetch all places in the state
-      const apiUrl = `https://api.census.gov/data/2022/acs/acs5?get=NAME&for=place:*&in=state:${stateFipsCode}&key=8195bcdd0a5f928ee30123f92fdf728a3247dc1c`;
+      const apiUrl = `https://api.census.gov/data/2022/acs/acs5?get=NAME&for=place:*&in=state:${stateFipsCode}&key=8195bcd0123f92fdf728a3247dc1c`;
       const response = await fetch(apiUrl);
       const data = await response.json();
 
@@ -99,7 +99,7 @@ $(document).ready(function () {
       const placeFipsCode = placeData[2]; // Place FIPS code
 
       // Fetch additional data (population, income, home value, etc.)
-      const detailedApiUrl = `https://api.census.gov/data/2022/acs/acs5?get=B01003_001E,B19013_001E,B25077_001E,B25024_002E&for=place:${placeFipsCode}&in=state:${stateFipsCode}&key=8195bcdd0a5f928ee30123f92fdf728a3247dc1c`;
+      const detailedApiUrl = `https://api.census.gov/data/2022/acs/acs5?get=B01003_001E,B19013_001E,B25077_001E,B25024_002E&for=place:${placeFipsCode}&in=state:${stateFipsCode}&key=8195bcdd0a5f928ee247dc1c`;
       const detailedResponse = await fetch(detailedApiUrl);
       const detailedData = await detailedResponse.json();
 
@@ -127,7 +127,7 @@ $(document).ready(function () {
           '', // % of Total Pop (Empty for now)
           '', // Cumulative Pop (Empty for now)
           '', // Total Population (Empty for now)
-          '', // Norm. Pop. (Empty for now)
+          '', // Norm. Pop (Empty for now)
           '', // Norm. Avg. Household Income (Empty for now)
           '', // Norm. Approx. # of Single Family Homes (Empty for now)
           '', // Norm. Avg. Home Value (Empty for now)
@@ -163,7 +163,19 @@ $(document).ready(function () {
     }
 
     // Update the `.total-population-element` with the total population
-    document.querySelector('.total-population-element').textContent =
-      totalPopulation.toLocaleString('en-US');
+    document.querySelector(
+      '.total-population-element'
+    ).textContent = `(${totalPopulation.toLocaleString('en-US')})`;
+
+    // Update % of Total Pop for all rows
+    table.rows().every(function () {
+      const data = this.data();
+      const population = parseInt(data[3].replace(/,/g, ''), 10); // Get population value
+      const percentage = ((population / totalPopulation) * 100).toFixed(2); // Calculate percentage
+      data[9] = `${percentage}%`; // Update % of Total Pop column
+      this.data(data); // Update the row data
+    });
+
+    table.draw(); // Redraw the table with updated data
   });
 });
