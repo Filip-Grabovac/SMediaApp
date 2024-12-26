@@ -100,6 +100,8 @@ $(document).ready(function () {
       const percentageOfTotalPop = ''; // Placeholder for now
       const cumulativePop = ''; // Placeholder for now
 
+      console.log(document.querySelectorAll("#main-data-table tbody tr").length);
+
       // Insert the data into the table
       table.row
         .add([
