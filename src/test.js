@@ -179,3 +179,5 @@ document
       alert('Failed to fetch data. See console for details.');
     }
   });
+
+console.log(statesFips);
