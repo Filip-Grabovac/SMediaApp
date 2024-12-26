@@ -1,6 +1,6 @@
 // Hardcoded variables for now
-const stateName = "Alabama"; // State name
-const placeName = "Birmingham"; // Place name
+const stateName = 'Alabama'; // State name
+const placeName = 'Birmingham'; // Place name
 
 // Step 1: Get the state FIPS code from the state name
 const stateFipsCode = statesFips[stateName];
@@ -19,7 +19,7 @@ const fetchPlaceInfo = async () => {
     const placeData = data.find((item) => item[0].includes(placeName));
 
     if (!placeData) {
-      console.error("Place not found!");
+      console.error('Place not found!');
       return;
     }
 
@@ -33,9 +33,11 @@ const fetchPlaceInfo = async () => {
 
     // TODO: Use the FIPS codes to fetch additional data (population, income, etc.)
   } catch (error) {
-    console.error("Error fetching data:", error);
+    console.error('Error fetching data:', error);
   }
 };
 
 // Call the function to fetch data
-fetchPlaceInfo();
+document
+  .querySelector('.submit-selection')
+  .addEventListener('click', fetchPlaceInfo);
