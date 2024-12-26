@@ -134,7 +134,7 @@ document
       cityName + ', ' + stateName
     )}&benchmark=Public_AR_Census2020&format=json`;
 
-    const apiKey = 'YOUR_CENSUS_API_KEY'; // Replace with your Census API key
+    const apiKey = 'a056908496d8c3dfc4c95509c6165e2904b8e00f'; // Replace with your Census API key
 
     try {
       // Step 1: Get FIPS Codes from Geocoding API
