@@ -121,11 +121,11 @@ $(document).ready(function () {
           '',
           fullPlaceName, // City
           stateName, // State
-          formatNumber(population), // Population
-          '$' + formatNumber(medianHouseholdIncome), // Avg. Household Income
-          formatNumber(singleFamilyHomes), // Approx. # of Single Family Homes
+          formatNumber(Number(population)), // Population
+          '$' + formatNumber(Number(medianHouseholdIncome)), // Avg. Household Income
+          formatNumber(Number(singleFamilyHomes)), // Approx. # of Single Family Homes
           '$' + formatNumber(Number(medianHomeValue)), // Avg. Home Value
-          '$' + formatNumber(medianHomeValue * singleFamilyHomes), // Total Home Value (Empty for now)
+          '$' + formatNumber(medianHomeValue * singleFamilyHomes), // Total Home Value
           '', // Closest Office (Empty for now)
           '', // % of Total Pop (Empty for now)
           '', // Cumulative Pop (Empty for now)
