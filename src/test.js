@@ -3,7 +3,6 @@ $(document).ready(function () {
   const table = $('#main-data-table').DataTable({
     // Hide the "Show n entries" dropdown and the original search
     lengthChange: false, // Hides the "Show n entries" dropdown
-    searching: false, // Hides the default search input
     info: false,
   });
 
