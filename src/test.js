@@ -14,7 +14,7 @@ if (!stateFipsCode) {
 const fetchPlaceInfo = async () => {
   try {
     // API URL for fetching all places in the state
-    const apiUrl = `https://api.census.gov/data/2022/acs/acs5?get=NAME&for=place:*&in=state:${stateFipsCode}&key=8195f92fdf728a3247dc1c`;
+    const apiUrl = `https://api.census.gov/data/2022/acs/acs5?get=NAME&for=place:*&in=state:${stateFipsCode}&key=8195bcdd0a5f928ee30123f92fdf728a3247dc1c`;
 
     // Fetch place data
     const response = await fetch(apiUrl);
@@ -37,7 +37,7 @@ const fetchPlaceInfo = async () => {
     console.log(`Place FIPS: ${placeFipsCode}`);
 
     // Step 3: Fetch additional data (population, income, home value, etc.)
-    const detailedApiUrl = `https://api.census.gov/data/2022/acs/acs5?get=B01003_001E,B19013_001E,B25077_001E,B25024_002E&for=place:${placeFipsCode}&in=state:${stateFipsCode}&key=8195f92fdf728a3247dc1c`;
+    const detailedApiUrl = `https://api.census.gov/data/2022/acs/acs5?get=B01003_001E,B19013_001E,B25077_001E,B25024_002E&for=place:${placeFipsCode}&in=state:${stateFipsCode}&key=8195bcdd0a5f928ee30123f92fdf728a3247dc1c`;
     const detailedResponse = await fetch(detailedApiUrl);
     const detailedData = await detailedResponse.json();
 
