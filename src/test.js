@@ -1,183 +1,53 @@
-// // Function to fetch city data from the API
-// function fetchCityData(apiUrl) {
-//   return fetch(apiUrl)
-//     .then((response) => response.json())
-//     .catch((error) => {
-//       console.error('Error fetching city data:', error);
-//     });
-// }
+// Hardcoded variables for now
+const stateName = "Alabama"; // State name
+const placeName = "Birmingham"; // Place name
 
-// // Function to fetch detailed data for a specific place and state
-// function fetchDetailedData(stateNumber, placeNumber) {
-//   const detailedApiUrl = `https://api.census.gov/data/2022/acs/acs5?get=NAME,B01003_001E,B19013_001E,B25024_002E,B25077_001E&for=place:${placeNumber}&in=state:${stateNumber}&key=a056908496d8c3dfc4c95509c6165e2904b8e00f`;
+// Step 1: Get the state FIPS code from the state name
+const stateFipsCode = statesFips[stateName];
 
-//   return fetch(detailedApiUrl)
-//     .then((response) => response.json())
-//     .catch((error) => {
-//       console.error('Error fetching detailed data:', error);
-//     });
-// }
+if (!stateFipsCode) {
+  console.error("State FIPS code not found!");
+  return;
+}
 
-// // Function to add a row to the table
-// // Function to add a row to the table
-// function addRowToTable(data) {
-//   const tableBody = document.querySelector('#main-data-table tbody');
-//   const row = document.createElement('tr');
+// Step 2: Fetch data for the place using the Census API
+const fetchPlaceData = async () => {
+  try {
+    // Step 2.1: Fetch Population
+    const populationApiUrl = `https://api.census.gov/data/2020/pep/population?get=POP,NAME&for=place:*&in=state:${stateFipsCode}&key=YOUR_CENSUS_API_KEY`;
+    const populationResponse = await fetch(populationApiUrl);
+    const populationData = await populationResponse.json();
 
-//   // Populate the row with data (no index column)
-//   row.innerHTML = `
-//           <td>${data.cityName}</td>
-//           <td>${data.stateName}</td>
-//           <td>${data.population}</td>
-//           <td>${data.avgHouseholdIncome}</td>
-//           <td>${data.singleFamilyHomes}</td>
-//           <td>${data.avgHomeValue}</td>
-//           <td>${data.totalHomeValue}</td>
-//           <td>${data.closestOfficeMiles}</td>
-//           <td>${data.percentOfTotalPop}</td>
-//           <td>${data.cumulativePop}</td>
-//           <td>${data.totalPopulation}</td>
-//           <td>${data.normPop}</td>
-//           <td>${data.normAvgHouseholdIncome}</td>
-//           <td>${data.normSingleFamilyHomes}</td>
-//           <td>${data.normAvgHomeValue}</td>
-//           <td>${data.normClosestOffice}</td>
-//           <td>${data.weightedScore}</td>
-//       `;
+    // Find the place (e.g., Birmingham)
+    const placeData = populationData.find((item) => item[1] === placeName);
 
-//   tableBody.appendChild(row);
-// }
-
-// // Function to handle the table data fetching and population
-// document.querySelector('.submit-selection').addEventListener('click', () => {
-//   const stateValue = '08';
-//   const apiUrl = `https://api.census.gov/data/2022/acs/acs5?get=NAME&for=place:*&in=state:${stateValue}&key=a056908496d8c3dfc4c95509c6165e2904b8e00f`;
-
-//   fetchCityData(apiUrl).then((generatedCities) => {
-//     const promises = [];
-
-//     // Limit to the first 191 cities (slice from index 1 to 192)
-//     generatedCities.slice(1, 192).forEach((city, index) => {
-//       const cityName = city[0];
-//       const stateNumber = city[1];
-//       const placeNumber = city[2];
-
-//       const promise = fetchDetailedData(stateNumber, placeNumber).then(
-//         (cityDetails) => {
-//           if (
-//             cityDetails[1][1] == -666666666 ||
-//             cityDetails[1][2] == -666666666 ||
-//             cityDetails[1][3] == -666666666 ||
-//             cityDetails[1][4] == -666666666
-//           ) {
-//             return; // Skip invalid data
-//           }
-
-//           const cityData = {
-//             cityName: cityName,
-//             stateName: 'Colorado', // Hardcoded state name, can be dynamic if needed
-//             population: cityDetails[1][1], // Adjust based on API response structure
-//             avgHouseholdIncome: cityDetails[1][2], // Adjust accordingly
-//             singleFamilyHomes: cityDetails[1][3], // Adjust accordingly
-//             avgHomeValue: cityDetails[1][4], // Adjust accordingly
-//             totalHomeValue: '', // Adjust accordingly
-//             closestOfficeMiles: '', // Adjust accordingly
-//             percentOfTotalPop: '', // Adjust accordingly
-//             cumulativePop: '', // Adjust accordingly
-//             totalPopulation: '', // Adjust accordingly
-//             normPop: '', // Adjust accordingly
-//             normAvgHouseholdIncome: '', // Adjust accordingly
-//             normSingleFamilyHomes: '', // Adjust accordingly
-//             normAvgHomeValue: '', // Adjust accordingly
-//             normClosestOffice: '', // Adjust accordingly
-//             weightedScore: '', // Adjust accordingly
-//           };
-
-//           addRowToTable(cityData);
-//         }
-//       );
-
-//       promises.push(promise);
-//     });
-
-//     // Wait for all city data to be fetched
-//     Promise.all(promises).then(() => {
-//       console.log('All city data has been fetched and populated');
-
-//       // Initialize the DataTable without pagination
-//       $('#main-data-table').DataTable({
-//         dom: 't', // Only the table (no pagination or other controls)
-//         ordering: true, // Enable ordering for the table overall
-//         columnDefs: [
-//           { orderable: false, targets: 0 }, // Disable ordering for the first column (now not needed)
-//           { type: 'string', targets: [1, 2] }, // Enable string ordering for the 2nd and 3rd columns
-//           { type: 'num', targets: '_all' }, // Enable numeric ordering for all other columns
-//         ],
-//         order: [[1, 'asc']], // Optional: Set the default initial sort column
-//         paging: false, // Disable pagination
-//       });
-
-//       console.log('DataTable initialized successfully');
-//     });
-//   });
-// });
-
-// NEW CODE
-
-document
-  .querySelector('.submit-selection')
-  .addEventListener('click', async () => {
-    const cityName = 'Birmingham'; // City name
-    const stateName = 'Alabama'; // State name
-    const apiKey = 'a056908496d8c3dfc4c95509c6165e2904b8e00f'; // Replace with your Census API key
-
-    try {
-      // Step 1: Resolve stateFips and placeFips using the Geocoding API
-      const geoApiUrl = `https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=${encodeURIComponent(
-        `${cityName}, ${stateName}`
-      )}&benchmark=Public_AR_Census2020&format=json`;
-
-      const geoResponse = await fetch(geoApiUrl);
-      if (!geoResponse.ok)
-        throw new Error(`Geocoding API Error: ${geoResponse.statusText}`);
-
-      const geoData = await geoResponse.json();
-      const match = geoData.result.addressMatches[0];
-      if (!match) throw new Error('City not found in Geocoding API.');
-
-      const stateFips = match.geographies['Census Places'][0]['STATE'];
-      const placeFips = match.geographies['Census Places'][0]['PLACE'];
-
-      console.log(
-        `Resolved State FIPS: ${stateFips}, Place FIPS: ${placeFips}`
-      );
-
-      // Step 2: Fetch data from ACS API using the resolved FIPS codes
-      const acsUrl = `https://api.census.gov/data/2022/acs/acs5?get=NAME,B01003_001E,B19013_001E,B25024_002E,B25077_001E&for=place:${placeFips}&in=state:${stateFips}&key=${apiKey}`;
-
-      const acsResponse = await fetch(acsUrl);
-      if (!acsResponse.ok)
-        throw new Error(`ACS API Error: ${acsResponse.statusText}`);
-
-      const acsData = await acsResponse.json();
-      const [headers, values] = acsData;
-
-      // Use a different variable name here
-      const fetchedCityName = values[0];
-      const population = values[1];
-      const avgIncome = values[2];
-      const singleFamilyHomes = values[3];
-      const avgHomeValue = values[4];
-
-      alert(`City: ${fetchedCityName}
-      Population: ${population}
-      Average Household Income: $${avgIncome}
-      Approx. # of Single-Family Homes: ${singleFamilyHomes}
-      Average Home Value: $${avgHomeValue}`);
-    } catch (error) {
-      console.error('Error:', error);
-      alert('Failed to fetch data. See console for details.');
+    if (!placeData) {
+      console.error("Place not found!");
+      return;
     }
-  });
 
-console.log(statesFips);
+    const population = placeData[0]; // Population
+    const placeFipsCode = placeData[3]; // Place FIPS code
+
+    console.log(`Population: ${population}`);
+
+    // Step 2.2: Fetch Average Household Income, Home Value, and Single-Family Homes
+    const acsApiUrl = `https://api.census.gov/data/2021/acs/acs5?get=B19013_001E,B25024_002E,B25077_001E&for=place:${placeFipsCode}&in=state:${stateFipsCode}&key=YOUR_CENSUS_API_KEY`;
+    const acsResponse = await fetch(acsApiUrl);
+    const acsData = await acsResponse.json();
+
+    const [headers, values] = acsData; // Destructure response into headers and data
+
+    const medianHouseholdIncome = values[0]; // Median Household Income
+    const singleFamilyHomes = values[1]; // Single-family Homes
+    const medianHomeValue = values[2]; // Median Home Value
+
+    console.log(`Median Household Income: $${medianHouseholdIncome}`);
+    console.log(`Approx. Single-Family Homes: ${singleFamilyHomes}`);
+    console.log(`Median Home Value: $${medianHomeValue}`);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
+
+document.querySelector(".submit-selection").addEventListener("click", fetchPlaceData);
