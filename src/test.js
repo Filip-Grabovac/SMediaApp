@@ -162,19 +162,18 @@ document
       const acsData = await acsResponse.json();
       const [headers, values] = acsData;
 
-      const cityName = values[0];
+      // Use a different variable name here
+      const fetchedCityName = values[0];
       const population = values[1];
       const avgIncome = values[2];
       const singleFamilyHomes = values[3];
       const avgHomeValue = values[4];
 
-      alert(`
-      City: ${cityName}
+      alert(`City: ${fetchedCityName}
       Population: ${population}
       Average Household Income: $${avgIncome}
       Approx. # of Single-Family Homes: ${singleFamilyHomes}
-      Average Home Value: $${avgHomeValue}
-    `);
+      Average Home Value: $${avgHomeValue}`);
     } catch (error) {
       console.error('Error:', error);
       alert('Failed to fetch data. See console for details.');
