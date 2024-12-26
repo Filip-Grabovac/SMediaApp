@@ -62,6 +62,13 @@ $(document).ready(function () {
     return statesFips[stateName]; // Assuming statesFips is accessible
   };
 
+  function formatNumber(number) {
+    if (number === null || number === undefined || isNaN(number)) {
+      return '';
+    }
+    return number.toLocaleString('en-US');
+  }
+
   // Step 2: Function to fetch data for the place
   const fetchPlaceInfo = async (stateName, placeName) => {
     try {
@@ -113,11 +120,11 @@ $(document).ready(function () {
           '',
           fullPlaceName, // City
           stateName, // State
-          population, // Population
-          "$" + medianHouseholdIncome, // Avg. Household Income
-          singleFamilyHomes, // Approx. # of Single Family Homes
-          "$" + medianHomeValue, // Avg. Home Value
-          "$" + (medianHomeValue * singleFamilyHomes), // Total Home Value (Empty for now)
+          formatNumber(population), // Population
+          '$' + formatNumber(medianHouseholdIncome), // Avg. Household Income
+          formatNumber(singleFamilyHomes), // Approx. # of Single Family Homes
+          '$' + formatNumber(medianHomeValue), // Avg. Home Value
+          '$' + formatNumber(medianHomeValue * singleFamilyHomes), // Total Home Value (Empty for now)
           '', // Closest Office (Empty for now)
           '', // % of Total Pop (Empty for now)
           '', // Cumulative Pop (Empty for now)
