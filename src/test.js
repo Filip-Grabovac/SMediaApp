@@ -90,6 +90,7 @@ $(document).ready(function () {
 
   // Step 3: Loop through all the selected places and fetch data
   $('.submit-selection').on('click', async function () {
+    console.log("Cliked");
     // Clear the table first
     table.clear().draw();
 
