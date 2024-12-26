@@ -9,6 +9,7 @@ $(document).ready(function () {
 
   // Step 2: Function to fetch data for the place
   const fetchPlaceInfo = async (stateName, placeName) => {
+    console.log("Test");
     try {
       console.log(`Fetching data for: ${placeName}, ${stateName}`);
 
