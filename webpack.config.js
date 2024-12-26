@@ -4,6 +4,7 @@ module.exports = {
   mode: 'production',
   entry: {
     ['usStates']: './src/usStates.js',
+    ['usFips']: './src/usStatesFips.js',
     ['homepage']: './src/pages/homepage.js',
     ['login']: './src/pages/login.js',
     ['clients']: './src/pages/clients.js',
