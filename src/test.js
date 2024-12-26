@@ -127,18 +127,40 @@
 document
   .querySelector('.submit-selection')
   .addEventListener('click', async () => {
-    const stateFips = '01'; // Static FIPS code for Washington, D.C.
-    const placeFips = '07000'; // Static FIPS code for Washington, D.C.
+    const cityName = 'Birmingham'; // City name
+    const stateName = 'Alabama'; // State name
     const apiKey = 'a056908496d8c3dfc4c95509c6165e2904b8e00f'; // Replace with your Census API key
 
-    const url = `https://api.census.gov/data/2022/acs/acs5?get=NAME,B01003_001E,B19013_001E,B25024_002E,B25077_001E&for=place:${placeFips}&in=state:${stateFips}&key=${apiKey}`;
-
     try {
-      const response = await fetch(url);
-      if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
+      // Step 1: Resolve stateFips and placeFips using the Geocoding API
+      const geoApiUrl = `https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=${encodeURIComponent(
+        `${cityName}, ${stateName}`
+      )}&benchmark=Public_AR_Census2020&format=json`;
 
-      const data = await response.json();
-      const [headers, values] = data;
+      const geoResponse = await fetch(geoApiUrl);
+      if (!geoResponse.ok)
+        throw new Error(`Geocoding API Error: ${geoResponse.statusText}`);
+
+      const geoData = await geoResponse.json();
+      const match = geoData.result.addressMatches[0];
+      if (!match) throw new Error('City not found in Geocoding API.');
+
+      const stateFips = match.geographies['Census Places'][0]['STATE'];
+      const placeFips = match.geographies['Census Places'][0]['PLACE'];
+
+      console.log(
+        `Resolved State FIPS: ${stateFips}, Place FIPS: ${placeFips}`
+      );
+
+      // Step 2: Fetch data from ACS API using the resolved FIPS codes
+      const acsUrl = `https://api.census.gov/data/2022/acs/acs5?get=NAME,B01003_001E,B19013_001E,B25024_002E,B25077_001E&for=place:${placeFips}&in=state:${stateFips}&key=${apiKey}`;
+
+      const acsResponse = await fetch(acsUrl);
+      if (!acsResponse.ok)
+        throw new Error(`ACS API Error: ${acsResponse.statusText}`);
+
+      const acsData = await acsResponse.json();
+      const [headers, values] = acsData;
 
       const cityName = values[0];
       const population = values[1];
@@ -154,7 +176,7 @@ document
       Average Home Value: $${avgHomeValue}
     `);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error('Error:', error);
       alert('Failed to fetch data. See console for details.');
     }
   });
