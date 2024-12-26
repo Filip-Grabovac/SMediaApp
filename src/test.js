@@ -1,24 +1,11 @@
 $(document).ready(function () {
   // Initialize DataTable
   const table = $('#main-data-table').DataTable({
+    // Hide the "Show n entries" dropdown and the original search
     lengthChange: false, // Hides the "Show n entries" dropdown
-    info: false, // Hides the default "Showing 1 to 10 of X entries"
-    order: [], // Disable default ordering
-    columnDefs: [
-      { orderable: false, targets: 0 }, // Disable ordering for the "#" column
-    ],
-    drawCallback: function (settings) {
-      // Update the numbering in the first column
-      const pageInfo = table.page.info(); // Get current page info
-      table
-        .column(0, { page: 'current' }) // Access only the visible rows on the current page
-        .nodes()
-        .each(function (cell, i) {
-          $(cell).html(pageInfo.start + i + 1); // Add row index
-        });
-    },
+    info: false,
   });
-  
+
   // Hide the original search input
   $('#main-data-table_filter').hide();
 
