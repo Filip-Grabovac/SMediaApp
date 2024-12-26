@@ -63,6 +63,7 @@ $(document).ready(function () {
   };
 
   function formatNumber(number) {
+    console.log(isNaN(number));
     if (number === null || number === undefined || isNaN(number)) {
       return '';
     }
@@ -123,8 +124,8 @@ $(document).ready(function () {
           formatNumber(population), // Population
           '$' + formatNumber(medianHouseholdIncome), // Avg. Household Income
           formatNumber(singleFamilyHomes), // Approx. # of Single Family Homes
-          '$' + String(formatNumber(medianHomeValue)), // Avg. Home Value
-          '$' + String(formatNumber(medianHomeValue * singleFamilyHomes)), // Total Home Value (Empty for now)
+          '$' + formatNumber(medianHomeValue), // Avg. Home Value
+          '$' + formatNumber(medianHomeValue * singleFamilyHomes), // Total Home Value (Empty for now)
           '', // Closest Office (Empty for now)
           '', // % of Total Pop (Empty for now)
           '', // Cumulative Pop (Empty for now)
