@@ -75,7 +75,7 @@ $(document).ready(function () {
   const fetchPlaceInfo = async (stateName, placeName) => {
     try {
       // Get the state FIPS code
-      const stateFipsCode = getStateFipsCode(stateName);
+      const stateFipsCode = getStateFipsCode(stateName.replaceAll(' ', '_'));
 
       if (!stateFipsCode) {
         console.error('State FIPS code not found!');
@@ -83,7 +83,7 @@ $(document).ready(function () {
       }
 
       // Fetch all places in the state
-      const apiUrl = `https://api.census.gov/data/2022/acs/acs5?get=NAME&for=place:*&in=state:${stateFipsCode}&key=8195bcd0123f92fdf728a3247dc1c`;
+      const apiUrl = `https://api.census.gov/data/2022/acs/acs5?get=NAME&for=place:*&in=state:${stateFipsCode}&key=8195bcdd0a5f928ee30123f92fdf728a3247dc1c`;
       const response = await fetch(apiUrl);
       const data = await response.json();
 
@@ -99,7 +99,7 @@ $(document).ready(function () {
       const placeFipsCode = placeData[2]; // Place FIPS code
 
       // Fetch additional data (population, income, home value, etc.)
-      const detailedApiUrl = `https://api.census.gov/data/2022/acs/acs5?get=B01003_001E,B19013_001E,B25077_001E,B25024_002E&for=place:${placeFipsCode}&in=state:${stateFipsCode}&key=8195bcdd0a5f928ee247dc1c`;
+      const detailedApiUrl = `https://api.census.gov/data/2022/acs/acs5?get=B01003_001E,B19013_001E,B25077_001E,B25024_002E&for=place:${placeFipsCode}&in=state:${stateFipsCode}&key=8195bcdd0a5f928ee30123f92fdf728a3247dc1c`;
       const detailedResponse = await fetch(detailedApiUrl);
       const detailedData = await detailedResponse.json();
 
