@@ -2,29 +2,28 @@ $(document).ready(function () {
   // Initialize DataTable
   const table = $('#main-data-table').DataTable();
 
-  // Hardcoded variables for now
-  const stateName = 'Alabama'; // State name
-  const placeName = 'Birmingham'; // Place name
+  // Function to fetch FIPS code for the state
+  const getStateFipsCode = (stateName) => {
+    return statesFips[stateName];
+  };
 
-  // Step 1: Get the state FIPS code from the state name
-  const stateFipsCode = statesFips[stateName];
-
-  if (!stateFipsCode) {
-    console.error('State FIPS code not found!');
-    return;
-  }
-
-  // Step 2: Fetch and process data for the place
-  const fetchPlaceInfo = async () => {
+  // Step 2: Function to fetch data for the place
+  const fetchPlaceInfo = async (stateName, placeName) => {
     try {
-      // API URL for fetching all places in the state
-      const apiUrl = `https://api.census.gov/data/2022/acs/acs5?get=NAME&for=place:*&in=state:${stateFipsCode}&key=8195bcdd0a5f928ee30123f92fdf728a3247dc1c`;
+      // Get the state FIPS code
+      const stateFipsCode = getStateFipsCode(stateName);
 
-      // Fetch place data
+      if (!stateFipsCode) {
+        console.error('State FIPS code not found!');
+        return;
+      }
+
+      // Fetch all places in the state
+      const apiUrl = `https://api.census.gov/data/2022/acs/acs5?get=NAME&for=place:*&in=state:${stateFipsCode}&key=8195bcdd0a5f928ee30123f92fdf728a3247dc1c`;
       const response = await fetch(apiUrl);
       const data = await response.json();
 
-      // Find the place (e.g., Birmingham)
+      // Find the place
       const placeData = data.find((item) => item[0].includes(placeName));
 
       if (!placeData) {
@@ -32,7 +31,6 @@ $(document).ready(function () {
         return;
       }
 
-      // Extract information
       const fullPlaceName = placeData[0]; // Full name of the place
       const placeFipsCode = placeData[2]; // Place FIPS code
 
@@ -40,7 +38,7 @@ $(document).ready(function () {
       console.log(`State FIPS: ${stateFipsCode}`);
       console.log(`Place FIPS: ${placeFipsCode}`);
 
-      // Step 3: Fetch additional data (population, income, home value, etc.)
+      // Fetch additional data (population, income, home value, etc.)
       const detailedApiUrl = `https://api.census.gov/data/2022/acs/acs5?get=B01003_001E,B19013_001E,B25077_001E,B25024_002E&for=place:${placeFipsCode}&in=state:${stateFipsCode}&key=8195bcdd0a5f928ee30123f92fdf728a3247dc1c`;
       const detailedResponse = await fetch(detailedApiUrl);
       const detailedData = await detailedResponse.json();
@@ -57,7 +55,7 @@ $(document).ready(function () {
       console.log(`Median Home Value: ${medianHomeValue}`);
       console.log(`Approx. Single-Family Homes: ${singleFamilyHomes}`);
 
-      // Step 4: Insert data into DataTable (only first 6 columns)
+      // Insert the data into the table (only first 6 columns)
       const totalHomeValue = medianHomeValue * singleFamilyHomes;
       const closestOffice = ''; // Placeholder for now
       const percentageOfTotalPop = ''; // Placeholder for now
@@ -90,8 +88,20 @@ $(document).ready(function () {
     }
   };
 
-  // Add event listener to fetch data on button click
-  document
-    .querySelector('.submit-selection')
-    .addEventListener('click', fetchPlaceInfo);
+  // Step 3: Loop through all the selected places and fetch data
+  $('.submit-selection').on('click', async function () {
+    // Clear the table first
+    table.clear().draw();
+
+    // Loop through each .state-row in the .included div
+    $('.states_wrap .included .state-row').each(async function () {
+      const stateNameWithPlace = $(this).find('.state-name-text').text().trim();
+      const [placeName, stateName] = stateNameWithPlace
+        .split(',')
+        .map((part) => part.trim());
+
+      // Fetch data for this place and state
+      await fetchPlaceInfo(stateName, placeName);
+    });
+  });
 });
