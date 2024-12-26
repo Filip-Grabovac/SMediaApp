@@ -145,7 +145,7 @@ $(document).ready(function () {
   // Step 3: Loop through all the selected places and fetch data
   $('.submit-selection').on('click', async function () {
     const notificationElement = document.querySelector('.notification');
-    notificationElement.textContent = "Generating city/town data";
+    notificationElement.textContent = "Generating city/town data...";
     notificationElement.classList.remove('hidden');
 
     table.clear().draw();
@@ -204,6 +204,6 @@ $(document).ready(function () {
 
     table.draw();
 
-    notificationElement.classList.remove('add');
+    notificationElement.classList.add('hidden');
   });
 });
