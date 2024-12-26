@@ -4,6 +4,12 @@ $(document).ready(function () {
     // Hide the "Show n entries" dropdown and the original search
     lengthChange: false, // Hides the "Show n entries" dropdown
     info: false,
+    fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+      // Add row index dynamically in the first column
+      var index = iDisplayIndex + 1; // iDisplayIndex is zero-based
+      $('td:eq(0)', nRow).html(index); // Update the first cell of the row
+      return nRow;
+    },
   });
 
   // Hide the original search input
@@ -99,8 +105,6 @@ $(document).ready(function () {
       const closestOffice = ''; // Placeholder for now
       const percentageOfTotalPop = ''; // Placeholder for now
       const cumulativePop = ''; // Placeholder for now
-
-      console.log(document.querySelectorAll("#main-data-table tbody tr").length);
 
       // Insert the data into the table
       table.row
