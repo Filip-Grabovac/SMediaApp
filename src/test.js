@@ -16,9 +16,6 @@ $(document).ready(function () {
     table.search(searchTerm).draw(); // Perform search with custom input
   });
 
-  // Update range and total number of entries when table is initialized
-  updatePaginationInfo();
-
   // Custom pagination: Previous button
   $('.pagination-arrow.left').on('click', function () {
     table.page('previous').draw('page');
@@ -126,6 +123,8 @@ $(document).ready(function () {
           '', // Weighted Score (Empty for now)
         ])
         .draw(); // Add row and update the table
+
+      updatePaginationInfo();
     } catch (error) {
       console.error('Error fetching data:', error);
     }
