@@ -189,7 +189,7 @@ $(document).ready(function () {
       const normalizedPopulation = (
         (population - minPopulation) /
         (maxPopulation - minPopulation)
-      ).toFixed(2);
+      );
 
       data[9] = `${percentage}%`; // % of Total Pop
       data[10] = `${cumulativePercentage.toFixed(2)}%`; // Cumulative Pop %
