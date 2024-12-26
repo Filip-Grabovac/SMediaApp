@@ -123,7 +123,7 @@ $(document).ready(function () {
           formatNumber(population), // Population
           '$' + formatNumber(medianHouseholdIncome), // Avg. Household Income
           formatNumber(singleFamilyHomes), // Approx. # of Single Family Homes
-          '$' + formatNumber(medianHomeValue), // Avg. Home Value
+          '$' + String(formatNumber(medianHomeValue)), // Avg. Home Value
           '$' + String(formatNumber(medianHomeValue * singleFamilyHomes)), // Total Home Value (Empty for now)
           '', // Closest Office (Empty for now)
           '', // % of Total Pop (Empty for now)
