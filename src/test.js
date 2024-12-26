@@ -127,8 +127,8 @@
 document
   .querySelector('.submit-selection')
   .addEventListener('click', async () => {
-    const stateFips = '11'; // Static FIPS code for Washington, D.C.
-    const placeFips = '50000'; // Static FIPS code for Washington, D.C.
+    const stateFips = '01'; // Static FIPS code for Washington, D.C.
+    const placeFips = '07000'; // Static FIPS code for Washington, D.C.
     const apiKey = 'a056908496d8c3dfc4c95509c6165e2904b8e00f'; // Replace with your Census API key
 
     const url = `https://api.census.gov/data/2022/acs/acs5?get=NAME,B01003_001E,B19013_001E,B25024_002E,B25077_001E&for=place:${placeFips}&in=state:${stateFips}&key=${apiKey}`;
