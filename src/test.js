@@ -5,7 +5,6 @@ $(document).ready(function () {
     lengthChange: false, // Hides the "Show n entries" dropdown
     searching: false, // Hides the default search input
     info: false,
-    fixedHeader: true,
   });
 
   // Hide the original search input
@@ -17,6 +16,44 @@ $(document).ready(function () {
     table.search(searchTerm).draw(); // Perform search with custom input
   });
 
+  // Update range and total number of entries when table is initialized
+  updatePaginationInfo();
+
+  // Custom pagination: Previous button
+  $('.pagination-arrow.left').on('click', function () {
+    table.page('previous').draw('page');
+    updatePaginationInfo();
+  });
+
+  // Custom pagination: Next button
+  $('.pagination-arrow.right').on('click', function () {
+    table.page('next').draw('page');
+    updatePaginationInfo();
+  });
+
+  function updatePaginationInfo() {
+    const start = table.page.info().start + 1; // Current page start (1-indexed)
+    const end = table.page.info().end; // Current page end (1-indexed)
+    const total = table.page.info().recordsTotal; // Total records in the dataset
+
+    // Update the pagination text
+    $('.clients-table__range').text(`${start}-${end}`);
+    $('.clients-number').text(total);
+
+    // Enable/Disable previous and next buttons based on the page
+    if (table.page() === 0) {
+      $('.pagination-arrow.left').addClass('disabled');
+    } else {
+      $('.pagination-arrow.left').removeClass('disabled');
+    }
+
+    if (table.page() === table.page.info().pages - 1) {
+      $('.pagination-arrow.right').addClass('disabled');
+    } else {
+      $('.pagination-arrow.right').removeClass('disabled');
+    }
+  }
+
   // Function to fetch FIPS code for the state
   const getStateFipsCode = (stateName) => {
     return statesFips[stateName]; // Assuming statesFips is accessible
@@ -24,10 +61,7 @@ $(document).ready(function () {
 
   // Step 2: Function to fetch data for the place
   const fetchPlaceInfo = async (stateName, placeName) => {
-    console.log('Test');
     try {
-      console.log(`Fetching data for: ${placeName}, ${stateName}`);
-
       // Get the state FIPS code
       const stateFipsCode = getStateFipsCode(stateName);
 
@@ -52,10 +86,6 @@ $(document).ready(function () {
       const fullPlaceName = placeData[0]; // Full name of the place
       const placeFipsCode = placeData[2]; // Place FIPS code
 
-      console.log(`Place: ${fullPlaceName}`);
-      console.log(`State FIPS: ${stateFipsCode}`);
-      console.log(`Place FIPS: ${placeFipsCode}`);
-
       // Fetch additional data (population, income, home value, etc.)
       const detailedApiUrl = `https://api.census.gov/data/2022/acs/acs5?get=B01003_001E,B19013_001E,B25077_001E,B25024_002E&for=place:${placeFipsCode}&in=state:${stateFipsCode}&key=8195bcdd0a5f928ee30123f92fdf728a3247dc1c`;
       const detailedResponse = await fetch(detailedApiUrl);
@@ -67,11 +97,6 @@ $(document).ready(function () {
       const medianHouseholdIncome = values[1]; // Median Household Income (B19013_001E)
       const medianHomeValue = values[2]; // Median Home Value (B25077_001E)
       const singleFamilyHomes = values[3]; // Single-Family Homes (B25024_002E)
-
-      console.log(`Population: ${population}`);
-      console.log(`Median Household Income: ${medianHouseholdIncome}`);
-      console.log(`Median Home Value: ${medianHomeValue}`);
-      console.log(`Approx. Single-Family Homes: ${singleFamilyHomes}`);
 
       // Insert the data into the table (only first 6 columns)
       const totalHomeValue = medianHomeValue * singleFamilyHomes;
@@ -108,14 +133,11 @@ $(document).ready(function () {
 
   // Step 3: Loop through all the selected places and fetch data
   $('.submit-selection').on('click', async function () {
-    console.log('Clicked'); // Ensure button click is detected
-
     // Clear the table first
     table.clear().draw();
 
     // Loop through each .state-row in the .included div using for loop to await async actions
     const stateRows = $('.states_wrap.included .state-row');
-    console.log(stateRows);
     for (let i = 0; i < stateRows.length; i++) {
       const stateNameWithPlace = $(stateRows[i])
         .find('.state-name-text')
@@ -124,8 +146,6 @@ $(document).ready(function () {
       const [placeName, stateName] = stateNameWithPlace
         .split(',')
         .map((part) => part.trim());
-
-      console.log(`Processing ${placeName}, ${stateName}`); // Debug log
 
       // Fetch data for this place and state
       await fetchPlaceInfo(stateName, placeName);
