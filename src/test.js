@@ -9,7 +9,7 @@ const stateFipsCode = statesFips[stateName];
 const fetchPlaceData = async () => {
   try {
     // Step 2.1: Fetch Population
-    const populationApiUrl = `https://api.census.gov/data/2020/pep/population?get=POP,NAME&for=place:*&in=state:${stateFipsCode}&key=YOUR_CENSUS_API_KEY`;
+    const populationApiUrl = `https://api.census.gov/data/2020/pep/population?get=POP,NAME&for=place:*&in=state:${stateFipsCode}&key=8195bcdd0a5f928ee30123f92fdf728a3247dc1c`;
     const populationResponse = await fetch(populationApiUrl);
     const populationData = await populationResponse.json();
 
