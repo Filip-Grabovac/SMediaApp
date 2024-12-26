@@ -4,12 +4,14 @@ $(document).ready(function () {
 
   // Function to fetch FIPS code for the state
   const getStateFipsCode = (stateName) => {
-    return statesFips[stateName];
+    return statesFips[stateName]; // Assuming statesFips is accessible
   };
 
   // Step 2: Function to fetch data for the place
   const fetchPlaceInfo = async (stateName, placeName) => {
     try {
+      console.log(`Fetching data for: ${placeName}, ${stateName}`);
+
       // Get the state FIPS code
       const stateFipsCode = getStateFipsCode(stateName);
 
@@ -90,19 +92,23 @@ $(document).ready(function () {
 
   // Step 3: Loop through all the selected places and fetch data
   $('.submit-selection').on('click', async function () {
-    console.log("Cliked");
+    console.log("Clicked"); // Ensure button click is detected
+
     // Clear the table first
     table.clear().draw();
 
-    // Loop through each .state-row in the .included div
-    $('.states_wrap .included .state-row').each(async function () {
-      const stateNameWithPlace = $(this).find('.state-name-text').text().trim();
+    // Loop through each .state-row in the .included div using for loop to await async actions
+    const stateRows = $('.states_wrap .included .state-row');
+    for (let i = 0; i < stateRows.length; i++) {
+      const stateNameWithPlace = $(stateRows[i]).find('.state-name-text').text().trim();
       const [placeName, stateName] = stateNameWithPlace
         .split(',')
         .map((part) => part.trim());
 
+      console.log(`Processing ${placeName}, ${stateName}`); // Debug log
+
       // Fetch data for this place and state
       await fetchPlaceInfo(stateName, placeName);
-    });
+    }
   });
 });
