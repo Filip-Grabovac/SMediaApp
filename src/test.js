@@ -1,6 +1,19 @@
 $(document).ready(function () {
   // Initialize DataTable
-  const table = $('#main-data-table').DataTable();
+  const table = $('#main-data-table').DataTable({
+    // Hide the "Show n entries" dropdown and the original search
+    lengthChange: false, // Hides the "Show n entries" dropdown
+    searching: false, // Hides the default search input
+  });
+
+  // Hide the original search input
+  $('#main-data-table_filter').hide();
+
+  // Add a custom search input with class .main-table-search
+  $('.main-table-search').on('input', function () {
+    const searchTerm = $(this).val();
+    table.search(searchTerm).draw(); // Perform search with custom input
+  });
 
   // Function to fetch FIPS code for the state
   const getStateFipsCode = (stateName) => {
@@ -9,7 +22,7 @@ $(document).ready(function () {
 
   // Step 2: Function to fetch data for the place
   const fetchPlaceInfo = async (stateName, placeName) => {
-    console.log("Test");
+    console.log('Test');
     try {
       console.log(`Fetching data for: ${placeName}, ${stateName}`);
 
@@ -93,7 +106,7 @@ $(document).ready(function () {
 
   // Step 3: Loop through all the selected places and fetch data
   $('.submit-selection').on('click', async function () {
-    console.log("Clicked"); // Ensure button click is detected
+    console.log('Clicked'); // Ensure button click is detected
 
     // Clear the table first
     table.clear().draw();
@@ -102,7 +115,10 @@ $(document).ready(function () {
     const stateRows = $('.states_wrap.included .state-row');
     console.log(stateRows);
     for (let i = 0; i < stateRows.length; i++) {
-      const stateNameWithPlace = $(stateRows[i]).find('.state-name-text').text().trim();
+      const stateNameWithPlace = $(stateRows[i])
+        .find('.state-name-text')
+        .text()
+        .trim();
       const [placeName, stateName] = stateNameWithPlace
         .split(',')
         .map((part) => part.trim());
