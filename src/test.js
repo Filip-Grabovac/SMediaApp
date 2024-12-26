@@ -5,11 +5,6 @@ const placeName = 'Birmingham'; // Place name
 // Step 1: Get the state FIPS code from the state name
 const stateFipsCode = statesFips[stateName];
 
-if (!stateFipsCode) {
-  console.error('State FIPS code not found!');
-  return;
-}
-
 // Step 2: Fetch and process data for the place
 const fetchPlaceInfo = async () => {
   try {
