@@ -5,8 +5,9 @@ $(document).ready(function () {
     lengthChange: false, // Hides the "Show n entries" dropdown
     info: false,
     fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-      // Add row index dynamically in the first column
-      var index = iDisplayIndex + 1; // iDisplayIndex is zero-based
+      // Calculate the correct row number across all pages
+      const pageInfo = this.api().page.info();
+      const index = pageInfo.start + iDisplayIndex + 1; // Start index + current row index
       $('td:eq(0)', nRow).html(index); // Update the first cell of the row
       return nRow;
     },
