@@ -144,10 +144,8 @@ $(document).ready(function () {
 
   // Step 3: Loop through all the selected places and fetch data
   $('.submit-selection').on('click', async function () {
-    // Clear the table first
     table.clear().draw();
 
-    // Loop through each .state-row in the .included div using for loop to await async actions
     const stateRows = $('.states_wrap.included .state-row');
     for (let i = 0; i < stateRows.length; i++) {
       const stateNameWithPlace = $(stateRows[i])
@@ -158,28 +156,48 @@ $(document).ready(function () {
         .split(',')
         .map((part) => part.trim());
 
-      // Fetch data for this place and state
       await fetchPlaceInfo(stateName, placeName);
     }
 
-    // Update the `.total-population-element` with the total population
     document.querySelector(
       '.total-population-element'
     ).textContent = `(${totalPopulation.toLocaleString('en-US')})`;
 
-    // Update % of Total Pop and Cumulative Pop % for all rows
-    let cumulativePercentage = 0; // Track cumulative percentage
+    // Calculate min and max population
+    let minPopulation = Infinity;
+    let maxPopulation = -Infinity;
+
+    const populations = table
+      .rows()
+      .data()
+      .map((row) => {
+        const population = parseInt(row[3].replace(/,/g, ''), 10);
+        if (population < minPopulation) minPopulation = population;
+        if (population > maxPopulation) maxPopulation = population;
+        return population;
+      });
+
+    // Update % of Total Pop, Cumulative Pop %, and Norm. Pop
+    let cumulativePercentage = 0;
     table.rows().every(function () {
       const data = this.data();
-      const population = parseInt(data[3].replace(/,/g, ''), 10); // Get population value
-      const percentage = ((population / totalPopulation) * 100).toFixed(2); // Calculate % of Total Pop
-      cumulativePercentage += parseFloat(percentage); // Add to cumulative percentage
+      const population = parseInt(data[3].replace(/,/g, ''), 10);
+      const percentage = ((population / totalPopulation) * 100).toFixed(2);
+      cumulativePercentage += parseFloat(percentage);
 
-      data[9] = `${percentage}%`; // Update % of Total Pop column
-      data[10] = `${cumulativePercentage.toFixed(2)}%`; // Update Cumulative Pop % column
-      this.data(data); // Update the row data
+      // Normalize population
+      const normalizedPopulation = (
+        (population - minPopulation) /
+        (maxPopulation - minPopulation)
+      ).toFixed(2);
+
+      data[9] = `${percentage}%`; // % of Total Pop
+      data[10] = `${cumulativePercentage.toFixed(2)}%`; // Cumulative Pop %
+      data[11] = normalizedPopulation; // Norm. Pop
+
+      this.data(data);
     });
 
-    table.draw(); // Redraw the table with updated data
+    table.draw();
   });
 });
