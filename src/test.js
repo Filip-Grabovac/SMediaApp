@@ -100,6 +100,7 @@ $(document).ready(function () {
 
     // Loop through each .state-row in the .included div using for loop to await async actions
     const stateRows = $('.states_wrap .included .state-row');
+    console.log(stateRows);
     for (let i = 0; i < stateRows.length; i++) {
       const stateNameWithPlace = $(stateRows[i]).find('.state-name-text').text().trim();
       const [placeName, stateName] = stateNameWithPlace
