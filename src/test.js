@@ -114,9 +114,9 @@ $(document).ready(function () {
           fullPlaceName, // City
           stateName, // State
           population, // Population
-          medianHouseholdIncome, // Avg. Household Income
+          "$" + medianHouseholdIncome, // Avg. Household Income
           singleFamilyHomes, // Approx. # of Single Family Homes
-          medianHomeValue, // Avg. Home Value
+          "$" + medianHomeValue, // Avg. Home Value
           '', // Total Home Value (Empty for now)
           '', // Closest Office (Empty for now)
           '', // % of Total Pop (Empty for now)
