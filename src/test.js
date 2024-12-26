@@ -127,63 +127,34 @@
 document
   .querySelector('.submit-selection')
   .addEventListener('click', async () => {
-    const cityName = 'Washington'; // Replace with any city name
-    const stateName = 'DC'; // Replace with state abbreviation (e.g., AL, NY, CA)
-
-    const geoApiUrl = `https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=${encodeURIComponent(
-      cityName + ', ' + stateName
-    )}&benchmark=Public_AR_Census2020&format=json`;
-
+    const stateFips = '11'; // Static FIPS code for Washington, D.C.
+    const placeFips = '50000'; // Static FIPS code for Washington, D.C.
     const apiKey = 'a056908496d8c3dfc4c95509c6165e2904b8e00f'; // Replace with your Census API key
 
+    const url = `https://api.census.gov/data/2022/acs/acs5?get=NAME,B01003_001E,B19013_001E,B25024_002E,B25077_001E&for=place:${placeFips}&in=state:${stateFips}&key=${apiKey}`;
+
     try {
-      // Step 1: Get FIPS Codes from Geocoding API
-      const geoResponse = await fetch(geoApiUrl);
-      if (!geoResponse.ok)
-        throw new Error(`Geocoding Error: ${geoResponse.statusText}`);
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
 
-      const geoData = await geoResponse.json();
-      const match = geoData.result.addressMatches[0];
-      if (!match) throw new Error('City not found.');
+      const data = await response.json();
+      const [headers, values] = data;
 
-      const stateFips = match.geographies['Census Blocks'][0]['STATE'];
-      const countyFips = match.geographies['Census Blocks'][0]['COUNTY'];
+      const cityName = values[0];
+      const population = values[1];
+      const avgIncome = values[2];
+      const singleFamilyHomes = values[3];
+      const avgHomeValue = values[4];
 
-      console.log(`State FIPS: ${stateFips}, County FIPS: ${countyFips}`);
-
-      // Step 2: Use FIPS Codes to Fetch Census Data
-      const acsBaseUrl = 'https://api.census.gov/data/2021/acs/acs5';
-      const variables = [
-        'B01003_001E', // Total Population
-        'B19013_001E', // Median Household Income
-        'B25024_002E', // Single-Family Homes
-        'B25077_001E', // Median Home Value
-      ].join(',');
-
-      const acsUrl = `${acsBaseUrl}?get=${variables}&for=county:${countyFips}&in=state:${stateFips}&key=${apiKey}`;
-
-      const acsResponse = await fetch(acsUrl);
-      if (!acsResponse.ok)
-        throw new Error(`Census API Error: ${acsResponse.statusText}`);
-
-      const acsData = await acsResponse.json();
-      const [headers, values] = acsData;
-
-      const population = values[0];
-      const avgIncome = values[1];
-      const singleFamilyHomes = values[2];
-      const avgHomeValue = values[3];
-
-      // Display results
       alert(`
-      City: ${cityName}, ${stateName}
+      City: ${cityName}
       Population: ${population}
       Average Household Income: $${avgIncome}
       Approx. # of Single-Family Homes: ${singleFamilyHomes}
       Average Home Value: $${avgHomeValue}
     `);
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error fetching data:', error);
       alert('Failed to fetch data. See console for details.');
     }
   });
