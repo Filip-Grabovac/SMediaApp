@@ -167,16 +167,19 @@ $(document).ready(function () {
       '.total-population-element'
     ).textContent = `(${totalPopulation.toLocaleString('en-US')})`;
 
-    // Calculate min and max values for population and Avg. Household Income
+    // Calculate min and max values for Population, Avg. Household Income, and Single Family Homes
     let minPopulation = Infinity;
     let maxPopulation = -Infinity;
     let minAvgIncome = Infinity;
     let maxAvgIncome = -Infinity;
+    let minSingleFamilyHomes = Infinity;
+    let maxSingleFamilyHomes = -Infinity;
 
     const dataRows = table.rows().data();
     dataRows.each((row) => {
       const population = parseInt(row[3].replace(/,/g, ''), 10); // Population
       const avgHouseholdIncome = parseInt(row[4].replace(/[^0-9]/g, ''), 10); // Avg. Household Income (remove $ and commas)
+      const singleFamilyHomes = parseInt(row[5].replace(/,/g, ''), 10); // Approx. # of Single Family Homes
 
       // Update min and max for population
       if (population < minPopulation) minPopulation = population;
@@ -185,14 +188,21 @@ $(document).ready(function () {
       // Update min and max for Avg. Household Income
       if (avgHouseholdIncome < minAvgIncome) minAvgIncome = avgHouseholdIncome;
       if (avgHouseholdIncome > maxAvgIncome) maxAvgIncome = avgHouseholdIncome;
+
+      // Update min and max for Single Family Homes
+      if (singleFamilyHomes < minSingleFamilyHomes)
+        minSingleFamilyHomes = singleFamilyHomes;
+      if (singleFamilyHomes > maxSingleFamilyHomes)
+        maxSingleFamilyHomes = singleFamilyHomes;
     });
 
-    // Update % of Total Pop, Cumulative Pop %, Norm. Pop, and Norm. Avg. Household Income
+    // Update % of Total Pop, Cumulative Pop %, Norm. Pop, Norm. Avg. Household Income, and Norm. Single Family Homes
     let cumulativePercentage = 0;
     table.rows().every(function () {
       const data = this.data();
       const population = parseInt(data[3].replace(/,/g, ''), 10); // Population
       const avgHouseholdIncome = parseInt(data[4].replace(/[^0-9]/g, ''), 10); // Avg. Household Income
+      const singleFamilyHomes = parseInt(data[5].replace(/,/g, ''), 10); // Approx. # of Single Family Homes
 
       // % of Total Pop
       const percentage = ((population / totalPopulation) * 100).toFixed(2);
@@ -212,11 +222,18 @@ $(document).ready(function () {
         (maxAvgIncome - minAvgIncome)
       );
 
+      // Norm. Single Family Homes
+      const normalizedSingleFamilyHomes = (
+        (singleFamilyHomes - minSingleFamilyHomes) /
+        (maxSingleFamilyHomes - minSingleFamilyHomes)
+      );
+
       // Update the row data
       data[9] = `${percentage}%`; // % of Total Pop
       data[10] = `${cumulativePercentage.toFixed(2)}%`; // Cumulative Pop %
       data[12] = normalizedPopulation; // Norm. Pop
       data[13] = normalizedAvgIncome; // Norm. Avg. Household Income
+      data[14] = normalizedSingleFamilyHomes; // Norm. Single Family Homes
 
       this.data(data);
     });
