@@ -92,13 +92,14 @@ export default class Place {
   listPlaces(citiesWrap, cities, shapeId) {
     if (citiesWrap && cities.length > 0) {
       cities.forEach((city) => {
-        if (!city.tags.wikipedia) return;
-        console.log(stateInputSearch);
         const cityName = city.tags.name;
         let state =
           city.tags.wikipedia.split(', ').length > 1
             ? city.tags.wikipedia.split(', ')[1]
             : city.tags.wikipedia.split(', ')[0].replaceAll('en:', '');
+
+        // RETURN IF THERE IS NO STATE DATA AND ALSO IF WE ARE GETTING BORDER PLACES IN ANOTHER STATE
+        if (!city.tags.wikipedia || state !== stateInputSearch) return;
 
         // Create a new state-row element
         const stateRow = document.createElement('div');
