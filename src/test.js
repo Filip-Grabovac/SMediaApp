@@ -75,7 +75,7 @@ $(document).ready(function () {
       const medianHouseholdIncome = values[1]; // Median Household Income (B19013_001E)
       const medianHomeValue = String(values[2]).includes('-666')
         ? 'No data'
-        : '$' + formatNumber(Number(values[2])); // Median Home Value (B25077_001E)
+        : formatNumber(Number(values[2])); // Median Home Value (B25077_001E)
       const singleFamilyHomes = values[3]; // Single-Family Homes (B25024_002E)
       const totalHomeValue =
         medianHomeValue === 'No data'
@@ -95,7 +95,9 @@ $(document).ready(function () {
           formatNumber(Number(population)), // Population
           '$' + formatNumber(Number(medianHouseholdIncome)), // Avg. Household Income
           formatNumber(Number(singleFamilyHomes)), // Approx. # of Single Family Homes
-          medianHomeValue, // Avg. Home Value
+          medianHomeValue === 'No data'
+            ? medianHomeValue
+            : `$${medianHomeValue}`, // Avg. Home Value
           totalHomeValue, // Total Home Value
           '', // Closest Office
           '', // % of Total Pop
