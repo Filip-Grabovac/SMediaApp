@@ -140,6 +140,16 @@ export default class Map {
 
   addPinsToMap(locations) {
     let firstMarkerCoords = null; // Variable to store the first marker's coordinates
+    var blackMarker = L.icon({
+      iconUrl:
+        'https://cdn.prod.website-files.com/66eab8d4420be36698ed221a/676edfa695eddb77fe758f61_black-marker.png',
+
+      iconSize: [38, 95], // size of the icon
+      shadowSize: [50, 64], // size of the shadow
+      iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
+      shadowAnchor: [4, 62], // the same for the shadow
+      popupAnchor: [-3, -76], // point from which the popup should open relative to the iconAnchor
+    });
 
     locations.forEach((location, index) => {
       try {
@@ -150,7 +160,9 @@ export default class Map {
 
         if (!isNaN(lat) && !isNaN(lon)) {
           // Add a circle marker with custom style
-          const marker = L.marker([lat, lon]).addTo(window.map);
+          const marker = L.marker([lat, lon], { icon: blackMarker }).addTo(
+            window.map
+          );
           marker.bindPopup(`<strong>${address}</strong>`); // Add popup with address
 
           // Save the first marker's coordinates
