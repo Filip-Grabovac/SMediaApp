@@ -145,7 +145,7 @@ $(document).ready(function () {
   // Step 3: Loop through all the selected places and fetch data
   $('.submit-selection').on('click', async function () {
     const notificationElement = document.querySelector('.notification');
-    notificationElement.textContent = "Generating city/town data...";
+    notificationElement.textContent = 'Generating city/town data...';
     notificationElement.classList.remove('hidden');
 
     table.clear().draw();
@@ -167,43 +167,61 @@ $(document).ready(function () {
       '.total-population-element'
     ).textContent = `(${totalPopulation.toLocaleString('en-US')})`;
 
-    // Calculate min and max population
+    // Calculate min and max values for population and Avg. Household Income
     let minPopulation = Infinity;
     let maxPopulation = -Infinity;
+    let minAvgIncome = Infinity;
+    let maxAvgIncome = -Infinity;
 
-    const populations = table
-      .rows()
-      .data()
-      .map((row) => {
-        const population = parseInt(row[3].replace(/,/g, ''), 10);
-        if (population < minPopulation) minPopulation = population;
-        if (population > maxPopulation) maxPopulation = population;
-        return population;
-      });
+    const dataRows = table.rows().data();
+    dataRows.each((row) => {
+      const population = parseInt(row[3].replace(/,/g, ''), 10); // Population
+      const avgHouseholdIncome = parseInt(row[4].replace(/[^0-9]/g, ''), 10); // Avg. Household Income (remove $ and commas)
 
-    // Update % of Total Pop, Cumulative Pop %, and Norm. Pop
+      // Update min and max for population
+      if (population < minPopulation) minPopulation = population;
+      if (population > maxPopulation) maxPopulation = population;
+
+      // Update min and max for Avg. Household Income
+      if (avgHouseholdIncome < minAvgIncome) minAvgIncome = avgHouseholdIncome;
+      if (avgHouseholdIncome > maxAvgIncome) maxAvgIncome = avgHouseholdIncome;
+    });
+
+    // Update % of Total Pop, Cumulative Pop %, Norm. Pop, and Norm. Avg. Household Income
     let cumulativePercentage = 0;
     table.rows().every(function () {
       const data = this.data();
-      const population = parseInt(data[3].replace(/,/g, ''), 10);
+      const population = parseInt(data[3].replace(/,/g, ''), 10); // Population
+      const avgHouseholdIncome = parseInt(data[4].replace(/[^0-9]/g, ''), 10); // Avg. Household Income
+
+      // % of Total Pop
       const percentage = ((population / totalPopulation) * 100).toFixed(2);
+
+      // Cumulative Pop %
       cumulativePercentage += parseFloat(percentage);
 
-      // Normalize population
+      // Norm. Pop
       const normalizedPopulation = (
         (population - minPopulation) /
         (maxPopulation - minPopulation)
       );
 
+      // Norm. Avg. Household Income
+      const normalizedAvgIncome = (
+        (avgHouseholdIncome - minAvgIncome) /
+        (maxAvgIncome - minAvgIncome)
+      );
+
+      // Update the row data
       data[9] = `${percentage}%`; // % of Total Pop
       data[10] = `${cumulativePercentage.toFixed(2)}%`; // Cumulative Pop %
       data[12] = normalizedPopulation; // Norm. Pop
+      data[13] = normalizedAvgIncome; // Norm. Avg. Household Income
 
       this.data(data);
     });
 
     table.draw();
-
     notificationElement.classList.add('hidden');
   });
 });
