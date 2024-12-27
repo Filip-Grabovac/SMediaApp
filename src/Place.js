@@ -31,10 +31,11 @@ export default class Place {
         way["place"~"city|town|village|hamlet"](${bbox});
         relation["place"~"city|town|village|hamlet"](${bbox});
       );
-      relation["boundary"="administrative"]["admin_level"="4"](${bbox}); // State boundaries
+      relation["boundary"="administrative"]["admin_level"="*"](${bbox}); // State boundaries
       out body;
       >;
       out skel qt;`;
+      
     } else if (layer instanceof L.Circle) {
       const center = layer.getLatLng();
       const radius = layer.getRadius();
