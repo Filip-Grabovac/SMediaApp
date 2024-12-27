@@ -27,9 +27,9 @@ export default class Place {
       query = `
                 [out:json];
                 (
-                    node["place"~"city|town|village|hamlet"](${bbox});
-                    way["place"~"city|town|village|hamlet"](${bbox});
-                    relation["place"~"city|town|village|hamlet"](${bbox});
+                    node["place"~"city|town|village|hamlet|locality"](${bbox});
+                    way["place"~"city|town|village|hamlet|locality"](${bbox});
+                    relation["place"~"city|town|village|hamlet|locality"](${bbox});
                 );
                 out body;`;
     } else if (layer instanceof L.Circle) {
@@ -38,9 +38,9 @@ export default class Place {
       query = `
                 [out:json];
                 (
-                    node["place"~"city|town|village|hamlet"](around:${radius}, ${center.lat}, ${center.lng});
-                    way["place"~"city|town|village|hamlet"](around:${radius}, ${center.lat}, ${center.lng});
-                    relation["place"~"city|town|village|hamlet"](around:${radius}, ${center.lat}, ${center.lng});
+                    node["place"~"city|town|village|hamlet|locality"](around:${radius}, ${center.lat}, ${center.lng});
+                    way["place"~"city|town|village|hamlet|locality"](around:${radius}, ${center.lat}, ${center.lng});
+                    relation["place"~"city|town|village|hamlet|locality"](around:${radius}, ${center.lat}, ${center.lng});
                 );
                 out body;`;
     } else if (layer instanceof L.GeoJSON) {
@@ -49,9 +49,9 @@ export default class Place {
       query = `
                 [out:json];
                 (
-                    node["place"~"city|town|village|hamlet"](${bbox});
-                    way["place"~"city|town|village|hamlet"](${bbox});
-                    relation["place"~"city|town|village|hamlet"](${bbox});
+                    node["place"~"city|town|village|hamlet|locality"](${bbox});
+                    way["place"~"city|town|village|hamlet|locality"](${bbox});
+                    relation["place"~"city|town|village|hamlet|locality"](${bbox});
                 );
                 out body;`;
     } else {
