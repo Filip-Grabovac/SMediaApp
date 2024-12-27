@@ -319,6 +319,11 @@ export default class Tool {
             this.setupRadiusAdjustment(selectedCityInfo);
           }
 
+          if(item.classList.contains("state-dropdown__link")) {
+            let stateInputSearch = input.value;
+            window.stateInputSearch = stateInputSearch;
+          }
+
           input.value = itemData.name;
           dropdown.style.display = 'none';
           input.value = '';

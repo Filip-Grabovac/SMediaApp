@@ -93,7 +93,7 @@ export default class Place {
     if (citiesWrap && cities.length > 0) {
       cities.forEach((city) => {
         if (!city.tags.wikipedia) return;
-
+        console.log(stateInputSearch);
         const cityName = city.tags.name;
         let state =
           city.tags.wikipedia.split(', ').length > 1
