@@ -167,19 +167,22 @@ $(document).ready(function () {
       '.total-population-element'
     ).textContent = `(${totalPopulation.toLocaleString('en-US')})`;
 
-    // Calculate min and max values for Population, Avg. Household Income, and Single Family Homes
+    // Calculate min and max values for Population, Avg. Household Income, Single Family Homes, and Avg. Home Value
     let minPopulation = Infinity;
     let maxPopulation = -Infinity;
     let minAvgIncome = Infinity;
     let maxAvgIncome = -Infinity;
     let minSingleFamilyHomes = Infinity;
     let maxSingleFamilyHomes = -Infinity;
+    let minAvgHomeValue = Infinity;
+    let maxAvgHomeValue = -Infinity;
 
     const dataRows = table.rows().data();
     dataRows.each((row) => {
       const population = parseInt(row[3].replace(/,/g, ''), 10); // Population
       const avgHouseholdIncome = parseInt(row[4].replace(/[^0-9]/g, ''), 10); // Avg. Household Income (remove $ and commas)
       const singleFamilyHomes = parseInt(row[5].replace(/,/g, ''), 10); // Approx. # of Single Family Homes
+      const avgHomeValue = parseInt(row[6].replace(/[^0-9]/g, ''), 10); // Avg. Home Value (remove $ and commas)
 
       // Update min and max for population
       if (population < minPopulation) minPopulation = population;
@@ -194,46 +197,51 @@ $(document).ready(function () {
         minSingleFamilyHomes = singleFamilyHomes;
       if (singleFamilyHomes > maxSingleFamilyHomes)
         maxSingleFamilyHomes = singleFamilyHomes;
+
+      // Update min and max for Avg. Home Value
+      if (avgHomeValue < minAvgHomeValue) minAvgHomeValue = avgHomeValue;
+      if (avgHomeValue > maxAvgHomeValue) maxAvgHomeValue = avgHomeValue;
     });
 
-    // Update % of Total Pop, Cumulative Pop %, Norm. Pop, Norm. Avg. Household Income, and Norm. Single Family Homes
+    // Update % of Total Pop, Cumulative Pop %, Norm. Pop, Norm. Avg. Household Income, Norm. Single Family Homes, and Norm. Avg. Home Value
     let cumulativePercentage = 0;
     table.rows().every(function () {
       const data = this.data();
       const population = parseInt(data[3].replace(/,/g, ''), 10); // Population
       const avgHouseholdIncome = parseInt(data[4].replace(/[^0-9]/g, ''), 10); // Avg. Household Income
       const singleFamilyHomes = parseInt(data[5].replace(/,/g, ''), 10); // Approx. # of Single Family Homes
+      const avgHomeValue = parseInt(data[6].replace(/[^0-9]/g, ''), 10); // Avg. Home Value
 
       // % of Total Pop
-      const percentage = ((population / totalPopulation) * 100).toFixed(2);
+      const percentage = population / totalPopulation;
 
       // Cumulative Pop %
-      cumulativePercentage += parseFloat(percentage);
+      cumulativePercentage += percentage;
 
       // Norm. Pop
-      const normalizedPopulation = (
-        (population - minPopulation) /
-        (maxPopulation - minPopulation)
-      );
+      const normalizedPopulation =
+        (population - minPopulation) / (maxPopulation - minPopulation);
 
       // Norm. Avg. Household Income
-      const normalizedAvgIncome = (
-        (avgHouseholdIncome - minAvgIncome) /
-        (maxAvgIncome - minAvgIncome)
-      );
+      const normalizedAvgIncome =
+        (avgHouseholdIncome - minAvgIncome) / (maxAvgIncome - minAvgIncome);
 
       // Norm. Single Family Homes
-      const normalizedSingleFamilyHomes = (
+      const normalizedSingleFamilyHomes =
         (singleFamilyHomes - minSingleFamilyHomes) /
-        (maxSingleFamilyHomes - minSingleFamilyHomes)
-      );
+        (maxSingleFamilyHomes - minSingleFamilyHomes);
+
+      // Norm. Avg. Home Value
+      const normalizedAvgHomeValue =
+        (avgHomeValue - minAvgHomeValue) / (maxAvgHomeValue - minAvgHomeValue);
 
       // Update the row data
-      data[9] = `${percentage}%`; // % of Total Pop
-      data[10] = `${cumulativePercentage.toFixed(2)}%`; // Cumulative Pop %
+      data[9] = `${(percentage * 100).toFixed(2)}%`; // % of Total Pop
+      data[10] = `${(cumulativePercentage * 100).toFixed(2)}%`; // Cumulative Pop %
       data[12] = normalizedPopulation; // Norm. Pop
       data[13] = normalizedAvgIncome; // Norm. Avg. Household Income
       data[14] = normalizedSingleFamilyHomes; // Norm. Single Family Homes
+      data[15] = normalizedAvgHomeValue; // Norm. Avg. Home Value
 
       this.data(data);
     });
