@@ -95,10 +95,10 @@ export default class Place {
         if (!city.tags.wikipedia) return;
 
         const cityName = city.tags.name;
-        let state = 'state';
-        city.tags.wikipedia.split(', ').length > 1
-          ? city.tags.wikipedia.split(', ')[1]
-          : city.tags.wikipedia.split(', ')[0].replaceAll('en:', '');
+        let state =
+          city.tags.wikipedia.split(', ').length > 1
+            ? city.tags.wikipedia.split(', ')[1]
+            : city.tags.wikipedia.split(', ')[0].replaceAll('en:', '');
 
         // Create a new state-row element
         const stateRow = document.createElement('div');
