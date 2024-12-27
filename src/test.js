@@ -78,6 +78,8 @@ $(document).ready(function () {
 
       totalPopulation += Number(population);
 
+      console.log(medianHomeValue);
+
       // Insert the data into the table
       table.row
         .add([
