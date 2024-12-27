@@ -4,8 +4,6 @@
 import Map from 'https://smediaapp.pages.dev/src/Map.js';
 import Place from 'https://smediaapp.pages.dev/src/Place.js';
 
-
-
 export default class Client {
   constructor(tool) {
     this.authToken = localStorage.getItem('authToken');
@@ -173,7 +171,6 @@ export default class Client {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
           const navNoClients = document.querySelector(
             '.nav-clients.no-clients'
           );
@@ -190,6 +187,14 @@ export default class Client {
           } else {
             navNoClients.style.display = 'none';
             navClients.style.display = 'flex';
+
+            // Hide "Select other client" heading since there are no other clients
+            if (data.homepage_clients.length < 2) {
+              const otherClientsHeading = document.querySelector(
+                '.other-client-heading'
+              );
+              otherClientsHeading.style = 'display: none';
+            }
 
             // Populate the client data dynamically
             const firstClient = clientId
