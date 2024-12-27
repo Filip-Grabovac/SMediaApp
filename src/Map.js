@@ -145,9 +145,8 @@ export default class Map {
         'https://cdn.prod.website-files.com/66eab8d4420be36698ed221a/676edfa695eddb77fe758f61_black-marker.png',
 
       iconSize: [16, 19.8], // size of the icon
-      iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
-      shadowAnchor: [4, 62], // the same for the shadow
-      popupAnchor: [-3, -76], // point from which the popup should open relative to the iconAnchor
+      iconAnchor: [8, 19.8], // point of the icon which will correspond to marker's location
+      popupAnchor: [0, -76], // point from which the popup should open relative to the iconAnchor
     });
 
     locations.forEach((location, index) => {
