@@ -72,7 +72,9 @@ $(document).ready(function () {
       const [headers, values] = detailedData; // Destructure response into headers and values
 
       const population = values[0]; // Total population (B01003_001E)
-      const medianHouseholdIncome = values[1]; // Median Household Income (B19013_001E)
+      const medianHouseholdIncome = String(values[1]).includes('-666')
+        ? 'No data'
+        : values[1]; // Median Household Income (B19013_001E)
       const medianHomeValue = String(values[2]).includes('-666')
         ? 'No data'
         : values[2]; // Median Home Value (B25077_001E)
@@ -95,7 +97,9 @@ $(document).ready(function () {
           fullPlaceName, // City
           stateName, // State
           formatNumber(Number(population)), // Population
-          '$' + formatNumber(Number(medianHouseholdIncome)), // Avg. Household Income
+          medianHouseholdIncome === 'No data'
+            ? 'No data'
+            : '$' + formatNumber(Number(medianHouseholdIncome)), // Avg. Household Income
           formatNumber(Number(singleFamilyHomes)), // Approx. # of Single Family Homes
           medianHomeValue === 'No data'
             ? 'No data'
