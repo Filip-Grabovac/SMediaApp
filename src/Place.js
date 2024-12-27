@@ -92,7 +92,7 @@ export default class Place {
   listPlaces(citiesWrap, cities, shapeId) {
     if (citiesWrap && cities.length > 0) {
       cities.forEach((city) => {
-        if (!city.tags.name) return;
+        if (!city.tags.wikipedia) return;
 
         const cityName = city.tags.name;
         let state = 'state';
