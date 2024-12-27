@@ -146,7 +146,7 @@ export default class Map {
 
       iconSize: [16, 19.8], // size of the icon
       iconAnchor: [8, 19.8], // point of the icon which will correspond to marker's location
-      popupAnchor: [0, -76], // point from which the popup should open relative to the iconAnchor
+      popupAnchor: [0, -25], // point from which the popup should open relative to the iconAnchor
     });
 
     locations.forEach((location, index) => {
