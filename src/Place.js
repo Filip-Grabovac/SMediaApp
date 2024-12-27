@@ -25,17 +25,13 @@ export default class Place {
         ...latlngs.map((c) => c.lng)
       )}`;
       query = `
-      [out:json];
-      (
-        node["place"~"city|town|village|hamlet"](${bbox});
-        way["place"~"city|town|village|hamlet"](${bbox});
-        relation["place"~"city|town|village|hamlet"](${bbox});
-      );
-      relation["boundary"="administrative"]["admin_level"="*"](${bbox}); // State boundaries
-      out body;
-      >;
-      out skel qt;`;
-      
+                [out:json];
+                (
+                    node["place"~"city|town|village|hamlet"](${bbox});
+                    way["place"~"city|town|village|hamlet"](${bbox});
+                    relation["place"~"city|town|village|hamlet"](${bbox});
+                );
+                out body;`;
     } else if (layer instanceof L.Circle) {
       const center = layer.getLatLng();
       const radius = layer.getRadius();
