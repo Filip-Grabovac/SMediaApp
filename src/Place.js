@@ -27,9 +27,9 @@ export default class Place {
       query = `
                 [out:json];
                 (
-                    node["place"~"city|town|village|hamlet"](${bbox});
-                    way["place"~"city|town|village|hamlet"](${bbox});
-                    relation["place"~"city|town|village|hamlet"](${bbox});
+                    node["place"~"city|town|village"](${bbox});
+                    way["place"~"city|town|village"](${bbox});
+                    relation["place"~"city|town|village"](${bbox});
                 );
                 out body;`;
     } else if (layer instanceof L.Circle) {
@@ -38,9 +38,9 @@ export default class Place {
       query = `
                 [out:json];
                 (
-                    node["place"~"city|town|village|hamlet"](around:${radius}, ${center.lat}, ${center.lng});
-                    way["place"~"city|town|village|hamlet"](around:${radius}, ${center.lat}, ${center.lng});
-                    relation["place"~"city|town|village|hamlet"](around:${radius}, ${center.lat}, ${center.lng});
+                    node["place"~"city|town|village"](around:${radius}, ${center.lat}, ${center.lng});
+                    way["place"~"city|town|village"](around:${radius}, ${center.lat}, ${center.lng});
+                    relation["place"~"city|town|village"](around:${radius}, ${center.lat}, ${center.lng});
                 );
                 out body;`;
     } else if (layer instanceof L.GeoJSON) {
@@ -49,9 +49,9 @@ export default class Place {
       query = `
                 [out:json];
                 (
-                    node["place"~"city|town|village|hamlet"](${bbox});
-                    way["place"~"city|town|village|hamlet"](${bbox});
-                    relation["place"~"city|town|village|hamlet"](${bbox});
+                    node["place"~"city|town|village"](${bbox});
+                    way["place"~"city|town|village"](${bbox});
+                    relation["place"~"city|town|village"](${bbox});
                 );
                 out body;`;
     } else {
@@ -92,7 +92,7 @@ export default class Place {
   listPlaces(citiesWrap, cities, shapeId) {
     if (citiesWrap && cities.length > 0) {
       cities.forEach((city) => {
-        if (!city.tags.wikipedia) return;
+        if (!city.tags.name) return;
 
         const cityName = city.tags.name;
         let state = 'state';
