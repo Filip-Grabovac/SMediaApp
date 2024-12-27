@@ -27,9 +27,9 @@ export default class Place {
       query = `
                 [out:json];
                 (
-                    node["place"~"city|town|village|hamlet|locality"](${bbox});
-                    way["place"~"city|town|village|hamlet|locality"](${bbox});
-                    relation["place"~"city|town|village|hamlet|locality"](${bbox});
+                    node["place"~"city|town"](${bbox});
+                    way["place"~"city|town"](${bbox});
+                    relation["place"~"city|town"](${bbox});
                 );
                 out body;`;
     } else if (layer instanceof L.Circle) {
@@ -38,9 +38,9 @@ export default class Place {
       query = `
                 [out:json];
                 (
-                    node["place"~"city|town|village|hamlet|locality"](around:${radius}, ${center.lat}, ${center.lng});
-                    way["place"~"city|town|village|hamlet|locality"](around:${radius}, ${center.lat}, ${center.lng});
-                    relation["place"~"city|town|village|hamlet|locality"](around:${radius}, ${center.lat}, ${center.lng});
+                    node["place"~"city|town"](around:${radius}, ${center.lat}, ${center.lng});
+                    way["place"~"city|town"](around:${radius}, ${center.lat}, ${center.lng});
+                    relation["place"~"city|town"](around:${radius}, ${center.lat}, ${center.lng});
                 );
                 out body;`;
     } else if (layer instanceof L.GeoJSON) {
@@ -49,9 +49,9 @@ export default class Place {
       query = `
                 [out:json];
                 (
-                    node["place"~"city|town|village|hamlet|locality"](${bbox});
-                    way["place"~"city|town|village|hamlet|locality"](${bbox});
-                    relation["place"~"city|town|village|hamlet|locality"](${bbox});
+                    node["place"~"city|town"](${bbox});
+                    way["place"~"city|town"](${bbox});
+                    relation["place"~"city|town"](${bbox});
                 );
                 out body;`;
     } else {
@@ -74,7 +74,7 @@ export default class Place {
       .then((data) => {
         console.log(data);
         const cities = data.elements.filter(
-          (el) => el.tags && el.type === 'relation' && el.tags.name
+          (el) => el.tags && el.tags.name
         );
         // Check if new drawn shape needs to be added to incuded or excluded section
         const excludeButton = document.querySelector('.option_button.exclude');
@@ -97,10 +97,10 @@ export default class Place {
         if (!city.tags.wikipedia) return;
 
         const cityName = city.tags.name;
-        let state =
-          city.tags.wikipedia.split(', ').length > 1
-            ? city.tags.wikipedia.split(', ')[1]
-            : city.tags.wikipedia.split(', ')[0].replaceAll('en:', '');
+        let state = "state";
+          // city.tags.wikipedia.split(', ').length > 1
+          //   ? city.tags.wikipedia.split(', ')[1]
+          //   : city.tags.wikipedia.split(', ')[0].replaceAll('en:', '');
 
         // Create a new state-row element
         const stateRow = document.createElement('div');
