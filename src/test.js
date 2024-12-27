@@ -25,41 +25,6 @@ $(document).ready(function () {
     table.search(searchTerm).draw(); // Perform search with custom input
   });
 
-  // Custom pagination: Previous button
-  $('.pagination-arrow.left').on('click', function () {
-    table.page('previous').draw('page');
-    updatePaginationInfo();
-  });
-
-  // Custom pagination: Next button
-  $('.pagination-arrow.right').on('click', function () {
-    table.page('next').draw('page');
-    updatePaginationInfo();
-  });
-
-  function updatePaginationInfo() {
-    const start = table.page.info().start + 1; // Current page start (1-indexed)
-    const end = table.page.info().end; // Current page end (1-indexed)
-    const total = table.page.info().recordsTotal; // Total records in the dataset
-
-    // Update the pagination text
-    $('.clients-table__range').text(`${start}-${end}`);
-    $('.clients-number').text(total);
-
-    // Enable/Disable previous and next buttons based on the page
-    if (table.page() === 0) {
-      $('.pagination-arrow.left').addClass('disabled');
-    } else {
-      $('.pagination-arrow.left').removeClass('disabled');
-    }
-
-    if (table.page() === table.page.info().pages - 1) {
-      $('.pagination-arrow.right').addClass('disabled');
-    } else {
-      $('.pagination-arrow.right').removeClass('disabled');
-    }
-  }
-
   // Function to fetch FIPS code for the state
   const getStateFipsCode = (stateName) => {
     return statesFips[stateName]; // Assuming statesFips is accessible
@@ -136,8 +101,6 @@ $(document).ready(function () {
           '', // Weighted Score (Empty for now)
         ])
         .draw(); // Add row and update the table
-
-      updatePaginationInfo();
     } catch (error) {
       console.error('Error fetching data:', error);
     }
