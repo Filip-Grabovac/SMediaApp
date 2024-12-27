@@ -75,8 +75,13 @@ $(document).ready(function () {
       const medianHouseholdIncome = values[1]; // Median Household Income (B19013_001E)
       const medianHomeValue = String(values[2]).includes('-666')
         ? 'No data'
-        : formatNumber(Number(values[2])); // Median Home Value (B25077_001E)
+        : '$' + formatNumber(Number(values[2])); // Median Home Value (B25077_001E)
       const singleFamilyHomes = values[3]; // Single-Family Homes (B25024_002E)
+      const totalHomeValue =
+        medianHomeValue === 'No data'
+          ? 'No data'
+          : '$' +
+            formatNumber(Number(medianHomeValue) * Number(singleFamilyHomes)); // Total Home Value
 
       totalPopulation += Number(population);
 
@@ -89,20 +94,18 @@ $(document).ready(function () {
           formatNumber(Number(population)), // Population
           '$' + formatNumber(Number(medianHouseholdIncome)), // Avg. Household Income
           formatNumber(Number(singleFamilyHomes)), // Approx. # of Single Family Homes
-          '$' + medianHomeValue, // Avg. Home Value
-          medianHomeValue === 'No data'
-            ? 'No data'
-            : '$' + formatNumber(medianHomeValue * singleFamilyHomes), // Total Home Value
-          '', // Closest Office (Empty for now)
-          '', // % of Total Pop (Empty for now)
-          '', // Cumulative Pop % (Empty for now)
-          '', // Total Population (Empty for now)
-          '', // Norm. Pop (Empty for now)
-          '', // Norm. Avg. Household Income (Empty for now)
-          '', // Norm. Approx. # of Single Family Homes (Empty for now)
-          '', // Norm. Avg. Home Value (Empty for now)
-          '', // Norm. Closest Office (Empty for now)
-          '', // Weighted Score (Empty for now)
+          medianHomeValue, // Avg. Home Value
+          totalHomeValue, // Total Home Value
+          '', // Closest Office
+          '', // % of Total Pop
+          '', // Cumulative Pop %
+          '', // Total Population
+          '', // Norm. Pop
+          '', // Norm. Avg. Household Income
+          '', // Norm. Approx. # of Single Family Homes
+          '', // Norm. Avg. Home Value
+          '', // Norm. Closest Office
+          '', // Weighted Score
         ])
         .draw(); // Add row and update the table
     } catch (error) {
