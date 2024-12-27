@@ -80,8 +80,9 @@ $(document).ready(function () {
       const totalHomeValue =
         medianHomeValue === 'No data'
           ? 'No data'
-          : '$' +
-            formatNumber(Number(medianHomeValue) * Number(singleFamilyHomes)); // Total Home Value
+          : `$${formatNumber(
+              Number(medianHomeValue) * Number(singleFamilyHomes)
+            )}`; // Total Home Value
 
       totalPopulation += Number(population);
 
