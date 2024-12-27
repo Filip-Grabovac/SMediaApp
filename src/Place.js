@@ -13,7 +13,7 @@ export default class Place {
   }
 
   processLayer(layer, shapeId) {
-    this.tool.showNotification("List is Generating", true);
+    this.tool.showNotification('List is Generating', true);
     let query;
 
     // Process polygons and rectangles
@@ -27,9 +27,9 @@ export default class Place {
       query = `
                 [out:json];
                 (
-                    node["place"~"city|town"](${bbox});
-                    way["place"~"city|town"](${bbox});
-                    relation["place"~"city|town"](${bbox});
+                    node["place"~"city|town|village|hamlet"](${bbox});
+                    way["place"~"city|town|village|hamlet"](${bbox});
+                    relation["place"~"city|town|village|hamlet"](${bbox});
                 );
                 out body;`;
     } else if (layer instanceof L.Circle) {
@@ -38,9 +38,9 @@ export default class Place {
       query = `
                 [out:json];
                 (
-                    node["place"~"city|town"](around:${radius}, ${center.lat}, ${center.lng});
-                    way["place"~"city|town"](around:${radius}, ${center.lat}, ${center.lng});
-                    relation["place"~"city|town"](around:${radius}, ${center.lat}, ${center.lng});
+                    node["place"~"city|town|village|hamlet"](around:${radius}, ${center.lat}, ${center.lng});
+                    way["place"~"city|town|village|hamlet"](around:${radius}, ${center.lat}, ${center.lng});
+                    relation["place"~"city|town|village|hamlet"](around:${radius}, ${center.lat}, ${center.lng});
                 );
                 out body;`;
     } else if (layer instanceof L.GeoJSON) {
@@ -49,9 +49,9 @@ export default class Place {
       query = `
                 [out:json];
                 (
-                    node["place"~"city|town"](${bbox});
-                    way["place"~"city|town"](${bbox});
-                    relation["place"~"city|town"](${bbox});
+                    node["place"~"city|town|village|hamlet"](${bbox});
+                    way["place"~"city|town|village|hamlet"](${bbox});
+                    relation["place"~"city|town|village|hamlet"](${bbox});
                 );
                 out body;`;
     } else {
@@ -73,9 +73,7 @@ export default class Place {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        const cities = data.elements.filter(
-          (el) => el.tags && el.tags.name
-        );
+        const cities = data.elements.filter((el) => el.tags && el.tags.name);
         // Check if new drawn shape needs to be added to incuded or excluded section
         const excludeButton = document.querySelector('.option_button.exclude');
         const citiesWrap = document.querySelector(
@@ -97,10 +95,10 @@ export default class Place {
         if (!city.tags.wikipedia) return;
 
         const cityName = city.tags.name;
-        let state = "state";
-          // city.tags.wikipedia.split(', ').length > 1
-          //   ? city.tags.wikipedia.split(', ')[1]
-          //   : city.tags.wikipedia.split(', ')[0].replaceAll('en:', '');
+        let state = 'state';
+        // city.tags.wikipedia.split(', ').length > 1
+        //   ? city.tags.wikipedia.split(', ')[1]
+        //   : city.tags.wikipedia.split(', ')[0].replaceAll('en:', '');
 
         // Create a new state-row element
         const stateRow = document.createElement('div');
@@ -141,8 +139,8 @@ export default class Place {
       document
         .querySelector('.excluded-included__section')
         .classList.remove('hidden');
-      
-        document.querySelector(".notification").classList.add('hidden');
+
+      document.querySelector('.notification').classList.add('hidden');
     } else {
       console.log('No cities found in this area.');
     }
