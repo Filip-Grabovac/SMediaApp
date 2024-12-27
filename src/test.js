@@ -84,7 +84,9 @@ $(document).ready(function () {
       const totalHomeValue =
         medianHomeValue === 'No data'
           ? 'No data'
-          : formatNumber(Number(medianHomeValue) * Number(singleFamilyHomes));
+          : `$${formatNumber(
+              Number(medianHomeValue) * Number(singleFamilyHomes)
+            )}`;
 
       // Insert the data into the table
       table.row
