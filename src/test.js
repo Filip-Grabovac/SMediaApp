@@ -73,12 +73,12 @@ $(document).ready(function () {
 
       const population = values[0]; // Total population (B01003_001E)
       const medianHouseholdIncome = values[1]; // Median Household Income (B19013_001E)
-      const medianHomeValue = values[2]; // Median Home Value (B25077_001E)
+      const medianHomeValue = String(values[2]).includes('-666')
+        ? 'No data'
+        : formatNumber(Number(values[2])); // Median Home Value (B25077_001E)
       const singleFamilyHomes = values[3]; // Single-Family Homes (B25024_002E)
 
       totalPopulation += Number(population);
-
-      console.log(medianHomeValue);
 
       // Insert the data into the table
       table.row
@@ -89,8 +89,10 @@ $(document).ready(function () {
           formatNumber(Number(population)), // Population
           '$' + formatNumber(Number(medianHouseholdIncome)), // Avg. Household Income
           formatNumber(Number(singleFamilyHomes)), // Approx. # of Single Family Homes
-          '$' + formatNumber(Number(medianHomeValue)), // Avg. Home Value
-          '$' + formatNumber(medianHomeValue * singleFamilyHomes), // Total Home Value
+          '$' + medianHomeValue, // Avg. Home Value
+          medianHomeValue === 'No data'
+            ? 'No data'
+            : '$' + formatNumber(medianHomeValue * singleFamilyHomes), // Total Home Value
           '', // Closest Office (Empty for now)
           '', // % of Total Pop (Empty for now)
           '', // Cumulative Pop % (Empty for now)
