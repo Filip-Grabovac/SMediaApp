@@ -173,6 +173,7 @@ export default class Client {
       })
         .then((response) => response.json())
         .then((data) => {
+          console.log(data);
           const navNoClients = document.querySelector(
             '.nav-clients.no-clients'
           );
