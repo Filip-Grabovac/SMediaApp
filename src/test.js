@@ -197,7 +197,9 @@ $(document).ready(function () {
       table.rows().every(function () {
         const rowData = this.data(); // Get row data
         const rowIndex = this.index(); // Get the row index in the DataTable
-
+        console.log(rowIndex);
+        console.log(i);
+        console.log('-----------------------------');
         // Now, match the row by the index
         if (rowIndex === i) {
           // Populate column 8 (index 8) with closest office and distance
