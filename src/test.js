@@ -201,13 +201,11 @@ $(document).ready(function () {
         console.log(i);
         console.log('-----------------------------');
         // Now, match the row by the index
-        if (rowIndex === i) {
-          // Populate column 8 (index 8) with closest office and distance
-          rowData[8] = `Office: ${closestOffice}, Distance: ${shortestDistance}m`; // Format as needed
+        // Populate column 8 (index 8) with closest office and distance
+        rowData[8] = `Office: ${closestOffice}, Distance: ${shortestDistance}m`; // Format as needed
 
-          // Update the row in the table
-          this.data(rowData).draw();
-        }
+        // Update the row in the table
+        this.data(rowData).draw();
       });
 
       // Optionally, call fetchPlaceInfo if needed
