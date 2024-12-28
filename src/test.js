@@ -199,7 +199,7 @@ $(document).ready(function () {
         }
       });
 
-      // Call fetchPlaceInfo if needed
+      // Optionally, call fetchPlaceInfo if needed
       await fetchPlaceInfo(stateName, placeName);
     }
 
@@ -278,7 +278,7 @@ $(document).ready(function () {
       data[15] = normalizedAvgHomeValue; // Norm. Avg. Home Value
       data[17] = weightedScore || 0; // Weighted Score
 
-      this.data(data);
+      this.data(data); // Save the updated data
     });
 
     table.order([17, 'desc']).draw();
