@@ -796,7 +796,7 @@ export default class Client {
                   })
                   .then((data) => {
                     // Assuming the response contains an office ID
-                    const officeId = data.office_id; // Adjust this to match the API response structure
+                    const officeId = data.id; // Adjust this to match the API response structure
 
                     // Find the closest `.office-wrapp` element
                     const closestOfficeWrapp = document
