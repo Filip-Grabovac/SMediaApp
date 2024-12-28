@@ -785,6 +785,10 @@ export default class Client {
                   body: JSON.stringify(officeData),
                 }
               );
+
+              document
+                .querySelector('.new-office-input')
+                .classList.remove('new-office-input');
             });
 
             dropdown.appendChild(dropdownItem);
