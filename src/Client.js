@@ -578,8 +578,6 @@ export default class Client {
         const companyTitle = document.querySelector('.client_name_text');
         const { client_offices } = data;
 
-        window.singleClientId = data.id;
-
         const img = document.getElementById('client-img');
 
         // Populate text fields
@@ -789,13 +787,46 @@ export default class Client {
                     },
                     body: JSON.stringify(officeData),
                   }
-                );
-                document
-                  .querySelector('.new-office-input')
-                  .classList.add('profile-office-input');
-                document
-                  .querySelector('.new-office-input')
-                  .classList.remove('new-office-input');
+                )
+                  .then((response) => {
+                    if (!response.ok) {
+                      throw new Error('Failed to add new office');
+                    }
+                    return response.json(); // Assuming the API returns a JSON response
+                  })
+                  .then((data) => {
+                    // Assuming the response contains an office ID
+                    const officeId = data.office_id; // Adjust this to match the API response structure
+
+                    // Find the closest `.office-wrapp` element
+                    const closestOfficeWrapp = document
+                      .querySelector('.new-office-input')
+                      ?.closest('.office-wrapp');
+                    if (closestOfficeWrapp) {
+                      // Create the new image element
+                      const imgElement = document.createElement('img');
+                      imgElement.src =
+                        'https://cdn.prod.website-files.com/66eab8d4420be36698ed221a/675687c8f834451b18594f1c_red-x.svg';
+                      imgElement.alt = '';
+                      imgElement.loading = 'lazy';
+                      imgElement.className = 'remove-office';
+                      imgElement.setAttribute('data-office-id', officeId);
+
+                      // Append the image to the closest `.office-wrapp`
+                      closestOfficeWrapp.appendChild(imgElement);
+                    }
+
+                    // Update classes on the input element
+                    const inputElement =
+                      document.querySelector('.new-office-input');
+                    if (inputElement) {
+                      inputElement.classList.add('profile-office-input');
+                      inputElement.classList.remove('new-office-input');
+                    }
+                  })
+                  .catch((error) => {
+                    console.error('Error:', error);
+                  });
               }
             });
 
