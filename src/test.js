@@ -124,7 +124,7 @@ $(document).ready(function () {
   //FULLY WORKING!
   // Helper function to get the driving distance using Graphhopper
   const getGraphhopperDistance = async (lat1, lon1, lat2, lon2) => {
-    const apiKey = 'YOUR_GRAPHHOPPER_API_KEY'; // Replace with your actual API key
+    const apiKey = '90c67888-ff29-4663-b84f-ba2a711c9d77'; // Replace with your actual API key
     const url = `https://api.graphhopper.com/api/1/route?point=${lat1},${lon1}&point=${lat2},${lon2}&vehicle=car&key=${apiKey}`;
 
     const response = await fetch(url);
