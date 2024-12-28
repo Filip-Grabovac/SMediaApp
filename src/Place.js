@@ -106,8 +106,6 @@ export default class Place {
             ? city.tags.wikipedia.split(', ')[1]
             : city.tags.wikipedia.split(', ')[0].replaceAll('en:', '');
 
-        console.log(city);
-
         // Return if we are getting border places from another state
         if (
           typeof window.stateInputSearch !== 'undefined' &&
@@ -119,6 +117,10 @@ export default class Place {
         // Create a new state-row element
         const stateRow = document.createElement('div');
         stateRow.classList.add('state-row');
+
+        stateRow.setAttribute('data-lat', city.lat);
+        stateRow.setAttribute('data-lon', city.lon);
+
         stateRow.setAttribute('shapeId', shapeId);
 
         // Create a div for the city name
