@@ -121,8 +121,39 @@ $(document).ready(function () {
       console.error('Error fetching data:', error);
     }
   };
-  //FULLY WORKING!
-  // Step 3: Loop through all the selected places and fetch data
+  //FULLY DONE
+  // Import GraphHopper library (or ensure it's included in your project)
+
+  // Function to calculate the closest office using the GraphHopper API
+  async function getClosestOffice(placeLat, placeLon, offices) {
+    let closestOffice = null;
+    let shortestDistance = Infinity;
+
+    for (const office of offices) {
+      const officeData = JSON.parse(office.location.replace(/'/g, '"'));
+      const officeLat = parseFloat(officeData.lan);
+      const officeLon = parseFloat(officeData.lon);
+
+      const response = await fetch(
+        `https://graphhopper.com/api/1/route?point=${placeLat},${placeLon}&point=${officeLat},${officeLon}&vehicle=car&key=90c67888-ff29-4663-b84f-ba2a711c9d77`
+      );
+
+      const data = await response.json();
+
+      if (data.paths && data.paths[0]) {
+        const distance = data.paths[0].distance; // Distance in meters
+
+        if (distance < shortestDistance) {
+          shortestDistance = distance;
+          closestOffice = officeData.office_address;
+        }
+      }
+    }
+
+    return { closestOffice, shortestDistance };
+  }
+
+  // Main code logic
   $('.submit-selection').on('click', async function () {
     console.log(userFactors);
     const notificationElement = document.querySelector('.notification');
@@ -132,8 +163,11 @@ $(document).ready(function () {
     table.clear().draw();
 
     const stateRows = $('.states_wrap.included .state-row');
+
     for (let i = 0; i < stateRows.length; i++) {
       const stateRow = $(stateRows[i]);
+
+      // Extract place information
       const stateNameWithPlace = stateRow
         .find('.state-name-text')
         .text()
@@ -142,22 +176,23 @@ $(document).ready(function () {
         .split(',')
         .map((part) => part.trim());
 
-      const lat = Number(stateRow.data('lat'));
-      const lon = Number(stateRow.data('lon'));
+      // Extract lat and lon
+      const placeLat = parseFloat(stateRow.attr('data-lat'));
+      const placeLon = parseFloat(stateRow.attr('data-lon'));
 
-      // Find closest office using GraphHopper
-      const closestOffice = await findClosestOffice(
-        lat,
-        lon,
+      // Get closest office
+      const { closestOffice, shortestDistance } = await getClosestOffice(
+        placeLat,
+        placeLon,
         userFactors.client_offices
       );
 
-      // Fetch place information and add closest office info
-      const placeInfo = await fetchPlaceInfo(stateName, placeName);
-      placeInfo.closestOffice = closestOffice; // Add closest office info to place info
+      console.log(`Place: ${placeName}, ${stateName}`);
+      console.log(`Closest Office: ${closestOffice}`);
+      console.log(`Distance to Closest Office: ${shortestDistance} meters`);
 
-      // Populate the data table row
-      populateDataRow(placeInfo, closestOffice);
+      // Call fetchPlaceInfo if needed
+      await fetchPlaceInfo(stateName, placeName);
     }
 
     document.querySelector(
@@ -177,30 +212,27 @@ $(document).ready(function () {
     const dataRows = table.rows().data();
     dataRows.each((row) => {
       const population = parseInt(row[3].replace(/,/g, ''), 10); // Population
-      const avgHouseholdIncome = parseInt(row[4].replace(/[^0-9]/g, ''), 10); // Avg. Household Income (remove $ and commas)
+      const avgHouseholdIncome = parseInt(row[4].replace(/[^0-9]/g, ''), 10); // Avg. Household Income
       const singleFamilyHomes = parseInt(row[5].replace(/,/g, ''), 10); // Approx. # of Single Family Homes
-      const avgHomeValue = parseInt(row[6].replace(/[^0-9]/g, ''), 10); // Avg. Home Value (remove $ and commas)
+      const avgHomeValue = parseInt(row[6].replace(/[^0-9]/g, ''), 10); // Avg. Home Value
 
-      // Update min and max for population
+      // Update min and max values
       if (population < minPopulation) minPopulation = population;
       if (population > maxPopulation) maxPopulation = population;
 
-      // Update min and max for Avg. Household Income
       if (avgHouseholdIncome < minAvgIncome) minAvgIncome = avgHouseholdIncome;
       if (avgHouseholdIncome > maxAvgIncome) maxAvgIncome = avgHouseholdIncome;
 
-      // Update min and max for Single Family Homes
       if (singleFamilyHomes < minSingleFamilyHomes)
         minSingleFamilyHomes = singleFamilyHomes;
       if (singleFamilyHomes > maxSingleFamilyHomes)
         maxSingleFamilyHomes = singleFamilyHomes;
 
-      // Update min and max for Avg. Home Value
       if (avgHomeValue < minAvgHomeValue) minAvgHomeValue = avgHomeValue;
       if (avgHomeValue > maxAvgHomeValue) maxAvgHomeValue = avgHomeValue;
     });
 
-    // Update % of Total Pop, Cumulative Pop %, Norm. Pop, Norm. Avg. Household Income, Norm. Single Family Homes, and Norm. Avg. Home Value
+    // Normalize and update data
     let cumulativePercentage = 0;
     table.rows().every(function () {
       const data = this.data();
@@ -209,42 +241,27 @@ $(document).ready(function () {
       const singleFamilyHomes = parseInt(data[5].replace(/,/g, ''), 10); // Approx. # of Single Family Homes
       const avgHomeValue = parseInt(data[6].replace(/[^0-9]/g, ''), 10); // Avg. Home Value
 
-      // % of Total Pop
       const percentage = population / totalPopulation;
-
-      // Cumulative Pop %
       cumulativePercentage += percentage;
 
-      // Norm. Pop
       const normalizedPopulation =
         (population - minPopulation) / (maxPopulation - minPopulation);
-
-      // Norm. Avg. Household Income
       const normalizedAvgIncome =
         (avgHouseholdIncome - minAvgIncome) / (maxAvgIncome - minAvgIncome);
-
-      // Norm. Single Family Homes
       const normalizedSingleFamilyHomes =
         (singleFamilyHomes - minSingleFamilyHomes) /
         (maxSingleFamilyHomes - minSingleFamilyHomes);
-
-      // Norm. Avg. Home Value
       const normalizedAvgHomeValue =
         (avgHomeValue - minAvgHomeValue) / (maxAvgHomeValue - minAvgHomeValue);
 
-      // Norm. Closest Office (Assume missing for now, so default to 0)
-      const normalizedClosestOffice = 0; // Update this if Norm. Closest Office is calculated later
-
-      // Calculate Weighted Score
       const weightedScore =
         userFactors.population_factor * (normalizedPopulation || 0) +
         userFactors.avg_household_income_factor * (normalizedAvgIncome || 0) +
         userFactors.single_family_homes_factor *
           (normalizedSingleFamilyHomes || 0) +
         userFactors.avg_home_value_factor * (normalizedAvgHomeValue || 0) +
-        userFactors.distance_from_hq_factor * (normalizedClosestOffice || 0);
+        userFactors.distance_from_hq_factor * 0;
 
-      // Update the row data
       data[9] = `${(percentage * 100).toFixed(2)}%`; // % of Total Pop
       data[10] = `${(cumulativePercentage * 100).toFixed(2)}%`; // Cumulative Pop %
       data[12] = normalizedPopulation; // Norm. Pop
@@ -259,72 +276,4 @@ $(document).ready(function () {
     table.order([17, 'desc']).draw();
     notificationElement.classList.add('hidden');
   });
-
-  async function findClosestOffice(lat, lon, clientOffices) {
-    let closestOffice = null;
-    let shortestDistance = Infinity;
-
-    for (const office of clientOffices) {
-      const officeLocation = JSON.parse(office.location.replace(/'/g, '"'));
-      const officeLat = parseFloat(officeLocation.lan);
-      const officeLon = parseFloat(officeLocation.lon);
-
-      const distance = await getDistanceFromGraphHopper(
-        lat,
-        lon,
-        officeLat,
-        officeLon
-      );
-      if (distance < shortestDistance) {
-        shortestDistance = distance;
-        closestOffice = { ...officeLocation, distance };
-      }
-    }
-
-    return closestOffice;
-  }
-
-  /**
-   * Gets the driving distance between two points using GraphHopper API.
-   * @param {number} fromLat Latitude of the starting point.
-   * @param {number} fromLon Longitude of the starting point.
-   * @param {number} toLat Latitude of the destination point.
-   * @param {number} toLon Longitude of the destination point.
-   * @returns {number} Distance in meters.
-   */
-  async function getDistanceFromGraphHopper(fromLat, fromLon, toLat, toLon) {
-    const apiKey = '90c67888-ff29-4663-b84f-ba2a711c9d77';
-    const url = `https://graphhopper.com/api/1/route?point=${fromLat},${fromLon}&point=${toLat},${toLon}&vehicle=car&key=${apiKey}`;
-
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      return data.paths[0].distance; // Distance in meters
-    } catch (error) {
-      console.error('Error fetching data from GraphHopper:', error);
-      return Infinity; // Return a high value if the API call fails
-    }
-  }
-
-  /**
-   * Populates a data table row with place and closest office info.
-   * @param {Object} placeInfo Information about the place.
-   * @param {Object} closestOffice Information about the closest office.
-   */
-  function populateDataRow(placeInfo, closestOffice) {
-    const officeAddress = closestOffice ? closestOffice.office_address : 'N/A';
-    const officeDistance = closestOffice
-      ? `${(closestOffice.distance / 1609.34).toFixed(2)} miles`
-      : 'N/A';
-    const officeInfo = `${officeAddress} (${officeDistance})`;
-
-    // Example of populating data into the table
-    const rowData = [
-      // other columns
-      officeInfo, // Closest Office column
-      // remaining columns
-    ];
-
-    table.row.add(rowData).draw();
-  }
 });
