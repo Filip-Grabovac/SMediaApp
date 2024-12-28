@@ -203,7 +203,18 @@ export default class Client {
                 )
               : data.homepage_clients[0];
 
-              console.log(firstClient);
+            // Save factors into global variable
+            const userFactors = {
+              avg_home_value_factor: firstClient.avg_home_value_factor,
+              avg_household_income_factor:
+                firstClient.avg_household_income_factor,
+              distance_from_hq_factor: firstClient.distance_from_hq_factor,
+              population_factor: firstClient.population_factor,
+              single_family_homes_factor:
+                firstClient.single_family_homes_factor,
+            };
+
+            window.userFactors = userFactors;
 
             this.map.drawMap(
               JSON.parse(firstClient.geojson_map.map),

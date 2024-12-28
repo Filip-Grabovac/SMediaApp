@@ -124,6 +124,7 @@ $(document).ready(function () {
 
   // Step 3: Loop through all the selected places and fetch data
   $('.submit-selection').on('click', async function () {
+    console.log(userFactors);
     const notificationElement = document.querySelector('.notification');
     notificationElement.textContent = 'Generating city/town data...';
     notificationElement.classList.remove('hidden');
