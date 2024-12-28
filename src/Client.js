@@ -742,43 +742,46 @@ export default class Client {
   }
 
   deleteClient() {
-    // Get the client_id from the URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const clientId = urlParams.get('client_id'); // Extracts client_id from the query parameter
+    // Confirm with the user before proceeding
+    if (confirm('Are you sure you want to delete this client?')) {
+      // Get the client_id from the URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const clientId = urlParams.get('client_id'); // Extracts client_id from the query parameter
 
-    // Get the authToken from local storage
-    const authToken = localStorage.getItem('authToken');
+      // Get the authToken from local storage
+      const authToken = localStorage.getItem('authToken');
 
-    if (clientId && authToken) {
-      // Make the DELETE request
-      fetch(
-        `https://xrux-avyn-v7a8.n7d.xano.io/api:4o1s7k_j/clients/${clientId}`,
-        {
-          method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      )
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error('Failed to delete client');
+      if (clientId && authToken) {
+        // Make the DELETE request
+        fetch(
+          `https://xrux-avyn-v7a8.n7d.xano.io/api:4o1s7k_j/clients/${clientId}`,
+          {
+            method: 'DELETE',
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+              'Content-Type': 'application/json',
+            },
           }
-          return response.json();
-        })
-        .then(() => {
-          // Set the notification in local storage
-          localStorage.setItem('notification', 'Client deleted successfully');
+        )
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error('Failed to delete client');
+            }
+            return response.json();
+          })
+          .then(() => {
+            // Set the notification in local storage
+            localStorage.setItem('notification', 'Client deleted successfully');
 
-          // Redirect to the /clients page
-          window.location.href = '/clients';
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-        });
-    } else {
-      console.error('Missing client_id or authToken');
+            // Redirect to the /clients page
+            window.location.href = '/clients';
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+          });
+      } else {
+        console.error('Missing client_id or authToken');
+      }
     }
   }
 }
