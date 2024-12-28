@@ -190,7 +190,7 @@ $(document).ready(function () {
         .split(',')
         .map((part) => part.trim());
 
-      console.log($(stateRows[i]).attr('data-lat'));
+      console.log(Number($(stateRows[i]).attr('data-lat')));
       console.log($(stateRows[i]).attr('data-lon'));
 
       // Extract lat and lon attributes from the state-row element
