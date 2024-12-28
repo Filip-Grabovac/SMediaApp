@@ -325,8 +325,6 @@ export default class Tool {
 
             // Save it to the window object
             window.stateInputSearch = stateInputSearch;
-
-            console.log(window.stateInputSearch); // Should log "Tennessee"
           }
 
           input.value = itemData.name;
