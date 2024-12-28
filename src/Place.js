@@ -20,6 +20,7 @@ export default class Place {
     if (layer instanceof L.Polygon || layer instanceof L.Rectangle) {
       let latlngs = layer.getLatLngs()[0];
 
+      // If it's array inside array, take it out (we need flat array)
       if (Array.isArray(latlngs[0])) {
         latlngs = latlngs[0];
       }

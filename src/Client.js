@@ -171,6 +171,7 @@ export default class Client {
       })
         .then((response) => response.json())
         .then((data) => {
+          console.log(data);
           const navNoClients = document.querySelector(
             '.nav-clients.no-clients'
           );
@@ -621,8 +622,6 @@ export default class Client {
   }
 
   removeOffice(officeId, officeElement) {
-    console.log('Attempting to delete office with ID:', officeId);
-
     // Get the auth token from localStorage
     const authToken = localStorage.getItem('authToken');
     if (!authToken) {

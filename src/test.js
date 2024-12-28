@@ -105,16 +105,16 @@ $(document).ready(function () {
             ? 'No data'
             : '$' + formatNumber(Number(medianHomeValue)), // Avg. Home Value
           totalHomeValue, // Total Home Value
-          '', // Closest Office (Empty for now)
-          '', // % of Total Pop (Empty for now)
-          '', // Cumulative Pop % (Empty for now)
-          '', // Total Population (Empty for now)
-          '', // Norm. Pop (Empty for now)
-          '', // Norm. Avg. Household Income (Empty for now)
-          '', // Norm. Approx. # of Single Family Homes (Empty for now)
-          '', // Norm. Avg. Home Value (Empty for now)
-          '', // Norm. Closest Office (Empty for now)
-          '', // Weighted Score (Empty for now)
+          '', // Closest Office
+          '', // % of Total Pop
+          '', // Cumulative Pop %
+          '', // Total Population
+          '', // Norm. Pop
+          '', // Norm. Avg. Household Income
+          '', // Norm. Approx. # of Single Family Homes
+          '', // Norm. Avg. Home Value
+          '', // Norm. Closest Office
+          '', // Weighted Score
         ])
         .draw(); // Add row and update the table
     } catch (error) {
