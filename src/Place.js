@@ -100,11 +100,13 @@ export default class Place {
             : city.tags.wikipedia.split(', ')[0].replaceAll('en:', '');
 
         console.log(typeof window.stateInputSearch);
+        console.log(state);
+        console.log(stateInputSearch);
 
         // Return if we are getting border places from another state
         if (
           typeof window.stateInputSearch !== 'undefined' &&
-          state !== window.stateInputSearch
+          state !== stateInputSearch
         ) {
           return;
         }
