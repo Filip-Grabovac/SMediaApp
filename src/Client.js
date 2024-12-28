@@ -795,6 +795,7 @@ export default class Client {
                     return response.json(); // Assuming the API returns a JSON response
                   })
                   .then((data) => {
+                    console.log(data);
                     // Assuming the response contains an office ID
                     const officeId = data.id; // Adjust this to match the API response structure
 
