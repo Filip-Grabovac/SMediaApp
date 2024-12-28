@@ -685,12 +685,7 @@ export default class Client {
 
     // Create the new input field for the office address
     const input = document.createElement('input');
-    input.classList.add(
-      'full_name_input',
-      'w-input',
-      'new-office-input',
-      'profile-office-input'
-    );
+    input.classList.add('full_name_input', 'w-input', 'new-office-input');
     input.setAttribute('type', 'text');
     input.setAttribute('maxlength', '256');
     input.setAttribute('name', 'field-2');
