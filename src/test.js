@@ -158,7 +158,6 @@ $(document).ready(function () {
     return { closestOffice, shortestDistance };
   }
 
-  // Main code logic
   $('.submit-selection').on('click', async function () {
     console.log(userFactors);
     const notificationElement = document.querySelector('.notification');
@@ -207,7 +206,7 @@ $(document).ready(function () {
       '.total-population-element'
     ).textContent = `(${totalPopulation.toLocaleString('en-US')})`;
 
-    // Calculate min and max values for Population, Avg. Household Income, Single Family Homes, and Avg. Home Value
+    // Calculate min and max values for Population, Avg. Household Income, Single Family Homes, Avg. Home Value, and Distance (Miles)
     let minPopulation = Infinity;
     let maxPopulation = -Infinity;
     let minAvgIncome = Infinity;
@@ -216,6 +215,8 @@ $(document).ready(function () {
     let maxSingleFamilyHomes = -Infinity;
     let minAvgHomeValue = Infinity;
     let maxAvgHomeValue = -Infinity;
+    let minDistance = Infinity;
+    let maxDistance = -Infinity;
 
     const dataRows = table.rows().data();
     dataRows.each((row) => {
@@ -223,6 +224,10 @@ $(document).ready(function () {
       const avgHouseholdIncome = parseInt(row[4].replace(/[^0-9]/g, ''), 10); // Avg. Household Income
       const singleFamilyHomes = parseInt(row[5].replace(/,/g, ''), 10); // Approx. # of Single Family Homes
       const avgHomeValue = parseInt(row[6].replace(/[^0-9]/g, ''), 10); // Avg. Home Value
+
+      // Extract the distance in miles from data[8]
+      const distanceMatch = row[8]?.match(/([\d.]+) miles$/);
+      const distance = distanceMatch ? parseFloat(distanceMatch[1]) : 0;
 
       // Update min and max values
       if (population < minPopulation) minPopulation = population;
@@ -238,6 +243,9 @@ $(document).ready(function () {
 
       if (avgHomeValue < minAvgHomeValue) minAvgHomeValue = avgHomeValue;
       if (avgHomeValue > maxAvgHomeValue) maxAvgHomeValue = avgHomeValue;
+
+      if (distance < minDistance) minDistance = distance;
+      if (distance > maxDistance) maxDistance = distance;
     });
 
     // Normalize and update data
@@ -262,13 +270,19 @@ $(document).ready(function () {
       const normalizedAvgHomeValue =
         (avgHomeValue - minAvgHomeValue) / (maxAvgHomeValue - minAvgHomeValue);
 
+      // Extract and normalize distance
+      const distanceMatch = data[8]?.match(/([\d.]+) miles$/);
+      const distance = distanceMatch ? parseFloat(distanceMatch[1]) : 0;
+      const normalizedDistance =
+        (distance - minDistance) / (maxDistance - minDistance);
+
       const weightedScore =
         userFactors.population_factor * (normalizedPopulation || 0) +
         userFactors.avg_household_income_factor * (normalizedAvgIncome || 0) +
         userFactors.single_family_homes_factor *
           (normalizedSingleFamilyHomes || 0) +
         userFactors.avg_home_value_factor * (normalizedAvgHomeValue || 0) +
-        userFactors.distance_from_hq_factor * 0;
+        userFactors.distance_from_hq_factor * (normalizedDistance || 0);
 
       data[9] = `${(percentage * 100).toFixed(2)}%`; // % of Total Pop
       data[10] = `${(cumulativePercentage * 100).toFixed(2)}%`; // Cumulative Pop %
@@ -276,6 +290,7 @@ $(document).ready(function () {
       data[13] = normalizedAvgIncome; // Norm. Avg. Household Income
       data[14] = normalizedSingleFamilyHomes; // Norm. Single Family Homes
       data[15] = normalizedAvgHomeValue; // Norm. Avg. Home Value
+      data[16] = normalizedDistance || 0; // Norm. Distance (new column)
       data[17] = weightedScore || 0; // Weighted Score
 
       this.data(data);
