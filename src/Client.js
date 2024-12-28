@@ -772,6 +772,8 @@ export default class Client {
                 locations: locations,
               };
 
+              const authToken = localStorage.getItem('authToken');
+
               fetch(
                 'https://xrux-avyn-v7a8.n7d.xano.io/api:4o1s7k_j/new_offices',
                 {
