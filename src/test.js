@@ -188,7 +188,7 @@ $(document).ready(function () {
       );
 
       const distanceInMiles = (shortestDistance / 1609.34).toFixed(2); // Convert meters to miles
-
+      console.log("test");
       // Update column 8 in the respective row
       table.rows().every(function () {
         const data = this.data();
