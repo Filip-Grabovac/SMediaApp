@@ -216,6 +216,18 @@ $(document).ready(function () {
       const normalizedAvgHomeValue =
         (avgHomeValue - minAvgHomeValue) / (maxAvgHomeValue - minAvgHomeValue);
 
+      // Norm. Closest Office (Assume missing for now, so default to 0)
+      const normalizedClosestOffice = 0; // Update this if Norm. Closest Office is calculated later
+
+      // Calculate Weighted Score
+      const weightedScore =
+        userFactors.population_factor * (normalizedPopulation || 0) +
+        userFactors.avg_household_income_factor * (normalizedAvgIncome || 0) +
+        userFactors.single_family_homes_factor *
+          (normalizedSingleFamilyHomes || 0) +
+        userFactors.avg_home_value_factor * (normalizedAvgHomeValue || 0) +
+        userFactors.distance_from_hq_factor * (normalizedClosestOffice || 0);
+
       // Update the row data
       data[9] = `${(percentage * 100).toFixed(2)}%`; // % of Total Pop
       data[10] = `${(cumulativePercentage * 100).toFixed(2)}%`; // Cumulative Pop %
@@ -223,6 +235,7 @@ $(document).ready(function () {
       data[13] = normalizedAvgIncome; // Norm. Avg. Household Income
       data[14] = normalizedSingleFamilyHomes; // Norm. Single Family Homes
       data[15] = normalizedAvgHomeValue; // Norm. Avg. Home Value
+      data[17] = weightedScore || 0; // Weighted Score
 
       this.data(data);
     });
