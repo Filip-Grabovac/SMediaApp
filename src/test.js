@@ -198,7 +198,7 @@ $(document).ready(function () {
         console.log(rowIdx);
         console.log(i);
         // Ensure the rowIdx matches with the stateRow index i
-        if (rowIdx === i) {
+        if (rowIdx + 1 === i) {
           const rowData = this.data(); // Get row data
 
           // Populate column 8 (index 8) with closest office and distance
