@@ -240,7 +240,7 @@ $(document).ready(function () {
       this.data(data);
     });
 
-    table.draw();
+    table.order([17, 'desc']).draw();
     notificationElement.classList.add('hidden');
   });
 });
