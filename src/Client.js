@@ -777,6 +777,18 @@ export default class Client {
 
                 const authToken = localStorage.getItem('authToken');
 
+                // Find the closest `.form-input__wrapper` and add the loader
+                const closestOfficeWrapp = document
+                  .querySelector('.new-office-input')
+                  ?.closest('.form-input__wrapper');
+
+                if (closestOfficeWrapp) {
+                  // Add the loader to the closest `.form-input__wrapper`
+                  const loader = document.createElement('span');
+                  loader.className = 'loader';
+                  closestOfficeWrapp.appendChild(loader);
+                }
+
                 fetch(
                   'https://xrux-avyn-v7a8.n7d.xano.io/api:4o1s7k_j/new_offices',
                   {
@@ -798,29 +810,29 @@ export default class Client {
                     // Assuming the response contains an office ID
                     const officeId = data.result1.id; // Adjust this to match the API response structure
 
-                    // Find the closest `.office-wrapp` element
-                    const closestOfficeWrapp = document
-                      .querySelector('.new-office-input')
-                      ?.closest('.form-input__wrapper');
-                    if (closestOfficeWrapp) {
-                      // Create the new image element
-                      const imgElement = document.createElement('img');
-                      imgElement.src =
-                        'https://cdn.prod.website-files.com/66eab8d4420be36698ed221a/675687c8f834451b18594f1c_red-x.svg';
-                      imgElement.alt = '';
-                      imgElement.loading = 'lazy';
-                      imgElement.className = 'remove-office';
-                      imgElement.setAttribute('data-office-id', officeId);
-
-                      imgElement.addEventListener('click', (event) => {
-                        const officeId =
-                          imgElement.getAttribute('data-office-id');
-                        this.removeOffice(officeId, closestOfficeWrapp); // Call the function to remove the office by its ID
-                      });
-
-                      // Append the image to the closest `.office-wrapp`
-                      closestOfficeWrapp.appendChild(imgElement);
+                    // Remove the loader
+                    const loader = closestOfficeWrapp.querySelector('.loader');
+                    if (loader) {
+                      closestOfficeWrapp.removeChild(loader);
                     }
+
+                    // Create the new image element
+                    const imgElement = document.createElement('img');
+                    imgElement.src =
+                      'https://cdn.prod.website-files.com/66eab8d4420be36698ed221a/675687c8f834451b18594f1c_red-x.svg';
+                    imgElement.alt = '';
+                    imgElement.loading = 'lazy';
+                    imgElement.className = 'remove-office';
+                    imgElement.setAttribute('data-office-id', officeId);
+
+                    imgElement.addEventListener('click', (event) => {
+                      const officeId =
+                        imgElement.getAttribute('data-office-id');
+                      this.removeOffice(officeId, closestOfficeWrapp); // Call the function to remove the office by its ID
+                    });
+
+                    // Append the image to the closest `.office-wrapp`
+                    closestOfficeWrapp.appendChild(imgElement);
 
                     // Update classes on the input element
                     const inputElement =
@@ -832,6 +844,12 @@ export default class Client {
                   })
                   .catch((error) => {
                     console.error('Error:', error);
+
+                    // Remove the loader even in case of an error
+                    const loader = closestOfficeWrapp.querySelector('.loader');
+                    if (loader) {
+                      closestOfficeWrapp.removeChild(loader);
+                    }
                   });
               }
             });
