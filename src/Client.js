@@ -571,6 +571,7 @@ export default class Client {
         return response.json();
       })
       .then((data) => {
+        console.log(data);
         const company = document.getElementById('profile-company');
         const email = document.getElementById('profile-email');
         const website = document.getElementById('profile-website');
