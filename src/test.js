@@ -253,6 +253,7 @@ $(document).ready(function () {
     let cumulativePercentage = 0;
     table.rows().every(function () {
       const data = this.data();
+
       const population = parseInt(data[3].replace(/,/g, ''), 10); // Population
       const avgHouseholdIncome = parseInt(data[4].replace(/[^0-9]/g, ''), 10); // Avg. Household Income
       const singleFamilyHomes = parseInt(data[5].replace(/,/g, ''), 10); // Approx. # of Single Family Homes
@@ -281,8 +282,8 @@ $(document).ready(function () {
       const normalizedAvgHomeValue =
         (avgHomeValue - minAvgHomeValue) / (maxAvgHomeValue - minAvgHomeValue);
 
-      // Norm. Closest Office (Use closest office info)
-      const closestOffice = $(stateRows[i]).data('closestOffice');
+      // Norm. Closest Office (Use closest office info from data)
+      const closestOffice = data.closestOffice; // Assuming closestOffice is part of data
       const normalizedClosestOffice = closestOffice
         ? closestOffice.distance
         : 0;
@@ -308,7 +309,7 @@ $(document).ready(function () {
         ? `${closestOffice.address} (${closestOffice.distance.toFixed(
             2
           )} miles)`
-        : 'No nearby office';
+        : 'No nearby office'; // Add the office data to column 8
 
       this.data(data);
     });
