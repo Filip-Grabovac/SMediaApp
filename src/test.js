@@ -188,21 +188,12 @@ $(document).ready(function () {
       );
 
       const distanceInMiles = (shortestDistance / 1609.34).toFixed(2); // Convert meters to miles
-      console.log("test");
-      // Update column 8 in the respective row
-      table.rows().every(function () {
-        const data = this.data();
-        console.log(data)
-        console.log(placeName);
-        console.log(stateName);
-        if (data[1] === placeName && data[2] === stateName) {
-          // Match place and state
-          data[8] = `${closestOffice} (${distanceInMiles} miles)`; // Update column 8
-          this.data(data); // Save the updated data
-        }
-      });
 
-      // Optionally, call fetchPlaceInfo if needed
+      console.log(`Place: ${placeName}, ${stateName}`);
+      console.log(`Closest Office: ${closestOffice}`);
+      console.log(`Distance to Closest Office: ${shortestDistance} meters`);
+
+      // Call fetchPlaceInfo if needed
       await fetchPlaceInfo(stateName, placeName);
     }
 
@@ -281,7 +272,7 @@ $(document).ready(function () {
       data[15] = normalizedAvgHomeValue; // Norm. Avg. Home Value
       data[17] = weightedScore || 0; // Weighted Score
 
-      this.data(data); // Save the updated data
+      this.data(data);
     });
 
     table.order([17, 'desc']).draw();
