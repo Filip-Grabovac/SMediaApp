@@ -122,55 +122,6 @@ $(document).ready(function () {
     }
   };
   //FULLY WORKING!
-  // Helper function to get the driving distance using Graphhopper
-  const getGraphhopperDistance = async (lat1, lon1, lat2, lon2) => {
-    const apiKey = '90c67888-ff29-4663-b84f-ba2a711c9d77'; // Replace with your actual API key
-    const url = `https://api.graphhopper.com/api/1/route?point=${lat1},${lon1}&point=${lat2},${lon2}&vehicle=car&key=${apiKey}`;
-
-    const response = await fetch(url);
-    const data = await response.json();
-
-    // Check for successful response and return distance in miles
-    if (data && data.paths && data.paths[0] && data.paths[0].distance) {
-      const distanceInMeters = data.paths[0].distance;
-      return distanceInMeters / 1609.34; // Convert meters to miles
-    } else {
-      console.error('Error fetching distance from Graphhopper:', data);
-      return Infinity; // Return a large number if there's an error
-    }
-  };
-
-  // Helper function to find the closest office using Graphhopper
-  const findClosestOffice = async (lat, lon, offices) => {
-    let closestOffice = null;
-    let minDistance = Infinity;
-
-    // Loop through all client offices and get distance using Graphhopper
-    for (const office of offices) {
-      const officeLocation = JSON.parse(office.location.replace(/'/g, '"'));
-      const officeLat = parseFloat(officeLocation.lan);
-      const officeLon = parseFloat(officeLocation.lon);
-
-      // Get the distance from the office to the current place using Graphhopper
-      const distance = await getGraphhopperDistance(
-        lat,
-        lon,
-        officeLat,
-        officeLon
-      );
-
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestOffice = {
-          address: officeLocation.office_address,
-          distance,
-        };
-      }
-    }
-
-    return closestOffice;
-  };
-
   // Step 3: Loop through all the selected places and fetch data
   $('.submit-selection').on('click', async function () {
     console.log(userFactors);
@@ -189,22 +140,6 @@ $(document).ready(function () {
       const [placeName, stateName] = stateNameWithPlace
         .split(',')
         .map((part) => part.trim());
-
-      // Extract lat and lon attributes from the state-row element
-      const placeLat = Number($(stateRows[i]).attr('data-lat'));
-      const placeLon = Number($(stateRows[i]).attr('data-lon'));
-
-      // Determine the closest office
-      const closestOffice = await findClosestOffice(
-        placeLat,
-        placeLon,
-        userFactors.client_offices
-      );
-
-      // Save the closest office information for this row
-      if (closestOffice) {
-        $(stateRows[i]).data('closestOffice', closestOffice);
-      }
 
       await fetchPlaceInfo(stateName, placeName);
     }
@@ -249,11 +184,10 @@ $(document).ready(function () {
       if (avgHomeValue > maxAvgHomeValue) maxAvgHomeValue = avgHomeValue;
     });
 
-    // Update % of Total Pop, Cumulative Pop %, Norm. Pop, Norm. Avg. Household Income, Norm. Single Family Homes, Norm. Avg. Home Value, and Weighted Score
+    // Update % of Total Pop, Cumulative Pop %, Norm. Pop, Norm. Avg. Household Income, Norm. Single Family Homes, and Norm. Avg. Home Value
     let cumulativePercentage = 0;
     table.rows().every(function () {
       const data = this.data();
-
       const population = parseInt(data[3].replace(/,/g, ''), 10); // Population
       const avgHouseholdIncome = parseInt(data[4].replace(/[^0-9]/g, ''), 10); // Avg. Household Income
       const singleFamilyHomes = parseInt(data[5].replace(/,/g, ''), 10); // Approx. # of Single Family Homes
@@ -282,11 +216,8 @@ $(document).ready(function () {
       const normalizedAvgHomeValue =
         (avgHomeValue - minAvgHomeValue) / (maxAvgHomeValue - minAvgHomeValue);
 
-      // Norm. Closest Office (Use closest office info from data)
-      const closestOffice = data.closestOffice; // Assuming closestOffice is part of data
-      const normalizedClosestOffice = closestOffice
-        ? closestOffice.distance
-        : 0;
+      // Norm. Closest Office (Assume missing for now, so default to 0)
+      const normalizedClosestOffice = 0; // Update this if Norm. Closest Office is calculated later
 
       // Calculate Weighted Score
       const weightedScore =
@@ -305,11 +236,6 @@ $(document).ready(function () {
       data[14] = normalizedSingleFamilyHomes; // Norm. Single Family Homes
       data[15] = normalizedAvgHomeValue; // Norm. Avg. Home Value
       data[17] = weightedScore || 0; // Weighted Score
-      data[8] = closestOffice
-        ? `${closestOffice.address} (${closestOffice.distance.toFixed(
-            2
-          )} miles)`
-        : 'No nearby office'; // Add the office data to column 8
 
       this.data(data);
     });
