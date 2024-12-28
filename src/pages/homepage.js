@@ -122,6 +122,7 @@ stateInput.addEventListener('input', (event) => {
   }
 
   const filteredStates = filterStates(query);
+  console.log(filteredStates);
   const dropdownItems = filteredStates.map((state) => ({
     name: state.properties.name,
     onSelect: () => tool.drawState(state, map), // Define the action on selection
@@ -197,5 +198,11 @@ document.querySelectorAll('.option_button').forEach((btn) => {
   });
 });
 
-place.searchIncludedExcludedPlaces('.input-search.included-search', '.states_wrap.included');
-place.searchIncludedExcludedPlaces('.input-search.excluded-search', '.states_wrap.excluded');
+place.searchIncludedExcludedPlaces(
+  '.input-search.included-search',
+  '.states_wrap.included'
+);
+place.searchIncludedExcludedPlaces(
+  '.input-search.excluded-search',
+  '.states_wrap.excluded'
+);
