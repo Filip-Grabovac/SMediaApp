@@ -79,7 +79,9 @@ export default class Place {
     })
       .then((response) => response.json())
       .then((data) => {
-        const cities = data.elements.filter((el) => el.tags && el.tags.name);
+        const cities = data.elements.filter(
+          (el) => el.tags && el.type === 'node' && el.tags.name
+        );
         // Check if new drawn shape needs to be added to incuded or excluded section
         const excludeButton = document.querySelector('.option_button.exclude');
         const citiesWrap = document.querySelector(
