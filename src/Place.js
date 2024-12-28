@@ -72,7 +72,6 @@ export default class Place {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         const cities = data.elements.filter((el) => el.tags && el.tags.name);
         // Check if new drawn shape needs to be added to incuded or excluded section
         const excludeButton = document.querySelector('.option_button.exclude');
@@ -101,7 +100,12 @@ export default class Place {
             : city.tags.wikipedia.split(', ')[0].replaceAll('en:', '');
 
         // Return if we are getting border places from another state
-        if (stateInputSearch && state !== stateInputSearch) return;
+        if (
+          typeof window.stateInputSearch !== 'undefined' &&
+          state !== window.stateInputSearch
+        ) {
+          return;
+        }
 
         // Create a new state-row element
         const stateRow = document.createElement('div');
