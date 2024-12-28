@@ -801,7 +801,7 @@ export default class Client {
                     // Find the closest `.office-wrapp` element
                     const closestOfficeWrapp = document
                       .querySelector('.new-office-input')
-                      ?.closest('.office-wrapp');
+                      ?.closest('.form-input__wrapper');
                     if (closestOfficeWrapp) {
                       // Create the new image element
                       const imgElement = document.createElement('img');
