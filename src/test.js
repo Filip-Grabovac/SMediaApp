@@ -194,6 +194,8 @@ $(document).ready(function () {
       const placeLat = parseFloat($(stateRows[i]).attr('data-lat'));
       const placeLon = parseFloat($(stateRows[i]).attr('data-lon'));
 
+      console.log(placeLat, placeLon);
+
       // Determine the closest office
       const closestOffice = await findClosestOffice(
         placeLat,
