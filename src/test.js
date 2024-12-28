@@ -133,7 +133,8 @@ $(document).ready(function () {
 
     const stateRows = $('.states_wrap.included .state-row');
     for (let i = 0; i < stateRows.length; i++) {
-      const stateNameWithPlace = $(stateRows[i])
+      const stateRow = $(stateRows[i]);
+      const stateNameWithPlace = stateRow
         .find('.state-name-text')
         .text()
         .trim();
@@ -141,7 +142,22 @@ $(document).ready(function () {
         .split(',')
         .map((part) => part.trim());
 
-      await fetchPlaceInfo(stateName, placeName);
+      const lat = Number(stateRow.data('lat'));
+      const lon = Number(stateRow.data('lon'));
+
+      // Find closest office using GraphHopper
+      const closestOffice = await findClosestOffice(
+        lat,
+        lon,
+        userFactors.client_offices
+      );
+
+      // Fetch place information and add closest office info
+      const placeInfo = await fetchPlaceInfo(stateName, placeName);
+      placeInfo.closestOffice = closestOffice; // Add closest office info to place info
+
+      // Populate the data table row
+      populateDataRow(placeInfo, closestOffice);
     }
 
     document.querySelector(
@@ -243,4 +259,72 @@ $(document).ready(function () {
     table.order([17, 'desc']).draw();
     notificationElement.classList.add('hidden');
   });
+
+  async function findClosestOffice(lat, lon, clientOffices) {
+    let closestOffice = null;
+    let shortestDistance = Infinity;
+
+    for (const office of clientOffices) {
+      const officeLocation = JSON.parse(office.location.replace(/'/g, '"'));
+      const officeLat = parseFloat(officeLocation.lan);
+      const officeLon = parseFloat(officeLocation.lon);
+
+      const distance = await getDistanceFromGraphHopper(
+        lat,
+        lon,
+        officeLat,
+        officeLon
+      );
+      if (distance < shortestDistance) {
+        shortestDistance = distance;
+        closestOffice = { ...officeLocation, distance };
+      }
+    }
+
+    return closestOffice;
+  }
+
+  /**
+   * Gets the driving distance between two points using GraphHopper API.
+   * @param {number} fromLat Latitude of the starting point.
+   * @param {number} fromLon Longitude of the starting point.
+   * @param {number} toLat Latitude of the destination point.
+   * @param {number} toLon Longitude of the destination point.
+   * @returns {number} Distance in meters.
+   */
+  async function getDistanceFromGraphHopper(fromLat, fromLon, toLat, toLon) {
+    const apiKey = '90c67888-ff29-4663-b84f-ba2a711c9d77';
+    const url = `https://graphhopper.com/api/1/route?point=${fromLat},${fromLon}&point=${toLat},${toLon}&vehicle=car&key=${apiKey}`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      return data.paths[0].distance; // Distance in meters
+    } catch (error) {
+      console.error('Error fetching data from GraphHopper:', error);
+      return Infinity; // Return a high value if the API call fails
+    }
+  }
+
+  /**
+   * Populates a data table row with place and closest office info.
+   * @param {Object} placeInfo Information about the place.
+   * @param {Object} closestOffice Information about the closest office.
+   */
+  function populateDataRow(placeInfo, closestOffice) {
+    const officeAddress = closestOffice ? closestOffice.office_address : 'N/A';
+    const officeDistance = closestOffice
+      ? `${(closestOffice.distance / 1609.34).toFixed(2)} miles`
+      : 'N/A';
+    const officeInfo = `${officeAddress} (${officeDistance})`;
+
+    // Example of populating data into the table
+    const rowData = [
+      // other columns
+      officeInfo, // Closest Office column
+      // remaining columns
+    ];
+
+    table.row.add(rowData).draw();
+  }
 });
