@@ -13,6 +13,8 @@ export default class Place {
   }
 
   processLayer(layer, shapeId) {
+    console.log(layer);
+    console.log(shapeId);
     this.tool.showNotification('List is Generating', true);
     let query;
 
