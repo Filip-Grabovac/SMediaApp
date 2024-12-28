@@ -203,8 +203,6 @@ export default class Client {
                 )
               : data.homepage_clients[0];
 
-            console.log(firstClient);
-
             // Save factors into global variable
             const userFactors = {
               avg_home_value_factor: firstClient.avg_home_value_factor,
@@ -214,6 +212,7 @@ export default class Client {
               population_factor: firstClient.population_factor,
               single_family_homes_factor:
                 firstClient.single_family_homes_factor,
+              client_offices: firstClient.client_offices,
             };
 
             window.userFactors = userFactors;
