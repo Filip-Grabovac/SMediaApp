@@ -737,6 +737,8 @@ export default class Client {
               inputElement.value = item.display_name; // Set input value to the selected address
               dropdown.innerHTML = ''; // Clear the dropdown after selection
 
+              console.log('Clicked');
+
               // Add custom properties to the input element (latitude and longitude)
               inputElement.dataset.latitude = item.lat;
               inputElement.dataset.longitude = item.lon;
