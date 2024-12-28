@@ -118,6 +118,8 @@ export default class Place {
         const stateRow = document.createElement('div');
         stateRow.classList.add('state-row');
 
+        console.log(city);
+
         stateRow.setAttribute('data-lat', city.lat);
         stateRow.setAttribute('data-lon', city.lon);
 
