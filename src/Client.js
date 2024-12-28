@@ -815,7 +815,7 @@ export default class Client {
                       imgElement.addEventListener('click', (event) => {
                         const officeId =
                           imgElement.getAttribute('data-office-id');
-                        this.removeOffice(officeId, clonedOffice); // Call the function to remove the office by its ID
+                        this.removeOffice(officeId, closestOfficeWrapp); // Call the function to remove the office by its ID
                       });
 
                       // Append the image to the closest `.office-wrapp`
