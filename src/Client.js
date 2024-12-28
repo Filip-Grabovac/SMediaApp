@@ -171,7 +171,6 @@ export default class Client {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
           const navNoClients = document.querySelector(
             '.nav-clients.no-clients'
           );
@@ -203,6 +202,8 @@ export default class Client {
                   (client) => client.id === parseInt(clientId)
                 )
               : data.homepage_clients[0];
+
+              console.log(firstClient);
 
             this.map.drawMap(
               JSON.parse(firstClient.geojson_map.map),
