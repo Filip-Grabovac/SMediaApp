@@ -53,10 +53,10 @@ $(document).ready(function () {
       const response = await fetch(apiUrl);
       const data = await response.json();
 
+      console.log(data);
+
       // Find the place
       const placeData = data.find((item) => item[0].includes(placeName));
-
-      console.log(placeData);
 
       if (!placeData) {
         console.error('Place not found!');
