@@ -19,6 +19,8 @@ export default class Place {
     // Process polygons and rectangles
     if (layer instanceof L.Polygon || layer instanceof L.Rectangle) {
       const latlngs = layer.getLatLngs()[0];
+      console.log(layer);
+      console.log(latlngs);
       const bbox = `${Math.min(...latlngs.map((c) => c.lat))},${Math.min(
         ...latlngs.map((c) => c.lng)
       )},${Math.max(...latlngs.map((c) => c.lat))},${Math.max(
