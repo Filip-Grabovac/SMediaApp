@@ -685,7 +685,12 @@ export default class Client {
 
     // Create the new input field for the office address
     const input = document.createElement('input');
-    input.classList.add('full_name_input', 'w-input', 'new-office-input');
+    input.classList.add(
+      'full_name_input',
+      'w-input',
+      'new-office-input',
+      'profile-office-input'
+    );
     input.setAttribute('type', 'text');
     input.setAttribute('maxlength', '256');
     input.setAttribute('name', 'field-2');
@@ -736,8 +741,6 @@ export default class Client {
             dropdownItem.addEventListener('click', () => {
               inputElement.value = item.display_name; // Set input value to the selected address
               dropdown.innerHTML = ''; // Clear the dropdown after selection
-
-              console.log('Clicked');
 
               // Add custom properties to the input element (latitude and longitude)
               inputElement.dataset.latitude = item.lat;
