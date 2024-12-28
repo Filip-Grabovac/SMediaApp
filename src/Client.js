@@ -790,7 +790,9 @@ export default class Client {
                     body: JSON.stringify(officeData),
                   }
                 );
-
+                document
+                  .querySelector('.new-office-input')
+                  .classList.add('profile-office-input');
                 document
                   .querySelector('.new-office-input')
                   .classList.remove('new-office-input');
