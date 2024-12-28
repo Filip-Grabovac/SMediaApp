@@ -190,12 +190,12 @@ $(document).ready(function () {
         .split(',')
         .map((part) => part.trim());
 
+      console.log($(stateRows[i]).attr('data-lat'));
+      console.log($(stateRows[i]).attr('data-lon'));
+
       // Extract lat and lon attributes from the state-row element
       const placeLat = parseFloat($(stateRows[i]).attr('data-lat'));
       const placeLon = parseFloat($(stateRows[i]).attr('data-lon'));
-
-      console.log($(stateRows[i]).attr('data-lat'));
-      console.log($(stateRows[i]).attr('data-lon'));
 
       // Determine the closest office
       const closestOffice = await findClosestOffice(
