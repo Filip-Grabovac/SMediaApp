@@ -164,6 +164,7 @@ $(document).ready(function () {
 
     const stateRows = $('.states_wrap.included .state-row');
 
+    // In the for loop where you are getting closest office and distance
     for (let i = 0; i < stateRows.length; i++) {
       const stateRow = $(stateRows[i]);
 
@@ -189,9 +190,15 @@ $(document).ready(function () {
 
       const distanceInMiles = (shortestDistance / 1609.34).toFixed(2); // Convert meters to miles
 
-      console.log(`Place: ${placeName}, ${stateName}`);
-      console.log(`Closest Office: ${closestOffice}`);
-      console.log(`Distance to Closest Office: ${shortestDistance} meters`);
+      // Get the row in the table that matches this place (assuming `stateRow` has a unique identifier or index)
+      const rowIndex = $(stateRow).data('index'); // Adjust this if your row has a specific index or identifier
+      const rowData = table.row(rowIndex).data();
+
+      // Populate column 8 with the relevant information
+      rowData[8] = `Office: ${closestOffice}, Distance: ${shortestDistance}m`;
+
+      // Update the row with the new data
+      table.row(rowIndex).data(rowData).draw();
 
       // Call fetchPlaceInfo if needed
       await fetchPlaceInfo(stateName, placeName);
