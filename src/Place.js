@@ -13,8 +13,6 @@ export default class Place {
   }
 
   processLayer(layer, shapeId) {
-    console.log(layer);
-    console.log(shapeId);
     this.tool.showNotification('List is Generating', true);
     let query;
 
@@ -26,6 +24,8 @@ export default class Place {
       )},${Math.max(...latlngs.map((c) => c.lat))},${Math.max(
         ...latlngs.map((c) => c.lng)
       )}`;
+
+      console.log(bbox);
       query = `
                 [out:json];
                 (

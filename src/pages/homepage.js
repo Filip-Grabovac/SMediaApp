@@ -122,7 +122,6 @@ stateInput.addEventListener('input', (event) => {
   }
 
   const filteredStates = filterStates(query);
-  console.log(filteredStates);
   const dropdownItems = filteredStates.map((state) => ({
     name: state.properties.name,
     onSelect: () => tool.drawState(state, map), // Define the action on selection

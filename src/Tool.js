@@ -68,7 +68,6 @@ export default class Tool {
   }
 
   removeLayer(layer) {
-    console.log(layer);
     // Check if the layer is part of drawnItems
     if (window.drawnItems.hasLayer(layer)) {
       window.drawnItems.removeLayer(layer);
