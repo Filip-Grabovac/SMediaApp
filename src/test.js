@@ -192,6 +192,8 @@ $(document).ready(function () {
       // Update column 8 in the respective row
       table.rows().every(function () {
         const data = this.data();
+        console.log(data[1], placeName);
+        console.log(data[2], stateName);
         if (data[1] === placeName && data[2] === stateName) {
           // Match place and state
           data[8] = `${closestOffice} (${distanceInMiles} miles)`; // Update column 8
