@@ -106,6 +106,8 @@ export default class Place {
             ? city.tags.wikipedia.split(', ')[1]
             : city.tags.wikipedia.split(', ')[0].replaceAll('en:', '');
 
+        console.log(city);
+
         // Return if we are getting border places from another state
         if (
           typeof window.stateInputSearch !== 'undefined' &&
