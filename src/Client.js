@@ -216,11 +216,11 @@ export default class Client {
             };
 
             window.userFactors = userFactors;
-            console.log(firstClient);
+
             this.map.drawMap(
               JSON.parse(firstClient.geojson_map.map),
               this.place,
-              data.firstClient.client_offices
+              firstClient.client_offices
             );
 
             const clientName = document.querySelector('.client-nav__name');
