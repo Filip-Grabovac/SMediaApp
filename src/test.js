@@ -195,6 +195,8 @@ $(document).ready(function () {
 
       // Match the row using index i
       table.rows().every(function (rowIdx) {
+        console.log(rowIdx);
+        console.log(i);
         // Ensure the rowIdx matches with the stateRow index i
         if (rowIdx === i) {
           const rowData = this.data(); // Get row data
