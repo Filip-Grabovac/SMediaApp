@@ -187,9 +187,12 @@ $(document).ready(function () {
         userFactors.client_offices
       );
 
-      console.log(`Place: ${placeName}, ${stateName}`);
-      console.log(`Closest Office: ${closestOffice}`);
-      console.log(`Distance to Closest Office: ${shortestDistance} meters`);
+      const distanceInMiles = (shortestDistance / 1609.34).toFixed(2); // Convert meters to miles
+
+      // Add closest office and distance to data[8]
+      table.row.add({
+        8: `${closestOffice} (${distanceInMiles} miles)`,
+      });
 
       // Call fetchPlaceInfo if needed
       await fetchPlaceInfo(stateName, placeName);
