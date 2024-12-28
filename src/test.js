@@ -193,14 +193,13 @@ $(document).ready(function () {
       console.log(`Closest Office: ${closestOffice}`);
       console.log(`Distance to Closest Office: ${shortestDistance} meters`);
 
-      // Match the row using index i
-      table.rows().every(function (rowIdx) {
-        console.log(rowIdx);
-        console.log(i);
-        // Ensure the rowIdx matches with the stateRow index i
-        if (rowIdx + 1 === i) {
-          const rowData = this.data(); // Get row data
+      // Match the row using the index in the DataTable
+      table.rows().every(function () {
+        const rowData = this.data(); // Get row data
+        const rowIndex = this.index(); // Get the row index in the DataTable
 
+        // Now, match the row by the index
+        if (rowIndex === i) {
           // Populate column 8 (index 8) with closest office and distance
           rowData[8] = `Office: ${closestOffice}, Distance: ${shortestDistance}m`; // Format as needed
 
