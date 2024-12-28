@@ -101,7 +101,7 @@ export default class Place {
             : city.tags.wikipedia.split(', ')[0].replaceAll('en:', '');
 
         // Return if we are getting border places from another state
-        if (state !== stateInputSearch) return;
+        if (stateInputSearch && state !== stateInputSearch) return;
 
         // Create a new state-row element
         const stateRow = document.createElement('div');
