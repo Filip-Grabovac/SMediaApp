@@ -319,9 +319,14 @@ export default class Tool {
             this.setupRadiusAdjustment(selectedCityInfo);
           }
 
-          if(item.classList.contains("state-dropdown__link")) {
-            let stateInputSearch = input.value;
+          if (item.classList.contains('state-dropdown__link')) {
+            // Get the full text content of the element
+            let stateInputSearch = item.textContent.trim(); // Remove any leading/trailing whitespace
+
+            // Save it to the window object
             window.stateInputSearch = stateInputSearch;
+
+            console.log(window.stateInputSearch); // Should log "Tennessee"
           }
 
           input.value = itemData.name;
