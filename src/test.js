@@ -38,7 +38,12 @@ $(document).ready(function () {
   }
 
   // Step 2: Function to fetch data for the place
-  const fetchPlaceInfo = async (stateName, placeName) => {
+  const fetchPlaceInfo = async (
+    stateName,
+    placeName,
+    closestOffice,
+    distanceInMiles
+  ) => {
     try {
       // Get the state FIPS code
       const stateFipsCode = getStateFipsCode(stateName.replaceAll(' ', '_'));
@@ -105,7 +110,7 @@ $(document).ready(function () {
             ? 'No data'
             : '$' + formatNumber(Number(medianHomeValue)), // Avg. Home Value
           totalHomeValue, // Total Home Value
-          '', // Closest Office
+          `${closestOffice}(${distanceInMiles})`, // Closest Office
           '', // % of Total Pop
           '', // Cumulative Pop %
           '', // Total Population
@@ -189,27 +194,13 @@ $(document).ready(function () {
 
       const distanceInMiles = (shortestDistance / 1609.34).toFixed(2); // Convert meters to miles
 
-      console.log(`Place: ${placeName}, ${stateName}`);
-      console.log(`Closest Office: ${closestOffice}`);
-      console.log(`Distance to Closest Office: ${shortestDistance} meters`);
-
-      // Match the row using the index in the DataTable
-      table.rows().every(function () {
-        const rowData = this.data(); // Get row data
-        const rowIndex = this.index(); // Get the row index in the DataTable
-        console.log(rowIndex);
-        console.log(i);
-        console.log('-----------------------------');
-        // Now, match the row by the index
-        // Populate column 8 (index 8) with closest office and distance
-        rowData[8] = `Office: ${closestOffice}, Distance: ${shortestDistance}m`; // Format as needed
-
-        // Update the row in the table
-        this.data(rowData).draw();
-      });
-
       // Optionally, call fetchPlaceInfo if needed
-      await fetchPlaceInfo(stateName, placeName);
+      await fetchPlaceInfo(
+        stateName,
+        placeName,
+        closestOffice,
+        distanceInMiles
+      );
     }
 
     document.querySelector(
