@@ -571,13 +571,14 @@ export default class Client {
         return response.json();
       })
       .then((data) => {
-        console.log(data);
         const company = document.getElementById('profile-company');
         const email = document.getElementById('profile-email');
         const website = document.getElementById('profile-website');
         const phone = document.getElementById('profile-phone');
         const companyTitle = document.querySelector('.client_name_text');
         const { client_offices } = data;
+
+        window.singleClientId = data.id;
 
         const img = document.getElementById('client-img');
 
@@ -684,7 +685,7 @@ export default class Client {
 
     // Create the new input field for the office address
     const input = document.createElement('input');
-    input.classList.add('full_name_input', 'w-input');
+    input.classList.add('full_name_input', 'w-input', 'new-office-input');
     input.setAttribute('type', 'text');
     input.setAttribute('maxlength', '256');
     input.setAttribute('name', 'field-2');
@@ -743,6 +744,43 @@ export default class Client {
               // If you want to directly add them as properties, you can do:
               inputElement.lat = item.lat;
               inputElement.lon = item.lon;
+
+              // Prepare the payload for the new_offices API
+              const locations = Array.from(
+                document.querySelectorAll('.new-office-input')
+              )
+                .map((input) => {
+                  const officeAddress = input.value
+                    .trim()
+                    .replaceAll(', United States', '');
+                  const latitude = input.getAttribute('data-latitude');
+                  const longitude = input.getAttribute('data-longitude');
+
+                  if (officeAddress && latitude && longitude) {
+                    // Convert to the required string format
+                    return `{'office_address': '${officeAddress}', 'lan': '${latitude}', 'lon': '${longitude}'}`;
+                  }
+                  return null; // Skip inputs with missing data
+                })
+                .filter((location) => location); // Filter out null values
+
+              const officeData = {
+                client_id: singleClientId,
+                location: '', // Leave location empty as per your requirement
+                locations: locations,
+              };
+
+              fetch(
+                'https://xrux-avyn-v7a8.n7d.xano.io/api:4o1s7k_j/new_offices',
+                {
+                  method: 'POST',
+                  headers: {
+                    Authorization: `Bearer ${authToken}`,
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(officeData),
+                }
+              );
             });
 
             dropdown.appendChild(dropdownItem);
