@@ -18,7 +18,7 @@ export default class Place {
 
     // Process polygons and rectangles
     if (layer instanceof L.Polygon || layer instanceof L.Rectangle) {
-      const latlngs = layer.getLatLngs()[0];
+      let latlngs = layer.getLatLngs()[0];
 
       if (Array.isArray(latlngs[0])) {
         latlngs = latlngs[0];
