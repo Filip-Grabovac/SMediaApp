@@ -189,9 +189,14 @@ $(document).ready(function () {
 
       const distanceInMiles = (shortestDistance / 1609.34).toFixed(2); // Convert meters to miles
 
-      // Add closest office and distance to data[8]
-      table.row.add({
-        8: `${closestOffice} (${distanceInMiles} miles)`,
+      // Update column 8 in the respective row
+      table.rows().every(function () {
+        const data = this.data();
+        if (data[1] === placeName && data[2] === stateName) {
+          // Match place and state
+          data[8] = `${closestOffice} (${distanceInMiles} miles)`; // Update column 8
+          this.data(data); // Save the updated data
+        }
       });
 
       // Call fetchPlaceInfo if needed
