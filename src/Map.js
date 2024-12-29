@@ -62,7 +62,7 @@ export default class Map {
 
           if (radius) {
             // Create a Leaflet circle
-            const circle = L.circle(center, { radius });
+            const circle = L.circle(center, { radius }).addTo(window.map);
 
             // Add the circle to the correct layer (editable or non-editable)
             if (feature.properties && feature.properties.editable === false) {
@@ -99,7 +99,7 @@ export default class Map {
           }
         }
       },
-    }).addTo(window.map); // Add the loaded shapes to the map
+    }); // Add the loaded shapes to the map
   }
 
   drawMap(geojson, place, locations, geojsonPlace) {
