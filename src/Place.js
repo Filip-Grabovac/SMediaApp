@@ -41,8 +41,8 @@ export default class Place {
                 out body;`;
     } else if (layer instanceof L.Circle || layer instanceof L.Marker) {
       console.log(layer);
-      const center = layer.getLatLng();
-      const radius = layer.getRadius();
+      const center = layer._latlng;
+      const radius = layer.feature.properties.radius;
       query = `
                 [out:json];
                 (
