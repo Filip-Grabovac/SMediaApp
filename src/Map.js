@@ -63,6 +63,34 @@ export default class Map {
             feature.properties.classes.join(' ')
           );
         }
+
+        // Handle circle geometry (GeoJSON type: Point)
+        if (feature.geometry && feature.geometry.type === 'Point') {
+          const coordinates = feature.geometry.coordinates;
+          const center = L.latLng(coordinates[1], coordinates[0]); // GeoJSON uses [lng, lat], Leaflet uses [lat, lng]
+          const radius = feature.properties.radius; // Radius in meters (should be stored in properties)
+
+          if (radius) {
+            // Create a Leaflet circle
+            const circle = L.circle(center, { radius });
+
+            // Add the circle to the correct layer (editable or non-editable)
+            if (feature.properties && feature.properties.editable === false) {
+              window.nonEditableItems.addLayer(circle);
+            } else {
+              window.drawnItems.addLayer(circle);
+            }
+
+            // Set the shapeId and classes to the circle
+            circle._path.setAttribute('shapeId', feature.properties.shapeId);
+            if (feature.properties && feature.properties.classes) {
+              circle._path.setAttribute(
+                'class',
+                feature.properties.classes.join(' ')
+              );
+            }
+          }
+        }
       },
     }).addTo(window.map); // Add the loaded shapes to the map
   }
