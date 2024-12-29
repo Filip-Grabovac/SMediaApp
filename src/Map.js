@@ -1,7 +1,6 @@
 //import Tool from './Tool';
 
 import Tool from 'https://smediaapp.pages.dev/src/Tool.js';
-import Place from 'https://smediaapp.pages.dev/src/Place.js';
 
 // User.js
 export default class Map {
@@ -9,7 +8,6 @@ export default class Map {
     this.activeTool = null;
     this.updateButtonState = this.updateButtonState.bind(this);
     this.tool = new Tool(this);
-    this.place = new Place(this);
   }
 
   loadMap() {
@@ -42,10 +40,10 @@ export default class Map {
     window.map.addControl(drawControl);
   }
 
-  loadGeojson(geojson) {
+  loadGeojson(geojson, place) {
     L.geoJSON(geojson, {
       onEachFeature: function (feature, layer) {
-        this.place.processLayer(layer, shapeId);
+        place.processLayer(layer, shapeId);
 
         // Check the feature type to decide whether it's editable or not
         if (feature.properties && feature.properties.editable === false) {
@@ -104,14 +102,14 @@ export default class Map {
     }).addTo(window.map); // Add the loaded shapes to the map
   }
 
-  drawMap(geojson, place, locations) {
+  drawMap(geojson, place, locations, place) {
     // Initialize the map
     this.loadMap();
 
     // Handle GeoJSON data
     if (geojson) {
       if (Object.keys(geojson).length !== 0) {
-        this.loadGeojson(geojson); // Call loadGeoJSON to handle the GeoJSON shapes
+        this.loadGeojson(geojson, place); // Call loadGeoJSON to handle the GeoJSON shapes
       }
     }
 

@@ -222,7 +222,8 @@ export default class Client {
             this.map.drawMap(
               JSON.parse(firstClient.geojson_map.map),
               this.place,
-              firstClient.client_offices
+              firstClient.client_offices,
+              this.place
             );
 
             const clientName = document.querySelector('.client-nav__name');
