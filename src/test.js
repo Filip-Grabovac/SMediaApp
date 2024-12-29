@@ -199,7 +199,6 @@ $(document).ready(function () {
   }
 
   $('.submit-selection').on('click', async function () {
-    console.log(userFactors);
     const notificationElement = document.querySelector('.notification');
     notificationElement.textContent = 'Generating city/town data...';
     notificationElement.classList.remove('hidden');
@@ -233,13 +232,31 @@ $(document).ready(function () {
 
       const distanceInMiles = (shortestDistance / 1609.34).toFixed(2); // Convert meters to miles
 
-      // Optionally, call fetchPlaceInfo if needed
-      await fetchPlaceInfo(
-        stateName,
-        placeName,
-        closestOffice,
-        distanceInMiles
-      );
+      // FIRST DELETE ALREADY EXISTING PLACES IN DATABASE FOR THAT CLIENT
+      const authToken = localStorage.getItem('authToken');
+
+      // Make the POST request
+      fetch('https://xrux-avyn-v7a8.n7d.xano.io/api:4o1s7k_j/delete_places', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: JSON.stringify({ client_id: currentClientId }),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          // Add new places after other places are deleted
+          fetchPlaceInfo(stateName, placeName, closestOffice, distanceInMiles);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
     }
 
     document.querySelector(
