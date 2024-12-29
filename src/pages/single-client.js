@@ -13,6 +13,7 @@ let tool = new Tool();
 const logoutBtn = document.querySelector('.logout-btn');
 const cancelBtn = document.querySelector('.cancel-client-btn');
 const deleteBtn = document.querySelector('.delete_client_button');
+const updateBtn = document.querySelector('#save-client');
 const addNewOfficeButton = document.querySelector('.add_text-link');
 
 // Get client_id from the URL
@@ -49,4 +50,9 @@ deleteBtn.addEventListener('click', function (event) {
 addNewOfficeButton.addEventListener('click', (e) => {
   e.preventDefault();
   client.addNewOfficeField(tool);
+});
+
+updateBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  client.updateClient();
 });

@@ -906,4 +906,54 @@ export default class Client {
       }
     }
   }
+
+  updateClient() {
+    // Get the inputs
+    const clientId = new URLSearchParams(window.location.search).get(
+      'client_id'
+    );
+    const email = document.querySelector('#profile-email').value;
+    const website = document.querySelector('#profile-website').value;
+    const phoneNumber = document.querySelector('#profile-phone').value;
+    const companyName = document.querySelector('#profile-company').value;
+
+    // Get the bearer token from localStorage
+    const authToken = localStorage.getItem('authToken');
+
+    // Construct the request body
+    const requestBody = {
+      clients_id: clientId,
+      email: email,
+      website: website,
+      phone_number: phoneNumber,
+      company_name: companyName,
+    };
+
+    // Make the PATCH request
+    fetch(
+      `https://xrux-avyn-v7a8.n7d.xano.io/api:4o1s7k_j/update_client/${clientId}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: JSON.stringify(requestBody),
+      }
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to update client');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log('Client updated successfully:', data);
+        // Reset the page
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.error('Error updating client:', error);
+      });
+  }
 }
