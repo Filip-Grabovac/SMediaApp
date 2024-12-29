@@ -400,8 +400,11 @@ export default class Map {
           properties: {
             shapeId: shapeId,
             classes: classes ? classes.split(' ') : [],
+            editable: true,
           },
         };
+
+        console.log(layer);
 
         // Handle Polygons and Rectangles
         if (layer.getLatLngs) {
