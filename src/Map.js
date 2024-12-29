@@ -44,6 +44,7 @@ export default class Map {
     L.geoJSON(geojson, {
       onEachFeature: function (feature, layer) {
         console.log(feature);
+
         // Check the feature type to decide whether it's editable or not
         if (feature.properties && feature.properties.editable === false) {
           // Add non-editable shapes to nonEditableItems
@@ -53,17 +54,6 @@ export default class Map {
           window.drawnItems.addLayer(layer);
         }
 
-        // Add the shapeId and classes to the layer (path element)
-        // if (feature.properties && feature.properties.shapeId) {
-        //   layer._path.setAttribute('shapeId', feature.properties.shapeId);
-        // }
-        // if (feature.properties && feature.properties.classes) {
-        //   layer._path.setAttribute(
-        //     'class',
-        //     feature.properties.classes.join(' ')
-        //   );
-        // }
-
         // Handle circle geometry (GeoJSON type: Point)
         if (feature.geometry && feature.geometry.type === 'Point') {
           const coordinates = feature.geometry.coordinates;
@@ -71,7 +61,7 @@ export default class Map {
           const radius = feature.properties.radius; // Radius in meters (should be stored in properties)
 
           if (radius) {
-            // Create a Leaflet circle
+            // Create a Leaflet circle (make sure no marker is added)
             const circle = L.circle(center, { radius });
 
             // Add the circle to the correct layer (editable or non-editable)
@@ -89,7 +79,21 @@ export default class Map {
                 feature.properties.classes.join(' ')
               );
             }
+
+            // We don't want to add this circle's layer to the geoJSON layer group
+            return; // Exit early to avoid the default behavior of adding the layer
           }
+        }
+
+        // Add the shapeId and classes to the layer (path element) for polygons/rectangles
+        if (feature.properties && feature.properties.shapeId) {
+          layer._path.setAttribute('shapeId', feature.properties.shapeId);
+        }
+        if (feature.properties && feature.properties.classes) {
+          layer._path.setAttribute(
+            'class',
+            feature.properties.classes.join(' ')
+          );
         }
       },
     }).addTo(window.map); // Add the loaded shapes to the map
