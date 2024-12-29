@@ -85,6 +85,11 @@ export default class Map {
           return; // Return early to skip default marker creation
         }
 
+        // If the layer is a marker, remove it (if you don't need the marker)
+        if (layer instanceof L.Marker) {
+          window.map.removeLayer(layer);
+        }
+
         // For polygons and rectangles, handle the default layer creation
         if (feature.geometry && feature.geometry.type !== 'Point') {
           // Set the shapeId and classes to the layer (path element)
