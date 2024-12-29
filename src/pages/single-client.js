@@ -16,6 +16,11 @@ const deleteBtn = document.querySelector('.delete_client_button');
 const updateBtn = document.querySelector('#save-client');
 const addNewOfficeButton = document.querySelector('.add_text-link');
 
+/**
+ * SHOW NOTIFICATION AFTER USER UPDATE
+ */
+tool.showNotification();
+
 // Get client_id from the URL
 const urlParams = new URLSearchParams(window.location.search);
 const clientId = urlParams.get('client_id');

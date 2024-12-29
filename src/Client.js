@@ -948,7 +948,7 @@ export default class Client {
         return response.json();
       })
       .then((data) => {
-        console.log('Client updated successfully:', data);
+        localStorage.setItem('notification', 'Client updated successfully');
         // Reset the page
         window.location.reload();
       })
