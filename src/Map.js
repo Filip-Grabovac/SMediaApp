@@ -57,7 +57,7 @@ export default class Map {
         // Apply the custom properties (e.g., class, shapeId) as layer options
         if (feature.properties) {
           layer._leaflet_id = feature.properties.shapeId; // Store shapeId in the layer
-
+          console.log(layer);
           // Handle custom classes
           if (feature.properties.class) {
             layer._path.classList.add(feature.properties.class);
