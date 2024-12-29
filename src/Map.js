@@ -393,6 +393,14 @@ export default class Map {
       if (layer) {
         let geometry = null;
         let editable = true; // Default to editable
+        // Now we create the feature object
+        const feature = {
+          type: 'Feature',
+          geometry, // Use the generated GeoJSON geometry
+          properties: {
+            editable: editable, // Add the editable property
+          },
+        };
 
         // Check if the stroke color is blue to make the shape non-editable
         const strokeColor = shape.getAttribute('stroke');
@@ -419,15 +427,6 @@ export default class Map {
           geometry = {
             type: 'Point', // Representing the center as a Point
             coordinates: [center.lng, center.lat], // GeoJSON uses [lng, lat]
-          };
-
-          // Now we create the feature object
-          const feature = {
-            type: 'Feature',
-            geometry, // Use the generated GeoJSON geometry
-            properties: {
-              editable: editable, // Add the editable property
-            },
           };
 
           // Store additional radius information in properties
