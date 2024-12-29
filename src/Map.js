@@ -42,54 +42,15 @@ export default class Map {
 
   loadGeojson(geojson) {
     L.geoJSON(geojson, {
-      style: function (feature) {
-        // Apply styles based on the properties in the GeoJSON
-        return {
-          color: feature.properties.stroke || '#3388ff', // default stroke color
-          weight: feature.properties['stroke-width'] || 4,
-          opacity: feature.properties['stroke-opacity'] || 0.5,
-          fillColor: feature.properties.fill || '#3388ff',
-          fillOpacity: feature.properties['fill-opacity'] || 0.2,
-          fillRule: feature.properties['fill-rule'] || 'evenodd',
-        };
-      },
       onEachFeature: function (feature, layer) {
-        // Handle shapeId and custom classes
-        if (feature.properties) {
-          layer._leaflet_id = feature.properties.shapeId;
-          if (feature.properties.class) {
-            layer._path && layer._path.classList.add(feature.properties.class);
-          }
-
-          // Add layers to appropriate groups
-          if (feature.properties.editable === false) {
-            window.nonEditableItems.addLayer(layer);
-          } else {
-            window.drawnItems.addLayer(layer);
-          }
+        // Check the feature type to decide whether it's editable or not
+        if (feature.properties && feature.properties.editable === false) {
+          // Add non-editable shapes to nonEditableItems
+          window.nonEditableItems.addLayer(layer);
+        } else {
+          // Add editable shapes to drawnItems
+          window.drawnItems.addLayer(layer);
         }
-
-        // Handle geometry type
-        if (feature.geometry.type === 'Polygon') {
-          // If the geometry is a Polygon, create a polygon layer
-          layer = L.polygon(feature.geometry.coordinates[0]);
-        } else if (
-          feature.geometry.type === 'Point' &&
-          feature.properties.radius
-        ) {
-          // If it's a point with radius, create a circle layer
-          layer = L.circle(
-            [feature.geometry.coordinates[1], feature.geometry.coordinates[0]],
-            {
-              radius: feature.properties.radius,
-            }
-          );
-        } else if (feature.geometry.type === 'LineString') {
-          // If it's a LineString, create a polyline layer
-          layer = L.polyline(feature.geometry.coordinates);
-        }
-
-        // You may need to add more shape handling logic here for other types (like Rectangle, etc.)
       },
     }).addTo(window.map); // Add the loaded shapes to the map
   }
