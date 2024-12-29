@@ -39,7 +39,8 @@ export default class Place {
                     relation["place"~"city|town|village"](${bbox});
                 );
                 out body;`;
-    } else if (layer instanceof L.Circle) {
+    } else if (layer instanceof L.Circle || layer instanceof L.Marker) {
+      console.log(layer);
       const center = layer.getLatLng();
       const radius = layer.getRadius();
       query = `
