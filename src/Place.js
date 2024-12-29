@@ -68,9 +68,6 @@ export default class Place {
       return;
     }
 
-    console.log(query);
-    console.log(shapeId);
-
     this.pendingRequests++;
     this.sendOverpassQuery(query, shapeId, layer);
   }
