@@ -39,8 +39,18 @@ export default class Place {
                     relation["place"~"city|town|village"](${bbox});
                 );
                 out body;`;
-    } else if (layer instanceof L.Circle || layer instanceof L.Marker) {
-      console.log(layer);
+    } else if (layer instanceof L.Circle) {
+      const center = layer.getLatLng();
+      const radius = layer.getRadius();
+      query = `
+                [out:json];
+                (
+                    node["place"~"city|town|village"](around:${radius}, ${center.lat}, ${center.lng});
+                    way["place"~"city|town|village"](around:${radius}, ${center.lat}, ${center.lng});
+                    relation["place"~"city|town|village"](around:${radius}, ${center.lat}, ${center.lng});
+                );
+                out body;`;
+    } else if (layer instanceof L.Marker) {
       const center = layer._latlng;
       const radius = layer.feature.properties.radius;
       query = `
@@ -88,11 +98,25 @@ export default class Place {
         );
         // Check if new drawn shape needs to be added to incuded or excluded section
         const excludeButton = document.querySelector('.option_button.exclude');
-        const citiesWrap = document.querySelector(
-          `.states_wrap.${
-            layer._path.classList.contains('excluded') ? 'excluded' : 'included'
-          }`
-        );
+        let citiesWrap;
+
+        if (layer._path) {
+          citiesWrap = document.querySelector(
+            `.states_wrap.${
+              layer._path.classList.contains('excluded')
+                ? 'excluded'
+                : 'included'
+            }`
+          );
+        } else {
+          citiesWrap = document.querySelector(
+            `.states_wrap.${
+              layer.feature.properties.classes.contains('excluded')
+                ? 'excluded'
+                : 'included'
+            }`
+          );
+        }
 
         this.listPlaces(citiesWrap, cities, shapeId);
       })
