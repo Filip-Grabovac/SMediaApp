@@ -250,13 +250,18 @@ $(document).ready(function () {
           }
           return response.json();
         })
-        .then((data) => {
-          // Add new places after other places are deleted
-          fetchPlaceInfo(stateName, placeName, closestOffice, distanceInMiles);
-        })
+        .then((data) => {})
         .catch((error) => {
           console.error('Error:', error);
         });
+
+      // Optionally, call fetchPlaceInfo if needed
+      await fetchPlaceInfo(
+        stateName,
+        placeName,
+        closestOffice,
+        distanceInMiles
+      );
     }
 
     document.querySelector(
