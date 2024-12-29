@@ -1,3 +1,7 @@
+import Map from './Map';
+
+let map = new Map();
+
 $(document).ready(function () {
   let totalPopulation = 0;
 
@@ -230,6 +234,9 @@ $(document).ready(function () {
     notificationElement.classList.remove('hidden');
 
     table.clear().draw();
+
+    // Save shapes in database
+    map.saveMapInDB();
 
     const stateRows = $('.states_wrap.included .state-row');
     const authToken = localStorage.getItem('authToken');

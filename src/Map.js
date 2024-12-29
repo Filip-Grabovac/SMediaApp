@@ -328,4 +328,64 @@ export default class Map {
       button.classList.remove('active');
     }
   }
+
+  saveMapInDB() {
+    const geojson = {
+      type: 'FeatureCollection',
+      features: [],
+    };
+
+    // Iterate over all layers in the map to collect features
+    window.map.eachLayer((layer) => {
+      if (layer.feature && layer._path) {
+        // Add GeoJSON feature to the features array
+        const feature = {
+          type: 'Feature',
+          geometry: layer.feature.geometry, // Use the geometry from the layer's feature
+          properties: {
+            ...layer.feature.properties, // Copy properties
+          },
+        };
+
+        // Ensure classes and shapeId are correctly parsed
+        const shapeId = layer._path.getAttribute('shapeId');
+        const classes = layer._path.getAttribute('class');
+
+        if (shapeId) {
+          feature.properties.shapeId = shapeId;
+        }
+
+        if (classes) {
+          feature.properties.classes = classes.split(' ');
+        }
+
+        geojson.features.push(feature);
+      }
+    });
+
+    // Construct the API request body
+    const requestBody = {
+      geojson_client_id: currentClientId,
+      map: JSON.stringify(geojson),
+    };
+
+    // Call the API endpoint
+    fetch(
+      `https://xrux-avyn-v7a8.n7d.xano.io/api:4o1s7k_j/geojson_maps/${currentClientId}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Map saved successfully:', data);
+      })
+      .catch((error) => {
+        console.error('Error saving map:', error);
+      });
+  }
 }
