@@ -52,6 +52,17 @@ export default class Map {
           // Add editable shapes to drawnItems
           window.drawnItems.addLayer(layer);
         }
+
+        // Add the shapeId and classes to the layer (path element)
+        if (feature.properties && feature.properties.shapeId) {
+          layer._path.setAttribute('shapeId', feature.properties.shapeId);
+        }
+        if (feature.properties && feature.properties.classes) {
+          layer._path.setAttribute(
+            'class',
+            feature.properties.classes.join(' ')
+          );
+        }
       },
     }).addTo(window.map); // Add the loaded shapes to the map
   }
