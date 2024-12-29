@@ -64,7 +64,7 @@ export default class Map {
 
           if (radius) {
             // Create a Leaflet circle
-            const circle = L.circle(center, { radius });
+            const circle = L.circle([34.70330856647071, -92.98828125], { radius });
 
             // Add the circle to the correct layer (editable or non-editable)
             if (feature.properties && feature.properties.editable === false) {
