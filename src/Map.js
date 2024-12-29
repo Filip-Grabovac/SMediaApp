@@ -421,20 +421,20 @@ export default class Map {
             coordinates: [center.lng, center.lat], // GeoJSON uses [lng, lat]
           };
 
+          // Now we create the feature object
+          const feature = {
+            type: 'Feature',
+            geometry, // Use the generated GeoJSON geometry
+            properties: {
+              editable: editable, // Add the editable property
+            },
+          };
+
           // Store additional radius information in properties
           feature.properties.radius = radius;
         }
 
         if (geometry) {
-          const feature = {
-            type: 'Feature',
-            geometry, // Use the generated GeoJSON geometry
-            properties: {
-              ...layer.feature?.properties, // Copy properties if available
-              editable: editable, // Add the editable property
-            },
-          };
-
           // Add shapeId and classes to properties
           feature.properties.shapeId = shapeId;
           if (classes) {
