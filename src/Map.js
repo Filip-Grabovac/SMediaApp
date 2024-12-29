@@ -43,7 +43,7 @@ export default class Map {
   loadGeojson(geojson) {
     L.geoJSON(geojson, {
       style: function (feature) {
-        // Apply styles based on the properties in the GeoJSON
+        console.log(feature);
         return {
           color: feature.properties.stroke || '#3388ff', // default stroke color
           weight: feature.properties['stroke-width'] || 4,
@@ -54,11 +54,12 @@ export default class Map {
         };
       },
       onEachFeature: function (feature, layer) {
-        // Handle shapeId and custom classes
+        console.log(feature);
+        console.log(layer);
         if (feature.properties) {
-          layer._leaflet_id = feature.properties.shapeId;
+          layer._leaflet_id = feature.properties.shapeId; // Assign custom shape ID
           if (feature.properties.class) {
-            layer._path && layer._path.classList.add(feature.properties.class);
+            layer._path && layer._path.classList.add(feature.properties.class); // Assign custom class if present
           }
 
           // Add layers to appropriate groups based on 'editable' property
