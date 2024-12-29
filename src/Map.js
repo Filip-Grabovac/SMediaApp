@@ -62,7 +62,7 @@ export default class Map {
 
           if (radius) {
             // Create a Leaflet circle
-            const circle = L.circle([-92.98828125, 34.70330856647071], {
+            const circle = L.circle([34.70330856647071, -92.98828125], {
               radius,
             }).addTo(window.map);
 
