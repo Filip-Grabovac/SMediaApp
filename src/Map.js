@@ -350,6 +350,8 @@ export default class Map {
         (l) => l._path === shape
       );
 
+      console.log(layer);
+
       if (layer && layer.getLatLngs) {
         // Extract latlngs and convert to GeoJSON geometry
         const latlngs = layer.getLatLngs()[0]; // Use the first array for polygons
