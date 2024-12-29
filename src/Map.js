@@ -339,33 +339,37 @@ export default class Map {
     const shapes = document.querySelectorAll('.leaflet-interactive');
 
     shapes.forEach((shape) => {
-      console.log(shape);
       // Retrieve shapeId and class attributes
       const shapeId = shape.getAttribute('shapeId');
-      if (!shapeId) return;
+      if (!shapeId) return; // Skip shapes without a shapeId
 
       const classes = shape.getAttribute('class');
 
-      // Access geometry data from the corresponding Leaflet layer
+      // Find the corresponding Leaflet layer
       const layer = Object.values(window.map._layers).find(
         (l) => l._path === shape
       );
 
-      console.log(layer);
+      if (layer && layer.getLatLngs) {
+        // Extract latlngs and convert to GeoJSON geometry
+        const latlngs = layer.getLatLngs()[0]; // Use the first array for polygons
+        const geometry = {
+          type: 'Polygon',
+          coordinates: [
+            latlngs.map((latlng) => [latlng.lng, latlng.lat]), // Format as [lng, lat]
+          ],
+        };
 
-      if (layer && layer.feature && layer.feature.geometry) {
         const feature = {
           type: 'Feature',
-          geometry: layer.feature.geometry, // Use geometry from the layer's feature
+          geometry, // Use the converted GeoJSON geometry
           properties: {
-            ...layer.feature.properties, // Copy properties
+            ...layer.feature?.properties, // Copy properties if available
           },
         };
 
         // Add shapeId and classes to properties
-        if (shapeId) {
-          feature.properties.shapeId = shapeId;
-        }
+        feature.properties.shapeId = shapeId;
         if (classes) {
           feature.properties.classes = classes.split(' ');
         }
@@ -376,7 +380,7 @@ export default class Map {
 
     // Check if features are populated
     if (geojson.features.length === 0) {
-      console.error('No shapes found or features collected.');
+      console.error('No shapes found with valid shapeId.');
       return;
     }
 
