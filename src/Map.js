@@ -153,14 +153,6 @@ export default class Map {
         this.tool.edit();
       }.bind(this)
     );
-
-    // Example: Saving current shapes as GeoJSON
-    document
-      .getElementById('save-geojson')
-      .addEventListener('click', function () {
-        const geojsonData = window.drawnItems.toGeoJSON();
-        console.log('Saved GeoJSON:', JSON.stringify(geojsonData));
-      });
   }
 
   addPinsToMap(locations) {
