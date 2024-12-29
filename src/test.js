@@ -99,7 +99,7 @@ $(document).ready(function () {
       table.row
         .add([
           '',
-          fullPlaceName, // City
+          fullPlaceName.split(',')[0].trim(), // City
           stateName, // State
           formatNumber(Number(population)), // Population
           medianHouseholdIncome === 'No data'
@@ -122,6 +122,46 @@ $(document).ready(function () {
           '', // Weighted Score
         ])
         .draw(); // Add row and update the table
+
+      // ADD PLACE INTO DB
+      // Parse the authToken from localStorage
+      const authToken = localStorage.getItem('authToken');
+
+      // Static data to be sent in the request body
+      const requestBody = {
+        client_id: currentClientId,
+        place: fullPlaceName.split(',')[0].trim(),
+        state: stateName,
+        population: population,
+        household_income:
+          medianHouseholdIncome === 'No data'
+            ? 'No data'
+            : '$' + medianHouseholdIncome,
+        s_family_home: singleFamilyHomes,
+        avg_home_value:
+          medianHomeValue === 'No data' ? 'No data' : '$' + medianHomeValue,
+        closest_office: `${closestOffice} - ${distanceInMiles} miles`,
+      };
+
+      // Make the POST request
+      fetch('https://xrux-avyn-v7a8.n7d.xano.io/api:4o1s7k_j/add_place', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: JSON.stringify(requestBody),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {})
+        .catch((error) => {
+          console.error('Error:', error);
+        });
     } catch (error) {
       console.error('Error fetching data:', error);
     }
