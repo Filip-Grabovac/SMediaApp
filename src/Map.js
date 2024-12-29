@@ -366,31 +366,16 @@ export default class Map {
 
         // Handle Circles
         if (layer.getLatLng && layer._mRadius) {
-          const center = layer.getLatLng();
-          const radius = layer._mRadius;
-
-          // Generate points around the circle's circumference
-          const numPoints = 64; // Number of points to approximate the circle
-          const angleStep = (2 * Math.PI) / numPoints;
-          const coordinates = [];
-
-          for (let i = 0; i < numPoints; i++) {
-            const angle = i * angleStep;
-            const lat = center.lat + (radius / 111320) * Math.cos(angle); // Approx. degrees per meter
-            const lng =
-              center.lng +
-              (radius / (111320 * Math.cos((center.lat * Math.PI) / 180))) *
-                Math.sin(angle);
-            coordinates.push([lng, lat]);
-          }
-
-          // Close the circle by repeating the first point
-          coordinates.push(coordinates[0]);
+          const center = layer.getLatLng(); // Center of the circle
+          const radius = layer._mRadius; // Radius in meters
 
           geometry = {
-            type: 'Polygon',
-            coordinates: [coordinates],
+            type: 'Point', // Representing the center as a Point
+            coordinates: [center.lng, center.lat], // GeoJSON uses [lng, lat]
           };
+
+          // Store additional radius information in properties
+          feature.properties.radius = radius;
         }
 
         if (geometry) {
