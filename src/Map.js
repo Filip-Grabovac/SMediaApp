@@ -42,13 +42,12 @@ export default class Map {
 
   loadGeojson(geojson) {
     L.geoJSON(geojson, {
-      // Style function
+      // Style function to control the appearance of the polygon
       style: function (feature) {
         console.log(feature); // Debug: Check feature properties and geometry
 
-        // Ensure that style uses feature properties correctly
         return {
-          color: feature.properties.stroke || '#3388ff', // default stroke color
+          color: feature.properties.stroke || '#3388ff', // Default stroke color
           weight: feature.properties['stroke-width'] || 4,
           opacity: feature.properties['stroke-opacity'] || 0.5,
           fillColor: feature.properties.fill || '#3388ff',
@@ -56,10 +55,10 @@ export default class Map {
           fillRule: feature.properties['fill-rule'] || 'evenodd',
         };
       },
-      // onEachFeature function to handle features
+      // onEachFeature function to handle features and assign properties
       onEachFeature: function (feature, layer) {
-        console.log(feature); // Debug: Check the entire feature
-        console.log(layer); // Debug: Check layer object
+        console.log(feature); // Debug: Log feature object
+        console.log(layer); // Debug: Log the layer object
 
         if (feature.properties) {
           // Assign the custom shapeId (for internal use or identification)
@@ -70,12 +69,18 @@ export default class Map {
             layer._path && layer._path.classList.add(feature.properties.class);
           }
 
-          // Debugging: Confirm that the geometry is being added correctly
+          // Check and log the geometry of the feature
           if (feature.geometry && feature.geometry.coordinates) {
             console.log('Geometry:', feature.geometry.coordinates);
+
+            // Debugging: Check if the path is created correctly
+            const path = layer._path;
+            if (path) {
+              console.log('Path Data:', path.getAttribute('d'));
+            }
           }
 
-          // Add the layer to the appropriate group based on 'editable' property
+          // Add the layer to the appropriate group based on the 'editable' property
           if (feature.properties.editable === false) {
             window.nonEditableItems.addLayer(layer);
           } else {
@@ -83,7 +88,7 @@ export default class Map {
           }
         }
       },
-      // Add layer to map
+      // Add layer to the map
     }).addTo(window.map);
   }
 
