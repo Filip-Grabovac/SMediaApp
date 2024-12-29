@@ -71,10 +71,10 @@ export default class Place {
     }
 
     this.pendingRequests++;
-    this.sendOverpassQuery(query, shapeId);
+    this.sendOverpassQuery(query, shapeId, layer);
   }
 
-  sendOverpassQuery(query, shapeId) {
+  sendOverpassQuery(query, shapeId, layer) {
     fetch('https://overpass-api.de/api/interpreter', {
       method: 'POST',
       body: query,
@@ -88,7 +88,7 @@ export default class Place {
         const excludeButton = document.querySelector('.option_button.exclude');
         const citiesWrap = document.querySelector(
           `.states_wrap.${
-            excludeButton.classList.contains('active') ? 'excluded' : 'included'
+            layer._path.classList.contains('excluded') ? 'excluded' : 'included'
           }`
         );
 
