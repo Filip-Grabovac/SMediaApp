@@ -16,7 +16,7 @@ export default class Place {
     this.tool.showNotification('List is Generating', true);
     let query;
 
-    console.log(layer);
+    console.log(L);
 
     // Process polygons and rectangles
     if (layer instanceof L.Polygon || layer instanceof L.Rectangle) {
