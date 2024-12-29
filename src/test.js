@@ -198,6 +198,32 @@ $(document).ready(function () {
     return { closestOffice, shortestDistance };
   }
 
+  // Define the function to handle the delete_places request
+  async function deletePlaces(clientId, authToken) {
+    try {
+      const response = await fetch(
+        'https://xrux-avyn-v7a8.n7d.xano.io/api:4o1s7k_j/delete_places',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: JSON.stringify({ client_id: clientId }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error in deletePlaces:', error);
+      throw error; // Re-throw the error to handle it where called
+    }
+  }
+
   $('.submit-selection').on('click', async function () {
     const notificationElement = document.querySelector('.notification');
     notificationElement.textContent = 'Generating city/town data...';
@@ -234,34 +260,20 @@ $(document).ready(function () {
 
       // FIRST DELETE ALREADY EXISTING PLACES IN DATABASE FOR THAT CLIENT
       const authToken = localStorage.getItem('authToken');
+      try {
+        // Wait for deletePlaces to complete
+        await deletePlaces(currentClientId, authToken);
 
-      // Make the POST request
-      fetch('https://xrux-avyn-v7a8.n7d.xano.io/api:4o1s7k_j/delete_places', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${authToken}`,
-        },
-        body: JSON.stringify({ client_id: currentClientId }),
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then((data) => {})
-        .catch((error) => {
-          console.error('Error:', error);
-        });
-
-      // Optionally, call fetchPlaceInfo if needed
-      await fetchPlaceInfo(
-        stateName,
-        placeName,
-        closestOffice,
-        distanceInMiles
-      );
+        // After the delete request finishes, call fetchPlaceInfo
+        await fetchPlaceInfo(
+          stateName,
+          placeName,
+          closestOffice,
+          distanceInMiles
+        );
+      } catch (error) {
+        console.error('Error during deletion or fetching place info:', error);
+      }
     }
 
     document.querySelector(
