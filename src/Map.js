@@ -1,6 +1,7 @@
 //import Tool from './Tool';
 
 import Tool from 'https://smediaapp.pages.dev/src/Tool.js';
+import Place from 'https://smediaapp.pages.dev/src/Place.js';
 
 // User.js
 export default class Map {
@@ -8,6 +9,7 @@ export default class Map {
     this.activeTool = null;
     this.updateButtonState = this.updateButtonState.bind(this);
     this.tool = new Tool(this);
+    this.place = new Place(this);
   }
 
   loadMap() {
@@ -43,7 +45,7 @@ export default class Map {
   loadGeojson(geojson) {
     L.geoJSON(geojson, {
       onEachFeature: function (feature, layer) {
-        console.log(feature);
+        this.place.processLayer(layer, shapeId);
 
         // Check the feature type to decide whether it's editable or not
         if (feature.properties && feature.properties.editable === false) {
@@ -83,11 +85,6 @@ export default class Map {
 
           // Prevent Leaflet from creating a default marker for the point geometry
           return; // Return early to skip default marker creation
-        }
-
-        // If the layer is a marker, remove it (if you don't need the marker)
-        if (layer instanceof L.Marker) {
-          window.map.removeLayer(layer);
         }
 
         // For polygons and rectangles, handle the default layer creation
