@@ -350,33 +350,66 @@ export default class Map {
         (l) => l._path === shape
       );
 
-      console.log(layer);
+      if (layer) {
+        let geometry = null;
 
-      if (layer && layer.getLatLngs) {
-        // Extract latlngs and convert to GeoJSON geometry
-        const latlngs = layer.getLatLngs()[0]; // Use the first array for polygons
-        const geometry = {
-          type: 'Polygon',
-          coordinates: [
-            latlngs.map((latlng) => [latlng.lng, latlng.lat]), // Format as [lng, lat]
-          ],
-        };
-
-        const feature = {
-          type: 'Feature',
-          geometry, // Use the converted GeoJSON geometry
-          properties: {
-            ...layer.feature?.properties, // Copy properties if available
-          },
-        };
-
-        // Add shapeId and classes to properties
-        feature.properties.shapeId = shapeId;
-        if (classes) {
-          feature.properties.classes = classes.split(' ');
+        // Handle Polygons and Rectangles
+        if (layer.getLatLngs) {
+          const latlngs = layer.getLatLngs()[0]; // Use the first array for polygons
+          geometry = {
+            type: 'Polygon',
+            coordinates: [
+              latlngs.map((latlng) => [latlng.lng, latlng.lat]), // Format as [lng, lat]
+            ],
+          };
         }
 
-        geojson.features.push(feature);
+        // Handle Circles
+        if (layer.getLatLng && layer._mRadius) {
+          const center = layer.getLatLng();
+          const radius = layer._mRadius;
+
+          // Generate points around the circle's circumference
+          const numPoints = 64; // Number of points to approximate the circle
+          const angleStep = (2 * Math.PI) / numPoints;
+          const coordinates = [];
+
+          for (let i = 0; i < numPoints; i++) {
+            const angle = i * angleStep;
+            const lat = center.lat + (radius / 111320) * Math.cos(angle); // Approx. degrees per meter
+            const lng =
+              center.lng +
+              (radius / (111320 * Math.cos((center.lat * Math.PI) / 180))) *
+                Math.sin(angle);
+            coordinates.push([lng, lat]);
+          }
+
+          // Close the circle by repeating the first point
+          coordinates.push(coordinates[0]);
+
+          geometry = {
+            type: 'Polygon',
+            coordinates: [coordinates],
+          };
+        }
+
+        if (geometry) {
+          const feature = {
+            type: 'Feature',
+            geometry, // Use the generated GeoJSON geometry
+            properties: {
+              ...layer.feature?.properties, // Copy properties if available
+            },
+          };
+
+          // Add shapeId and classes to properties
+          feature.properties.shapeId = shapeId;
+          if (classes) {
+            feature.properties.classes = classes.split(' ');
+          }
+
+          geojson.features.push(feature);
+        }
       }
     });
 
