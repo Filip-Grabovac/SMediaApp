@@ -337,7 +337,8 @@ export default class Map {
 
     // Iterate over all layers in the map to collect features
     window.map.eachLayer((layer) => {
-      if (layer.feature && layer._path) {
+      if (layer.feature && layer.feature.geometry) {
+        // Ensure feature and geometry exist
         // Add GeoJSON feature to the features array
         const feature = {
           type: 'Feature',
@@ -347,21 +348,34 @@ export default class Map {
           },
         };
 
+        console.log(feature);
+        console.log(layer);
+
         // Ensure classes and shapeId are correctly parsed
-        const shapeId = layer._path.getAttribute('shapeId');
-        const classes = layer._path.getAttribute('class');
+        if (layer._path) {
+          const shapeId = layer._path.getAttribute('shapeId');
+          const classes = layer._path.getAttribute('class');
 
-        if (shapeId) {
-          feature.properties.shapeId = shapeId;
-        }
+          if (shapeId) {
+            feature.properties.shapeId = shapeId;
+          }
 
-        if (classes) {
-          feature.properties.classes = classes.split(' ');
+          if (classes) {
+            feature.properties.classes = classes.split(' ');
+          }
         }
 
         geojson.features.push(feature);
+      } else {
+        console.warn('Skipped layer:', layer); // Log skipped layers for debugging
       }
     });
+
+    // Check if features are populated
+    if (geojson.features.length === 0) {
+      console.error('No features were collected from the map.');
+      return;
+    }
 
     // Construct the API request body
     const requestBody = {
