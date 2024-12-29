@@ -102,14 +102,14 @@ export default class Map {
     }).addTo(window.map); // Add the loaded shapes to the map
   }
 
-  drawMap(geojson, place, locations, place) {
+  drawMap(geojson, place, locations, geojsonPlace) {
     // Initialize the map
     this.loadMap();
 
     // Handle GeoJSON data
     if (geojson) {
       if (Object.keys(geojson).length !== 0) {
-        this.loadGeojson(geojson, place); // Call loadGeoJSON to handle the GeoJSON shapes
+        this.loadGeojson(geojson, geojsonPlace); // Call loadGeoJSON to handle the GeoJSON shapes
       }
     }
 
