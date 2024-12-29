@@ -373,9 +373,10 @@ export default class Map {
     fetch(
       `https://xrux-avyn-v7a8.n7d.xano.io/api:4o1s7k_j/geojson_maps/${currentClientId}`,
       {
-        method: 'POST',
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`, // Retrieve authToken from localStorage
         },
         body: JSON.stringify(requestBody),
       }
