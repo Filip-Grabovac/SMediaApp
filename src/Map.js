@@ -390,8 +390,6 @@ export default class Map {
         (l) => l._path === shape
       );
 
-      console.log(layer);
-
       if (layer) {
         let geometry = null;
         let feature = {
@@ -404,7 +402,10 @@ export default class Map {
           },
         };
 
-        console.log(layer);
+        const strokeColor = layer.options.color;
+        if (strokeColor && strokeColor.toLowerCase() === 'blue') {
+          feature.properties.editable = false; // Set editable to false for blue stroke
+        }
 
         // Handle Polygons and Rectangles
         if (layer.getLatLngs) {
