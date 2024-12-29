@@ -42,14 +42,33 @@ export default class Map {
 
   loadGeojson(geojson) {
     L.geoJSON(geojson, {
+      style: function (feature) {
+        // Apply styles based on the properties in the GeoJSON
+        return {
+          color: feature.properties.stroke || '#3388ff', // default stroke color
+          weight: feature.properties['stroke-width'] || 4,
+          opacity: feature.properties['stroke-opacity'] || 0.5,
+          fillColor: feature.properties.fill || '#3388ff',
+          fillOpacity: feature.properties['fill-opacity'] || 0.2,
+          fillRule: feature.properties['fill-rule'] || 'evenodd',
+        };
+      },
       onEachFeature: function (feature, layer) {
-        // Check the feature type to decide whether it's editable or not
-        if (feature.properties && feature.properties.editable === false) {
-          // Add non-editable shapes to nonEditableItems
-          window.nonEditableItems.addLayer(layer);
-        } else {
-          // Add editable shapes to drawnItems
-          window.drawnItems.addLayer(layer);
+        // Apply the custom properties (e.g., class, shapeId) as layer options
+        if (feature.properties) {
+          layer._leaflet_id = feature.properties.shapeId; // Store shapeId in the layer
+
+          // Handle custom classes
+          if (feature.properties.class) {
+            layer._path.classList.add(feature.properties.class);
+          }
+
+          // Handle editable property
+          if (feature.properties.editable === false) {
+            window.nonEditableItems.addLayer(layer);
+          } else {
+            window.drawnItems.addLayer(layer);
+          }
         }
       },
     }).addTo(window.map); // Add the loaded shapes to the map
