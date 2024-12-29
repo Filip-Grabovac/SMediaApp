@@ -55,7 +55,7 @@ export default class Map {
         }
 
         // Handle circle geometry (GeoJSON type: Circle)
-        if (feature.geometry && feature.geometry.type === 'Circle') {
+        if (feature.geometry && feature.geometry.type === 'Point') {
           const coordinates = feature.geometry.coordinates;
           const center = L.latLng(coordinates[1], coordinates[0]); // GeoJSON uses [lng, lat], Leaflet uses [lat, lng]
           const radius = feature.properties.radius; // Radius in meters (stored in properties)
@@ -88,7 +88,7 @@ export default class Map {
         }
 
         // For polygons and rectangles, handle the default layer creation
-        if (feature.geometry && feature.geometry.type !== 'Circle') {
+        if (feature.geometry && feature.geometry.type !== 'Point') {
           // Set the shapeId and classes to the layer (path element)
           if (feature.properties && feature.properties.shapeId) {
             layer._path.setAttribute('shapeId', feature.properties.shapeId);
