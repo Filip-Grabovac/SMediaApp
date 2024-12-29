@@ -1,4 +1,4 @@
-import Map from './Map';
+import Map from 'https://smediaapp.pages.dev/src/Map.js';
 
 let map = new Map();
 
