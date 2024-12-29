@@ -42,54 +42,18 @@ export default class Map {
 
   loadGeojson(geojson) {
     L.geoJSON(geojson, {
-      // Style function to control the appearance of the polygon
-      style: function (feature) {
-        console.log(feature); // Debug: Check feature properties and geometry
-
-        return {
-          color: feature.properties.stroke || '#3388ff', // Default stroke color
-          weight: feature.properties['stroke-width'] || 4,
-          opacity: feature.properties['stroke-opacity'] || 0.5,
-          fillColor: feature.properties.fill || '#3388ff',
-          fillOpacity: feature.properties['fill-opacity'] || 0.2,
-          fillRule: feature.properties['fill-rule'] || 'evenodd',
-        };
-      },
-      // onEachFeature function to handle features and assign properties
       onEachFeature: function (feature, layer) {
-        console.log(feature); // Debug: Log feature object
-        console.log(layer); // Debug: Log the layer object
-
-        if (feature.properties) {
-          // Assign the custom shapeId (for internal use or identification)
-          layer._leaflet_id = feature.properties.shapeId;
-
-          // If there's a class in the properties, add it to the layer's path
-          if (feature.properties.class) {
-            layer._path && layer._path.classList.add(feature.properties.class);
-          }
-
-          // Check and log the geometry of the feature
-          if (feature.geometry && feature.geometry.coordinates) {
-            console.log('Geometry:', feature.geometry.coordinates);
-
-            // Debugging: Check if the path is created correctly
-            const path = layer._path;
-            if (path) {
-              console.log('Path Data:', path.getAttribute('d'));
-            }
-          }
-
-          // Add the layer to the appropriate group based on the 'editable' property
-          if (feature.properties.editable === false) {
-            window.nonEditableItems.addLayer(layer);
-          } else {
-            window.drawnItems.addLayer(layer);
-          }
+        console.log(feature);
+        // Check the feature type to decide whether it's editable or not
+        if (feature.properties && feature.properties.editable === false) {
+          // Add non-editable shapes to nonEditableItems
+          window.nonEditableItems.addLayer(layer);
+        } else {
+          // Add editable shapes to drawnItems
+          window.drawnItems.addLayer(layer);
         }
       },
-      // Add layer to the map
-    }).addTo(window.map);
+    }).addTo(window.map); // Add the loaded shapes to the map
   }
 
   drawMap(geojson, place, locations) {
