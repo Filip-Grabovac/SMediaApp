@@ -17,8 +17,11 @@ export default class Place {
     let query;
 
     console.log(L);
-    console.log(layer instanceof L.Circle);
-    console.log(layer instanceof L.CircleMarker);
+    console.log(layer instanceof L.Circle); // Checks if the layer is an instance of L.Circle
+    console.log(layer instanceof L.CircleMarker); // Checks if the layer is an instance of L.CircleMarker
+    console.log(layer instanceof L.Polygon); // Checks if the layer is an instance of L.Polygon
+    console.log(layer instanceof L.Rectangle); // Checks if the layer is an instance of L.Rectangle
+    console.log(layer instanceof L.Marker);
 
     // Process polygons and rectangles
     if (layer instanceof L.Polygon || layer instanceof L.Rectangle) {
