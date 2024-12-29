@@ -42,8 +42,11 @@ export default class Map {
 
   loadGeojson(geojson) {
     L.geoJSON(geojson, {
+      // Style function
       style: function (feature) {
-        console.log(feature);
+        console.log(feature); // Debug: Check feature properties and geometry
+
+        // Ensure that style uses feature properties correctly
         return {
           color: feature.properties.stroke || '#3388ff', // default stroke color
           weight: feature.properties['stroke-width'] || 4,
@@ -53,16 +56,26 @@ export default class Map {
           fillRule: feature.properties['fill-rule'] || 'evenodd',
         };
       },
+      // onEachFeature function to handle features
       onEachFeature: function (feature, layer) {
-        console.log(feature);
-        console.log(layer);
+        console.log(feature); // Debug: Check the entire feature
+        console.log(layer); // Debug: Check layer object
+
         if (feature.properties) {
-          layer._leaflet_id = feature.properties.shapeId; // Assign custom shape ID
+          // Assign the custom shapeId (for internal use or identification)
+          layer._leaflet_id = feature.properties.shapeId;
+
+          // If there's a class in the properties, add it to the layer's path
           if (feature.properties.class) {
-            layer._path && layer._path.classList.add(feature.properties.class); // Assign custom class if present
+            layer._path && layer._path.classList.add(feature.properties.class);
           }
 
-          // Add layers to appropriate groups based on 'editable' property
+          // Debugging: Confirm that the geometry is being added correctly
+          if (feature.geometry && feature.geometry.coordinates) {
+            console.log('Geometry:', feature.geometry.coordinates);
+          }
+
+          // Add the layer to the appropriate group based on 'editable' property
           if (feature.properties.editable === false) {
             window.nonEditableItems.addLayer(layer);
           } else {
@@ -70,7 +83,8 @@ export default class Map {
           }
         }
       },
-    }).addTo(window.map); // Add the loaded shapes to the map
+      // Add layer to map
+    }).addTo(window.map);
   }
 
   drawMap(geojson, place, locations) {
