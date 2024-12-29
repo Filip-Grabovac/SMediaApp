@@ -54,15 +54,15 @@ export default class Map {
         }
 
         // Add the shapeId and classes to the layer (path element)
-        if (feature.properties && feature.properties.shapeId) {
-          layer._path.setAttribute('shapeId', feature.properties.shapeId);
-        }
-        if (feature.properties && feature.properties.classes) {
-          layer._path.setAttribute(
-            'class',
-            feature.properties.classes.join(' ')
-          );
-        }
+        // if (feature.properties && feature.properties.shapeId) {
+        //   layer._path.setAttribute('shapeId', feature.properties.shapeId);
+        // }
+        // if (feature.properties && feature.properties.classes) {
+        //   layer._path.setAttribute(
+        //     'class',
+        //     feature.properties.classes.join(' ')
+        //   );
+        // }
 
         // Handle circle geometry (GeoJSON type: Point)
         if (feature.geometry && feature.geometry.type === 'Point') {
