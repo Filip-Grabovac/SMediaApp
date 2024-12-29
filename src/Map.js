@@ -339,14 +339,19 @@ export default class Map {
     const shapes = document.querySelectorAll('.leaflet-interactive');
 
     shapes.forEach((shape) => {
+      console.log(shape);
       // Retrieve shapeId and class attributes
       const shapeId = shape.getAttribute('shapeId');
+      if (!shapeId) return;
+
       const classes = shape.getAttribute('class');
 
       // Access geometry data from the corresponding Leaflet layer
       const layer = Object.values(window.map._layers).find(
         (l) => l._path === shape
       );
+
+      console.log(layer);
 
       if (layer && layer.feature && layer.feature.geometry) {
         const feature = {
