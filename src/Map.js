@@ -390,6 +390,8 @@ export default class Map {
         (l) => l._path === shape
       );
 
+      console.log(layer);
+
       if (layer) {
         let geometry = null;
         let feature = {
