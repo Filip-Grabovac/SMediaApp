@@ -54,22 +54,33 @@ export default class Map {
         };
       },
       onEachFeature: function (feature, layer) {
-        // Apply the custom properties (e.g., class, shapeId) as layer options
+        // Store the shapeId in the layer's leaflet_id
         if (feature.properties) {
           layer._leaflet_id = feature.properties.shapeId; // Store shapeId in the layer
-          console.log(layer);
-          // Handle custom classes
+
+          // Handle custom classes if available
           if (feature.properties.class) {
-            layer._path.classList.add(feature.properties.class);
+            layer._path && layer._path.classList.add(feature.properties.class);
           }
 
-          // Handle editable property
+          // Check the editable flag and add to the correct group
           if (feature.properties.editable === false) {
             window.nonEditableItems.addLayer(layer);
           } else {
             window.drawnItems.addLayer(layer);
           }
         }
+
+        // Handle different types of geometries (Polygon, Circle, Rectangle, etc.)
+        if (layer instanceof L.Polygon) {
+          // For polygons, you might want to do additional handling if needed
+        } else if (layer instanceof L.Circle) {
+          // For circles, you can further adjust properties if needed
+        } else if (layer instanceof L.Rectangle) {
+          // For rectangles, handle them as needed
+        }
+
+        // You can access and manipulate the geometry using layer._latlngs here if necessary
       },
     }).addTo(window.map); // Add the loaded shapes to the map
   }
