@@ -62,7 +62,7 @@ export default class Map {
 
           if (radius) {
             // Create a Leaflet circle
-            const circle = L.circle(center, { radius }).addTo(window.map);
+            const circle = L.circle(center, { radius });
 
             // Add the circle to the correct layer (editable or non-editable)
             if (feature.properties && feature.properties.editable === false) {
@@ -85,7 +85,7 @@ export default class Map {
           return; // Return early to skip default marker creation
         }
 
-        // For polygons, rectangles, and other shapes, handle the default layer creation
+        // For polygons and rectangles, handle the default layer creation
         if (feature.geometry && feature.geometry.type !== 'Point') {
           // Set the shapeId and classes to the layer (path element)
           if (feature.properties && feature.properties.shapeId) {
@@ -420,7 +420,7 @@ export default class Map {
           const radius = layer._mRadius; // Radius in meters
 
           geometry = {
-            type: 'Circle', // Representing the center as a Point
+            type: 'Point', // Representing the center as a Point
             coordinates: [center.lng, center.lat], // GeoJSON uses [lng, lat]
           };
 
