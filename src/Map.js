@@ -54,16 +54,14 @@ export default class Map {
         };
       },
       onEachFeature: function (feature, layer) {
-        // Store the shapeId in the layer's leaflet_id
+        // Handle shapeId and custom classes
         if (feature.properties) {
-          layer._leaflet_id = feature.properties.shapeId; // Store shapeId in the layer
-
-          // Handle custom classes if available
+          layer._leaflet_id = feature.properties.shapeId;
           if (feature.properties.class) {
             layer._path && layer._path.classList.add(feature.properties.class);
           }
 
-          // Check the editable flag and add to the correct group
+          // Add layers to appropriate groups
           if (feature.properties.editable === false) {
             window.nonEditableItems.addLayer(layer);
           } else {
@@ -71,16 +69,27 @@ export default class Map {
           }
         }
 
-        // Handle different types of geometries (Polygon, Circle, Rectangle, etc.)
-        if (layer instanceof L.Polygon) {
-          // For polygons, you might want to do additional handling if needed
-        } else if (layer instanceof L.Circle) {
-          // For circles, you can further adjust properties if needed
-        } else if (layer instanceof L.Rectangle) {
-          // For rectangles, handle them as needed
+        // Handle geometry type
+        if (feature.geometry.type === 'Polygon') {
+          // If the geometry is a Polygon, create a polygon layer
+          layer = L.polygon(feature.geometry.coordinates[0]);
+        } else if (
+          feature.geometry.type === 'Point' &&
+          feature.properties.radius
+        ) {
+          // If it's a point with radius, create a circle layer
+          layer = L.circle(
+            [feature.geometry.coordinates[1], feature.geometry.coordinates[0]],
+            {
+              radius: feature.properties.radius,
+            }
+          );
+        } else if (feature.geometry.type === 'LineString') {
+          // If it's a LineString, create a polyline layer
+          layer = L.polyline(feature.geometry.coordinates);
         }
 
-        // You can access and manipulate the geometry using layer._latlngs here if necessary
+        // You may need to add more shape handling logic here for other types (like Rectangle, etc.)
       },
     }).addTo(window.map); // Add the loaded shapes to the map
   }
