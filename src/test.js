@@ -232,6 +232,14 @@ $(document).ready(function () {
     table.clear().draw();
 
     const stateRows = $('.states_wrap.included .state-row');
+    const authToken = localStorage.getItem('authToken');
+
+    // FIRST DELETE ALREADY EXISTING PLACES IN DATABASE FOR THAT CLIENT
+    try {
+      await deletePlaces(currentClientId, authToken);
+    } catch (error) {
+      return; // Exit early if deletion fails
+    }
 
     for (let i = 0; i < stateRows.length; i++) {
       const stateRow = $(stateRows[i]);
@@ -258,22 +266,13 @@ $(document).ready(function () {
 
       const distanceInMiles = (shortestDistance / 1609.34).toFixed(2); // Convert meters to miles
 
-      // FIRST DELETE ALREADY EXISTING PLACES IN DATABASE FOR THAT CLIENT
-      const authToken = localStorage.getItem('authToken');
-      try {
-        // Wait for deletePlaces to complete
-        await deletePlaces(currentClientId, authToken);
-
-        // After the delete request finishes, call fetchPlaceInfo
-        await fetchPlaceInfo(
-          stateName,
-          placeName,
-          closestOffice,
-          distanceInMiles
-        );
-      } catch (error) {
-        console.error('Error during deletion or fetching place info:', error);
-      }
+      // Optionally, call fetchPlaceInfo if needed
+      await fetchPlaceInfo(
+        stateName,
+        placeName,
+        closestOffice,
+        distanceInMiles
+      );
     }
 
     document.querySelector(
