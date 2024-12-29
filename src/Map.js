@@ -390,18 +390,15 @@ export default class Map {
         (l) => l._path === shape
       );
 
-      console.log(layer);
-
       if (layer) {
         let geometry = null;
-        let feature = {
-          type: 'Feature',
-          geometry: null,
-          properties: {
-            shapeId: shapeId,
-            classes: classes ? classes.split(' ') : [],
-          },
-        };
+        let editable = true; // Default to editable
+
+        // Check if the stroke color is blue to make the shape non-editable
+        const strokeColor = shape.getAttribute('stroke');
+        if (strokeColor && strokeColor.toLowerCase() === 'blue') {
+          editable = false; // Set editable to false for blue stroke
+        }
 
         // Handle Polygons and Rectangles
         if (layer.getLatLngs) {
@@ -412,7 +409,6 @@ export default class Map {
               latlngs.map((latlng) => [latlng.lng, latlng.lat]), // Format as [lng, lat]
             ],
           };
-          feature.geometry = geometry;
         }
 
         // Handle Circles
@@ -426,12 +422,26 @@ export default class Map {
           };
 
           // Store additional radius information in properties
-          feature.geometry = geometry;
           feature.properties.radius = radius;
         }
 
-        if (feature.geometry) {
-          geojson.features.push(feature); // Add feature to GeoJSON
+        if (geometry) {
+          const feature = {
+            type: 'Feature',
+            geometry, // Use the generated GeoJSON geometry
+            properties: {
+              ...layer.feature?.properties, // Copy properties if available
+              editable: editable, // Add the editable property
+            },
+          };
+
+          // Add shapeId and classes to properties
+          feature.properties.shapeId = shapeId;
+          if (classes) {
+            feature.properties.classes = classes.split(' ');
+          }
+
+          geojson.features.push(feature);
         }
       }
     });
