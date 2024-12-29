@@ -17,6 +17,8 @@ export default class Place {
     let query;
 
     console.log(L);
+    console.log(layer instanceof L.Circle);
+    console.log(layer instanceof L.CircleMarker);
 
     // Process polygons and rectangles
     if (layer instanceof L.Polygon || layer instanceof L.Rectangle) {
