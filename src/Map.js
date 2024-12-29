@@ -337,6 +337,7 @@ export default class Map {
 
     // Iterate over all layers in the map to collect features
     window.map.eachLayer((layer) => {
+      console.log(layer);
       if (layer.feature && layer.feature.geometry) {
         // Ensure feature and geometry exist
         // Add GeoJSON feature to the features array
