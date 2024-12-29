@@ -335,46 +335,43 @@ export default class Map {
       features: [],
     };
 
-    // Iterate over all layers in the map to collect features
-    window.map.eachLayer((layer) => {
-      console.log(layer);
-      if (layer.feature && layer.feature.geometry) {
-        // Ensure feature and geometry exist
-        // Add GeoJSON feature to the features array
+    // Select all shapes with the class .leaflet-interactive
+    const shapes = document.querySelectorAll('.leaflet-interactive');
+
+    shapes.forEach((shape) => {
+      // Retrieve shapeId and class attributes
+      const shapeId = shape.getAttribute('shapeId');
+      const classes = shape.getAttribute('class');
+
+      // Access geometry data from the corresponding Leaflet layer
+      const layer = Object.values(window.map._layers).find(
+        (l) => l._path === shape
+      );
+
+      if (layer && layer.feature && layer.feature.geometry) {
         const feature = {
           type: 'Feature',
-          geometry: layer.feature.geometry, // Use the geometry from the layer's feature
+          geometry: layer.feature.geometry, // Use geometry from the layer's feature
           properties: {
             ...layer.feature.properties, // Copy properties
           },
         };
 
-        console.log(feature);
-        console.log(layer);
-
-        // Ensure classes and shapeId are correctly parsed
-        if (layer._path) {
-          const shapeId = layer._path.getAttribute('shapeId');
-          const classes = layer._path.getAttribute('class');
-
-          if (shapeId) {
-            feature.properties.shapeId = shapeId;
-          }
-
-          if (classes) {
-            feature.properties.classes = classes.split(' ');
-          }
+        // Add shapeId and classes to properties
+        if (shapeId) {
+          feature.properties.shapeId = shapeId;
+        }
+        if (classes) {
+          feature.properties.classes = classes.split(' ');
         }
 
         geojson.features.push(feature);
-      } else {
-        console.warn('Skipped layer:', layer); // Log skipped layers for debugging
       }
     });
 
     // Check if features are populated
     if (geojson.features.length === 0) {
-      console.error('No features were collected from the map.');
+      console.error('No shapes found or features collected.');
       return;
     }
 
