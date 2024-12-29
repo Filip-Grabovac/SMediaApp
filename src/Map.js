@@ -61,7 +61,7 @@ export default class Map {
           const radius = feature.properties.radius; // Radius in meters (stored in properties)
 
           if (radius) {
-            // Create a Leaflet circle (no marker)
+            // Create a Leaflet circle
             const circle = L.circle(center, { radius });
 
             // Add the circle to the correct layer (editable or non-editable)
@@ -81,8 +81,8 @@ export default class Map {
             }
           }
 
-          // Prevent L.geoJSON from creating a marker
-          return; // Return early to prevent any other default actions
+          // Prevent Leaflet from creating a default marker for the point geometry
+          return; // Return early to skip default marker creation
         }
 
         // For polygons and rectangles, handle the default layer creation
