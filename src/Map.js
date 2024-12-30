@@ -485,6 +485,8 @@ export default class Map {
 
         // Iterate through the fetched data and populate the table
         data.forEach((item) => {
+          console.log(item);
+
           table.row
             .add([
               '',
