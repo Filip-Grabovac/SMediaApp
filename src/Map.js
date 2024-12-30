@@ -634,7 +634,7 @@ export default class Map {
       data[12] = normalizedPopulation; // Norm. Pop
       data[13] = normalizedAvgIncome; // Norm. Avg. Household Income
       data[14] = normalizedSingleFamilyHomes; // Norm. Single Family Homes
-      data[15] = isNan(normalizedAvgHomeValue)
+      data[15] = isNaN(normalizedAvgHomeValue)
         ? 'No data'
         : normalizedAvgHomeValue; // Norm. Avg. Home Value
       data[17] = weightedScore || 0; // Weighted Score
