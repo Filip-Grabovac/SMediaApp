@@ -478,6 +478,8 @@ export default class Map {
         return response.json();
       })
       .then((data) => {
+        console.log(data);
+
         if (data.length === 0) {
           console.log('No data to preload.');
           return;
@@ -485,8 +487,6 @@ export default class Map {
 
         // Iterate through the fetched data and populate the table
         data.forEach((item) => {
-          console.log(item);
-
           table.row
             .add([
               '',
