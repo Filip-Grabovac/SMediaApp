@@ -494,8 +494,29 @@ export default class Map {
           return;
         }
 
-        // Populate the table
+        // Variables to calculate min and max for normalization
+        let minDistance = Infinity;
+        let maxDistance = -Infinity;
+
+        // Iterate through the data to find min and max distance
         data.forEach((item) => {
+          const distanceMatch = item.closest_office?.match(/([\d.]+) miles$/);
+          const distance = distanceMatch ? parseFloat(distanceMatch[1]) : 0;
+          if (distance < minDistance) minDistance = distance;
+          if (distance > maxDistance) maxDistance = distance;
+        });
+
+        // Iterate through the fetched data and populate the table
+        data.forEach((item) => {
+          const distanceMatch = item.closest_office?.match(/([\d.]+) miles$/);
+          const distance = distanceMatch ? parseFloat(distanceMatch[1]) : 0;
+
+          // Normalize the distance
+          const normalizedDistance =
+            maxDistance !== minDistance
+              ? (distance - minDistance) / (maxDistance - minDistance)
+              : 0;
+
           table.row
             .add([
               '',
@@ -520,16 +541,13 @@ export default class Map {
               '', // Norm. Avg. Household Income
               '', // Norm. Approx. # of Single Family Homes
               '', // Norm. Avg. Home Value
-              '', // Norm. Closest Office
+              normalizedDistance || 0, // Norm. Distance
               '', // Weighted Score
             ])
             .draw();
         });
 
         console.log('Table preloaded successfully!');
-
-        // Perform calculations
-        this.calculateAndNormalizeTableData(table);
       })
       .catch((error) => {
         console.error('Error preloading data:', error);
@@ -547,8 +565,6 @@ export default class Map {
     let maxSingleFamilyHomes = -Infinity;
     let minAvgHomeValue = Infinity;
     let maxAvgHomeValue = -Infinity;
-    let minDistance = Infinity;
-    let maxDistance = -Infinity;
 
     const dataRows = table.rows().data();
 
@@ -600,12 +616,6 @@ export default class Map {
       const normalizedAvgHomeValue =
         (avgHomeValue - minAvgHomeValue) / (maxAvgHomeValue - minAvgHomeValue);
 
-      // Extract and normalize distance
-      const distanceMatch = data[8]?.match(/([\d.]+) miles$/);
-      const distance = distanceMatch ? parseFloat(distanceMatch[1]) : 0;
-      const normalizedDistance =
-        (distance - minDistance) / (maxDistance - minDistance);
-
       const weightedScore =
         userFactors.population_factor * (normalizedPopulation || 0) +
         userFactors.avg_household_income_factor * (normalizedAvgIncome || 0) +
@@ -619,7 +629,6 @@ export default class Map {
       data[13] = normalizedAvgIncome; // Norm. Avg. Household Income
       data[14] = normalizedSingleFamilyHomes; // Norm. Single Family Homes
       data[15] = normalizedAvgHomeValue; // Norm. Avg. Home Value
-      data[16] = normalizedDistance; // Norm. Avg. Home Value
       data[17] = weightedScore || 0; // Weighted Score
 
       this.data(data);
