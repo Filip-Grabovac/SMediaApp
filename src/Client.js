@@ -205,8 +205,6 @@ export default class Client {
 
             window.currentClientId = firstClient.id;
 
-            this.map.preLoadTable(mainTable, currentClientId);
-
             // Save factors into global variable
             const userFactors = {
               avg_home_value_factor: firstClient.avg_home_value_factor,
@@ -220,6 +218,8 @@ export default class Client {
             };
 
             window.userFactors = userFactors;
+
+            this.map.preLoadTable(mainTable, currentClientId);
 
             this.map.drawMap(
               JSON.parse(firstClient.geojson_map.map),
