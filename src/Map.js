@@ -656,24 +656,34 @@ export default class Map {
       const lat = parseFloat(stateRow.attr('data-lat'));
       const lon = parseFloat(stateRow.attr('data-lon'));
 
+      const shapeId = `excluded-${stateRow.attr('shapeid')}`; // Unique ID for the circle
+
       if (stateRow.closest('.states_wrap').hasClass('included')) {
         // Move the state-row to the excluded wrapper
         excludedWrapper.append(stateRow);
 
         // Add a red circle to the map
-        map.addCircle({
-          lat: lat,
-          lon: lon,
-          color: 'red',
-          radius: 5, // Adjust the radius as needed
-          id: `excluded-${stateRow.attr('shapeid')}`, // Unique ID for the circle
-        });
+        if (typeof map.addLayer === 'function') {
+          const circle = L.circle([lat, lon], {
+            color: 'red',
+            fillColor: 'red',
+            fillOpacity: 0.5,
+            radius: 500, // Adjust radius as needed
+          }).addTo(map);
+
+          // Store the circle on the stateRow for easy removal
+          stateRow.data('circle', circle);
+        }
       } else {
         // Move the state-row back to the included wrapper
         includedWrapper.append(stateRow);
 
-        // Remove the red circle from the map
-        map.removeCircle(`excluded-${stateRow.attr('shapeid')}`);
+        // Remove the red circle from the map if it exists
+        const circle = stateRow.data('circle');
+        if (circle) {
+          map.removeLayer(circle);
+          stateRow.removeData('circle'); // Clear the reference
+        }
       }
     });
   }
