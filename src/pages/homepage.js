@@ -205,3 +205,5 @@ place.searchIncludedExcludedPlaces(
   '.input-search.excluded-search',
   '.states_wrap.excluded'
 );
+
+map.toggleStateRow();

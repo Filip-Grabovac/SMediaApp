@@ -645,4 +645,36 @@ export default class Map {
     // Sort table by weighted score
     table.order([17, 'desc']).draw();
   }
+
+  toggleStateRow() {
+    // Attach event listener to the SVG icon within each state-row
+    $(document).on('click', '.state-row .toggle-arrow-svg', function () {
+      const stateRow = $(this).closest('.state-row'); // Get the clicked state-row element
+      const includedWrapper = $('.states_wrap.included');
+      const excludedWrapper = $('.states_wrap.excluded');
+
+      const lat = parseFloat(stateRow.attr('data-lat'));
+      const lon = parseFloat(stateRow.attr('data-lon'));
+
+      if (stateRow.closest('.states_wrap').hasClass('included')) {
+        // Move the state-row to the excluded wrapper
+        excludedWrapper.append(stateRow);
+
+        // Add a red circle to the map
+        map.addCircle({
+          lat: lat,
+          lon: lon,
+          color: 'red',
+          radius: 5, // Adjust the radius as needed
+          id: `excluded-${stateRow.attr('shapeid')}`, // Unique ID for the circle
+        });
+      } else {
+        // Move the state-row back to the included wrapper
+        includedWrapper.append(stateRow);
+
+        // Remove the red circle from the map
+        map.removeCircle(`excluded-${stateRow.attr('shapeid')}`);
+      }
+    });
+  }
 }
