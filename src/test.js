@@ -20,6 +20,8 @@ $(document).ready(function () {
     },
   });
 
+  map.preloadTable(table);
+
   // Hide the original search input
   $('#main-data-table_filter').hide();
 

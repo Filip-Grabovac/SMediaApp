@@ -467,4 +467,58 @@ export default class Map {
         console.error('Error saving map:', error);
       });
   }
+
+  preLoadTable(table) {
+    // Fetch the data from the API
+    fetch('https://xrux-avyn-v7a8.n7d.xano.io/api:4o1s7k_j/clients_places')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data.length === 0) {
+          console.log('No data to preload.');
+          return;
+        }
+
+        // Iterate through the fetched data and populate the table
+        data.forEach((item) => {
+          table.row
+            .add([
+              '',
+              item.place, // City
+              item.state, // State
+              formatNumber(Number(item.population)), // Population
+              item.household_income, // Avg. Household Income
+              formatNumber(Number(item.s_family_home)), // Approx. # of Single Family Homes
+              item.avg_home_value, // Avg. Home Value
+              item.avg_home_value === 'No data'
+                ? 'No data'
+                : `$${formatNumber(
+                    Number(
+                      item.avg_home_value.replace('$', '').replace(/,/g, '')
+                    ) * Number(item.s_family_home)
+                  )}`, // Total Home Value
+              item.closest_office, // Closest Office
+              '', // % of Total Pop
+              '', // Cumulative Pop %
+              '', // Total Population
+              '', // Norm. Pop
+              '', // Norm. Avg. Household Income
+              '', // Norm. Approx. # of Single Family Homes
+              '', // Norm. Avg. Home Value
+              '', // Norm. Closest Office
+              '', // Weighted Score
+            ])
+            .draw();
+        });
+
+        console.log('Table preloaded successfully!');
+      })
+      .catch((error) => {
+        console.error('Error preloading data:', error);
+      });
+  }
 }
