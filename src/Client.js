@@ -205,7 +205,7 @@ export default class Client {
 
             window.currentClientId = firstClient.id;
 
-            this.map.preLoadTable(mainTable, formatNumber, currentClientId);
+            this.map.preLoadTable(mainTable, currentClientId);
 
             // Save factors into global variable
             const userFactors = {

@@ -475,7 +475,7 @@ export default class Map {
     return number.toLocaleString('en-US');
   }
 
-  preLoadTable(table, formatNumber, currentClientId) {
+  preLoadTable(table, currentClientId) {
     // Fetch the data from the API
     fetch(
       `https://xrux-avyn-v7a8.n7d.xano.io/api:4o1s7k_j/clients_places?client_id=${currentClientId}`
