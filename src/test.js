@@ -27,6 +27,8 @@ $(document).ready(function () {
     return number.toLocaleString('en-US');
   }
 
+  console.log(currentClientId);
+
   map.preLoadTable(table, formatNumber, currentClientId);
 
   // Hide the original search input
