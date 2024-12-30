@@ -20,7 +20,7 @@ $(document).ready(function () {
     },
   });
 
-  map.preloadTable(table);
+  map.preLoadTable(table);
 
   // Hide the original search input
   $('#main-data-table_filter').hide();
