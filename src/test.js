@@ -20,7 +20,14 @@ $(document).ready(function () {
     },
   });
 
-  map.preLoadTable(table);
+  function formatNumber(number) {
+    if (number === null || number === undefined || isNaN(number)) {
+      return '';
+    }
+    return number.toLocaleString('en-US');
+  }
+
+  map.preLoadTable(table, formatNumber);
 
   // Hide the original search input
   $('#main-data-table_filter').hide();
@@ -35,13 +42,6 @@ $(document).ready(function () {
   const getStateFipsCode = (stateName) => {
     return statesFips[stateName]; // Assuming statesFips is accessible
   };
-
-  function formatNumber(number) {
-    if (number === null || number === undefined || isNaN(number)) {
-      return '';
-    }
-    return number.toLocaleString('en-US');
-  }
 
   // Step 2: Function to fetch data for the place
   const fetchPlaceInfo = async (
