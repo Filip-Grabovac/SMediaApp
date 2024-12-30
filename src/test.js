@@ -27,7 +27,7 @@ $(document).ready(function () {
     return number.toLocaleString('en-US');
   }
 
-  map.preLoadTable(table, formatNumber);
+  map.preLoadTable(table, formatNumber, currentClientId);
 
   // Hide the original search input
   $('#main-data-table_filter').hide();

@@ -468,10 +468,10 @@ export default class Map {
       });
   }
 
-  preLoadTable(table, formatNumber) {
+  preLoadTable(table, formatNumber, currentClientId) {
     // Fetch the data from the API
     fetch(
-      `https://xrux-avyn-v7a8.n7d.xano.io/api:4o1s7k_j/clients_places?client_id=180`
+      `https://xrux-avyn-v7a8.n7d.xano.io/api:4o1s7k_j/clients_places?client_id=${currentClientId}`
     )
       .then((response) => {
         if (!response.ok) {
