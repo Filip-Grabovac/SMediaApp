@@ -20,16 +20,14 @@ $(document).ready(function () {
     },
   });
 
+  window.mainTable = table;
+
   function formatNumber(number) {
     if (number === null || number === undefined || isNaN(number)) {
       return '';
     }
     return number.toLocaleString('en-US');
   }
-
-  console.log(currentClientId);
-
-  map.preLoadTable(table, formatNumber, currentClientId);
 
   // Hide the original search input
   $('#main-data-table_filter').hide();

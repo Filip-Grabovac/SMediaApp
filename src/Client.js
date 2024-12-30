@@ -205,6 +205,8 @@ export default class Client {
 
             window.currentClientId = firstClient.id;
 
+            this.map.preLoadTable(mainTable, formatNumber, currentClientId);
+
             // Save factors into global variable
             const userFactors = {
               avg_home_value_factor: firstClient.avg_home_value_factor,

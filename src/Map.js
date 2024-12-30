@@ -468,6 +468,13 @@ export default class Map {
       });
   }
 
+  formatNumber(number) {
+    if (number === null || number === undefined || isNaN(number)) {
+      return '';
+    }
+    return number.toLocaleString('en-US');
+  }
+
   preLoadTable(table, formatNumber, currentClientId) {
     // Fetch the data from the API
     fetch(
@@ -494,13 +501,13 @@ export default class Map {
               '',
               item.place, // City
               item.state, // State
-              formatNumber(Number(item.population)), // Population
+              this.formatNumber(Number(item.population)), // Population
               item.household_income, // Avg. Household Income
-              formatNumber(Number(item.s_family_home)), // Approx. # of Single Family Homes
+              this.formatNumber(Number(item.s_family_home)), // Approx. # of Single Family Homes
               item.avg_home_value, // Avg. Home Value
               item.avg_home_value === 'No data'
                 ? 'No data'
-                : `$${formatNumber(
+                : `$${this.formatNumber(
                     Number(
                       item.avg_home_value.replace('$', '').replace(/,/g, '')
                     ) * Number(item.s_family_home)
