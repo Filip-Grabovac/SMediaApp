@@ -488,12 +488,12 @@ export default class Map {
       })
       .then((data) => {
         console.log(data);
-  
+
         if (data.length === 0) {
           console.log('No data to preload.');
           return;
         }
-  
+
         // Populate the table
         data.forEach((item) => {
           table.row
@@ -525,17 +525,17 @@ export default class Map {
             ])
             .draw();
         });
-  
+
         console.log('Table preloaded successfully!');
-  
+
         // Perform calculations
         this.calculateAndNormalizeTableData(table);
       })
       .catch((error) => {
         console.error('Error preloading data:', error);
       });
-  },
-  
+  }
+
   calculateAndNormalizeTableData(table) {
     // Initialize variables for min and max values
     let totalPopulation = 0;
@@ -547,47 +547,47 @@ export default class Map {
     let maxSingleFamilyHomes = -Infinity;
     let minAvgHomeValue = Infinity;
     let maxAvgHomeValue = -Infinity;
-  
+
     const dataRows = table.rows().data();
-  
+
     // Calculate min/max values and total population
     dataRows.each((row) => {
       const population = parseInt(row[3].replace(/,/g, ''), 10);
       const avgHouseholdIncome = parseInt(row[4].replace(/[^0-9]/g, ''), 10);
       const singleFamilyHomes = parseInt(row[5].replace(/,/g, ''), 10);
       const avgHomeValue = parseInt(row[6].replace(/[^0-9]/g, ''), 10);
-  
+
       totalPopulation += population;
-  
+
       if (population < minPopulation) minPopulation = population;
       if (population > maxPopulation) maxPopulation = population;
-  
+
       if (avgHouseholdIncome < minAvgIncome) minAvgIncome = avgHouseholdIncome;
       if (avgHouseholdIncome > maxAvgIncome) maxAvgIncome = avgHouseholdIncome;
-  
+
       if (singleFamilyHomes < minSingleFamilyHomes)
         minSingleFamilyHomes = singleFamilyHomes;
       if (singleFamilyHomes > maxSingleFamilyHomes)
         maxSingleFamilyHomes = singleFamilyHomes;
-  
+
       if (avgHomeValue < minAvgHomeValue) minAvgHomeValue = avgHomeValue;
       if (avgHomeValue > maxAvgHomeValue) maxAvgHomeValue = avgHomeValue;
     });
-  
+
     // Normalize data and compute weighted scores
     let cumulativePercentage = 0;
-  
+
     table.rows().every(function () {
       const data = this.data();
-  
+
       const population = parseInt(data[3].replace(/,/g, ''), 10);
       const avgHouseholdIncome = parseInt(data[4].replace(/[^0-9]/g, ''), 10);
       const singleFamilyHomes = parseInt(data[5].replace(/,/g, ''), 10);
       const avgHomeValue = parseInt(data[6].replace(/[^0-9]/g, ''), 10);
-  
+
       const percentage = population / totalPopulation;
       cumulativePercentage += percentage;
-  
+
       const normalizedPopulation =
         (population - minPopulation) / (maxPopulation - minPopulation);
       const normalizedAvgIncome =
@@ -597,14 +597,14 @@ export default class Map {
         (maxSingleFamilyHomes - minSingleFamilyHomes);
       const normalizedAvgHomeValue =
         (avgHomeValue - minAvgHomeValue) / (maxAvgHomeValue - minAvgHomeValue);
-  
+
       const weightedScore =
         userFactors.population_factor * (normalizedPopulation || 0) +
         userFactors.avg_household_income_factor * (normalizedAvgIncome || 0) +
         userFactors.single_family_homes_factor *
           (normalizedSingleFamilyHomes || 0) +
         userFactors.avg_home_value_factor * (normalizedAvgHomeValue || 0);
-  
+
       data[9] = `${(percentage * 100).toFixed(2)}%`; // % of Total Pop
       data[10] = `${(cumulativePercentage * 100).toFixed(2)}%`; // Cumulative Pop %
       data[12] = normalizedPopulation; // Norm. Pop
@@ -612,10 +612,10 @@ export default class Map {
       data[14] = normalizedSingleFamilyHomes; // Norm. Single Family Homes
       data[15] = normalizedAvgHomeValue; // Norm. Avg. Home Value
       data[17] = weightedScore || 0; // Weighted Score
-  
+
       this.data(data);
     });
-  
+
     // Sort table by weighted score
     table.order([17, 'desc']).draw();
   }
