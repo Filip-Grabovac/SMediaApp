@@ -594,6 +594,10 @@ export default class Map {
       if (avgHomeValue > maxAvgHomeValue) maxAvgHomeValue = avgHomeValue;
     });
 
+    document.querySelector(
+      '.total-population-element'
+    ).textContent = `(${totalPopulation.toLocaleString('en-US')})`;
+
     // Normalize data and compute weighted scores
     let cumulativePercentage = 0;
 
