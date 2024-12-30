@@ -629,14 +629,14 @@ export default class Map {
           (normalizedSingleFamilyHomes || 0) +
         userFactors.avg_home_value_factor * (normalizedAvgHomeValue || 0);
 
-      console.log(normalizedAvgHomeValue);
-
       data[9] = `${(percentage * 100).toFixed(2)}%`; // % of Total Pop
       data[10] = `${(cumulativePercentage * 100).toFixed(2)}%`; // Cumulative Pop %
       data[12] = normalizedPopulation; // Norm. Pop
       data[13] = normalizedAvgIncome; // Norm. Avg. Household Income
       data[14] = normalizedSingleFamilyHomes; // Norm. Single Family Homes
-      data[15] = normalizedAvgHomeValue; // Norm. Avg. Home Value
+      data[15] = isNan(normalizedAvgHomeValue)
+        ? 'No data'
+        : normalizedAvgHomeValue; // Norm. Avg. Home Value
       data[17] = weightedScore || 0; // Weighted Score
 
       this.data(data);
