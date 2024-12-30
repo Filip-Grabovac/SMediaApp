@@ -548,6 +548,8 @@ export default class Map {
         });
 
         console.log('Table preloaded successfully!');
+
+        this.calculateAndNormalizeTableData(table);
       })
       .catch((error) => {
         console.error('Error preloading data:', error);
