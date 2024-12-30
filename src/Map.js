@@ -674,6 +674,9 @@ export default class Map {
           // Store the circle on the stateRow for easy removal
           stateRow.data('circle', circle);
         }
+
+        // Update included and excluded numbers
+        updateCount();
       } else {
         // Move the state-row back to the included wrapper
         includedWrapper.append(stateRow);
@@ -684,7 +687,20 @@ export default class Map {
           map.removeLayer(circle);
           stateRow.removeData('circle'); // Clear the reference
         }
+
+        // Update included and excluded numbers
+        updateCount();
       }
     });
+
+    // Function to update the counts of included and excluded state rows
+    function updateCount() {
+      const includedCount = $('.states_wrap.included .state-row').length;
+      const excludedCount = $('.states_wrap.excluded .state-row').length;
+
+      // Update the placeholder numbers
+      $('.included-num__placeholder').text(includedCount);
+      $('.excluded-num__placeholder').text(excludedCount);
+    }
   }
 }
