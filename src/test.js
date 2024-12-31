@@ -186,7 +186,7 @@ $(document).ready(function () {
       const officeLon = parseFloat(officeData.lon);
 
       const response = await fetch(
-        `https://graphhopper.com/api/1/route?point=${placeLat},${placeLon}&point=${officeLat},${officeLon}&vehicle=car&key=90c67888-ff29-4663-b84f-ba2a711c9d77`
+        `https://graphhopper.com/api/1/route?point=${placeLat},${placeLon}&point=${officeLat},${officeLon}&vehicle=car&key=9f047c7e-8c26-46e3-8445-51b85d290dfb`
       );
 
       const data = await response.json();
