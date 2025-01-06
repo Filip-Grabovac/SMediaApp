@@ -370,6 +370,7 @@ export default class Client {
       single_family_homes_factor: factors['Number of single-family homes'],
       avg_home_value_factor: factors['Average home value'],
       distance_from_hq_factor: factors['Distance from nearest office'],
+      client_img: client.client_img || null,
     };
 
     fetch('https://xrux-avyn-v7a8.n7d.xano.io/api:4o1s7k_j/clients', {
