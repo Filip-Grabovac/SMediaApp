@@ -438,8 +438,8 @@ export default class Client {
         return response.json();
       })
       .then((officeResponse) => {
-        location.reload();
-        localStorage.setItem('notification', 'Client created successfully');
+        // location.reload();
+        // localStorage.setItem('notification', 'Client created successfully');
       })
       .catch((error) => {
         console.error('Error:', error);
