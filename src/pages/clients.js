@@ -23,7 +23,6 @@ const newAddressBtn = document.querySelector('.new-address__btn');
 const uploadArea = document.getElementById('upload-area');
 const fileInput = document.getElementById('fileElem');
 const preview = document.getElementById('preview');
-const rangeTooltips = document.querySelectorAll('.factor-range');
 const addressInput = document.querySelector('.company-office-address');
 
 let clientData = {
@@ -102,25 +101,6 @@ nextStepButton.addEventListener('click', (e) => {
   }
   client.modalNextStep(step);
   client.updateModalContent(e);
-
-  // UPDATE RANGE TOOLTIP POPULATION
-  rangeTooltips.forEach((toolt) => {
-    // Get the tooltip corresponding to this range input
-    let tooltip = document.querySelector(
-      `[tooltip-id="${toolt.getAttribute('range-id')}"]`
-    );
-
-    tool.updateTooltipPosition(toolt, tooltip);
-
-    toolt.addEventListener('input', function (e) {
-      tooltip.textContent = e.target.value;
-      client.validateSecondStepInput();
-
-      if (tooltip) {
-        tool.updateTooltipPosition(e.target, tooltip);
-      }
-    });
-  });
 });
 
 form.addEventListener('input', () => {
