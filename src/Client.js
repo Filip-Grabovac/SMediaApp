@@ -335,22 +335,41 @@ export default class Client {
   addNewClient(client) {
     const authToken = localStorage.getItem('authToken');
 
+    // Get the rows dynamically based on the current order
+    const rows = document.querySelectorAll('#factors-table tbody tr');
+
+    // Map weights based on factor names
+    const factors = {
+      Population: 0,
+      'Average household income': 0,
+      'Number of single-family homes': 0,
+      'Average home value': 0,
+      'Distance from nearest office': 0,
+    };
+
+    // Iterate over rows to extract factor names and weights
+    rows.forEach((row) => {
+      const factorName = row.querySelector('td:nth-child(2)').innerText.trim();
+      const weightValue =
+        parseFloat(row.querySelector('td:nth-child(3) p').innerText.trim()) ||
+        0;
+
+      if (factors.hasOwnProperty(factorName)) {
+        factors[factorName] = weightValue;
+      }
+    });
+
+    // Build client data object dynamically from the extracted weights
     const clientData = {
       company_name: client.company_name,
       email: client.email,
       website: client.website,
       phone_number: client.phone_number,
-      population_factor:
-        parseFloat(document.getElementById('population').value) || 0,
-      avg_household_income_factor:
-        parseFloat(document.getElementById('avg-income').value) || 0,
-      single_family_homes_factor:
-        parseFloat(document.getElementById('num-homes').value) || 0,
-      avg_home_value_factor:
-        parseFloat(document.getElementById('avg-home-value').value) || 0,
-      distance_from_hq_factor:
-        parseFloat(document.getElementById('distance-hq').value) || 0,
-      client_img: client.client_img || null,
+      population_factor: factors['Population'],
+      avg_household_income_factor: factors['Average household income'],
+      single_family_homes_factor: factors['Number of single-family homes'],
+      avg_home_value_factor: factors['Average home value'],
+      distance_from_hq_factor: factors['Distance from nearest office'],
     };
 
     fetch('https://xrux-avyn-v7a8.n7d.xano.io/api:4o1s7k_j/clients', {
