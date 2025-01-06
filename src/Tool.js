@@ -295,7 +295,7 @@ export default class Tool {
         });
         if (item.classList.contains('zip-dropdown__link')) {
           item.addEventListener('click', () => {
-            this.zipDraw(itemData, this.place);
+            this.zipDraw(itemData);
           });
         }
 
@@ -413,16 +413,11 @@ export default class Tool {
     tooltip.style.left = `${thumbPosition - tooltipWidth / 2 + 33}px`; // +10 centers it relative to the thumb
   }
 
-  zipDraw(itemData, place) {
+  zipDraw(itemData) {
     const zipCode = itemData.name.match(/^\d+/)?.[0];
     const authToken = localStorage.getItem('authToken');
 
     if (zipCode) {
-      // Generate unique shapeId
-      const shapeId = `shape-${Date.now()}-${Math.random()
-        .toString(36)
-        .substr(2, 9)}`;
-
       // Fetch ZIP code boundary data from Xano
       fetch(
         `https://xrux-avyn-v7a8.n7d.xano.io/api:4o1s7k_j/get_zip_geojson?zipCode=${zipCode}`,
@@ -464,22 +459,18 @@ export default class Tool {
               fillOpacity: 0.3,
             }).addTo(map);
 
-            // Add class and set shapeId for the polygon element
             boundaryPolygon
               .getElement()
               .classList.add('custom-polygon__searched');
-            boundaryPolygon.getElement().setAttribute('shapeId', shapeId);
 
             if (this.excludedBtn.classList.contains('active')) {
               boundaryPolygon.getElement().classList.add('excluded');
             }
 
-            // Process the layer using the shapeId
-            place.processLayer(boundaryPolygon, shapeId);
-
             // Fit map bounds to the polygon and add to non-editable items
             map.fitBounds(boundaryPolygon.getBounds());
             window.nonEditableItems.addLayer(boundaryPolygon);
+            // updateButtonState();
           } else {
             console.error('No features found in the response data');
           }
