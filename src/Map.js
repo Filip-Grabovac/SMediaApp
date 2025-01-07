@@ -306,6 +306,8 @@ export default class Map {
         },
       }));
 
+      console.log(place);
+
       this.tool.createDropdown(
         suggestions,
         zipDropdown,
