@@ -423,7 +423,6 @@ export default class Tool {
         .toString(36)
         .substr(2, 9)}`;
 
-      // Fetch ZIP code boundary data from Xano
       fetch(
         `https://xrux-avyn-v7a8.n7d.xano.io/api:4o1s7k_j/get_zip_geojson?zipCode=${zipCode}`,
         {
@@ -443,28 +442,21 @@ export default class Tool {
           return response.json();
         })
         .then((data) => {
-          // Check if the response has the expected structure
           if (
             data.response &&
             data.response.result &&
             data.response.result.features &&
             data.response.result.features.length > 0
           ) {
-            // Extract coordinates from the response
             const coordinates =
               data.response.result.features[0].geometry.coordinates[0];
-
-            // Convert coordinates to [latitude, longitude] format for Leaflet
             const latLngs = coordinates.map((coord) => [coord[1], coord[0]]);
-
-            // Create and add polygon to the map
             const boundaryPolygon = L.polygon(latLngs, {
               color: 'blue',
               fillColor: '#3388ff',
               fillOpacity: 0.3,
             }).addTo(map);
 
-            // Add class and set shapeId for the polygon element
             boundaryPolygon
               .getElement()
               .classList.add('custom-polygon__searched');
@@ -474,10 +466,9 @@ export default class Tool {
               boundaryPolygon.getElement().classList.add('excluded');
             }
 
-            // Process the layer using the shapeId
-            place.processLayer(boundaryPolygon, shapeId);
+            // Use this.place here
+            this.place.processLayer(boundaryPolygon, shapeId);
 
-            // Fit map bounds to the polygon and add to non-editable items
             map.fitBounds(boundaryPolygon.getBounds());
             window.nonEditableItems.addLayer(boundaryPolygon);
           } else {
