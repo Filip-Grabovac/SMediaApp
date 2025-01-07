@@ -294,10 +294,8 @@ export default class Tool {
           }
           item.appendChild(span);
         });
-        console.log(place);
-        console.log(item.classList);
+
         if (item.classList.contains('zip-dropdown__link')) {
-          console.log(place);
 
           item.addEventListener('click', () => {
             this.zipDraw(itemData, place);
@@ -419,7 +417,6 @@ export default class Tool {
   }
 
   zipDraw(itemData, place) {
-    console.log(place);
 
     const zipCode = itemData.name.match(/^\d+/)?.[0];
     const authToken = localStorage.getItem('authToken');

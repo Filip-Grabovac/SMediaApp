@@ -101,7 +101,6 @@ export default class Place {
     if (citiesWrap && cities.length > 0) {
       cities.forEach((city) => {
         if (!city.tags.wikipedia) {
-          console.log(city);
           return;
         }
 

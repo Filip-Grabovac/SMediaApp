@@ -306,8 +306,6 @@ export default class Map {
         },
       }));
 
-      console.log(place);
-
       this.tool.createDropdown(
         suggestions,
         zipDropdown,
@@ -491,10 +489,8 @@ export default class Map {
         return response.json();
       })
       .then((data) => {
-        console.log(data);
 
         if (data.length === 0) {
-          console.log('No data to preload.');
           return;
         }
 
@@ -550,8 +546,6 @@ export default class Map {
             ])
             .draw();
         });
-
-        console.log('Table preloaded successfully!');
 
         this.calculateAndNormalizeTableData(table);
       })
