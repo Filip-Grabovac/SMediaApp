@@ -210,6 +210,6 @@ place.searchIncludedExcludedPlaces(
 
 map.toggleStateRow();
 
-setTimeout(() => {
-  tool.zipDraw("98001, Auburn, King County, Washington, United States", place)
-}, 2000)
+// setTimeout(() => {
+//   tool.zipDraw("98001, Auburn, King County, Washington, United States", place)
+// }, 2000)

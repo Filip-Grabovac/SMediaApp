@@ -418,6 +418,8 @@ export default class Tool {
 
   zipDraw(itemData, place) {
 
+    console.log(itemData);
+
     const zipCode = itemData.name.match(/^\d+/)?.[0];
     const authToken = localStorage.getItem('authToken');
 
