@@ -210,6 +210,18 @@ place.searchIncludedExcludedPlaces(
 
 map.toggleStateRow();
 
-// setTimeout(() => {
-//   tool.zipDraw({name: "98001"}, place)
-// }, 2000)
+// ZIP BULK UPLOAD
+uploadZipBtn.addEventListener('click', async () => {
+  let zipTextArea = document.querySelector('.zip-modal-textarea');
+
+  // Get the value from the textarea and split it into an array of zip codes
+  let zipCodes = zipTextArea.value.split(',').map((zip) => zip.trim());
+
+  // Process each zip code sequentially
+  for (let zip of zipCodes) {
+    if (zip) {
+      // Ensure the zip code is not empty
+      await tool.zipDraw({ name: zip }, place);
+    }
+  }
+});
