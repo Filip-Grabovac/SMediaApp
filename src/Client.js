@@ -242,6 +242,8 @@ export default class Client {
               '.client-link.active .client-link__info'
             );
 
+            console.log(firstClient);
+
             clientName.textContent = firstClient.company_name;
             clientImage.src = firstClient.image.url;
 
