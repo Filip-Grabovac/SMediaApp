@@ -213,9 +213,14 @@ map.toggleStateRow();
 // ZIP BULK UPLOAD
 uploadZipBtn.addEventListener('click', async () => {
   let zipTextArea = document.querySelector('.zip-modal-textarea');
+  let zipText = zipTextArea.value.trim(); // Get and trim the textarea value
+
+  if (zipText.length === 0) {
+    return;
+  }
 
   // Get the value from the textarea and split it into an array of zip codes
-  let zipCodes = zipTextArea.value.split(',').map((zip) => zip.trim());
+  let zipCodes = zipText.split(',').map((zip) => zip.trim());
 
   // Process each zip code sequentially
   for (let zip of zipCodes) {
