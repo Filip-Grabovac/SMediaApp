@@ -210,6 +210,6 @@ place.searchIncludedExcludedPlaces(
 
 map.toggleStateRow();
 
-setTimeout(() => {
-  tool.zipDraw({name: "98001"}, place)
-}, 2000)
+// setTimeout(() => {
+//   tool.zipDraw({name: "98001"}, place)
+// }, 2000)
