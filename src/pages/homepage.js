@@ -28,6 +28,8 @@ const stateDropdown = document.getElementById('state-dropdown');
 const zipInput = document.getElementById('zip-input');
 const zipDropdown = document.getElementById('zip-dropdown');
 
+const uploadZipBtn = document.querySelector('.zip-bulk-button');
+
 const urlParams = new URLSearchParams(window.location.search);
 const clientId = urlParams.get('client_id');
 const clientApiEndpoint =
@@ -207,3 +209,7 @@ place.searchIncludedExcludedPlaces(
 );
 
 map.toggleStateRow();
+
+setTimeout(() => {
+  tool.zipDraw("98001, Auburn, King County, Washington, United States", place)
+}, 2000)
