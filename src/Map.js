@@ -314,6 +314,7 @@ export default class Map {
         zipInput,
         false,
         'zip-dropdown__link',
+        '#0c0b0e',
         place
       );
     } catch (error) {
