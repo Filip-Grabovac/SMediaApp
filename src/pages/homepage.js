@@ -11,8 +11,8 @@ import Client from 'https://smediaapp.pages.dev/src/Client.js';
 import Tool from 'https://smediaapp.pages.dev/src/Tool.js';
 
 const user = new User();
-const map = new Map();
 const place = new Place();
+const map = new Map(place);
 const client = new Client();
 const tool = new Tool(map, place);
 

@@ -268,7 +268,8 @@ export default class Tool {
     input,
     isSelectedCity,
     dropdownItemClass,
-    highlightColor = '#0c0b0e'
+    highlightColor = '#0c0b0e',
+    place
   ) {
     dropdown.innerHTML = ''; // Clear previous items
     const query = input.value.trim(); // Get current input value
@@ -295,7 +296,7 @@ export default class Tool {
         });
         if (item.classList.contains('zip-dropdown__link')) {
           item.addEventListener('click', () => {
-            this.zipDraw(itemData, this.place);
+            this.zipDraw(itemData, place);
           });
         }
 

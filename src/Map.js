@@ -4,10 +4,11 @@ import Tool from 'https://smediaapp.pages.dev/src/Tool.js';
 
 // User.js
 export default class Map {
-  constructor() {
+  constructor(place) {
     this.activeTool = null;
     this.updateButtonState = this.updateButtonState.bind(this);
     this.tool = new Tool(this);
+    this.place = place;
   }
 
   loadMap() {
@@ -311,7 +312,8 @@ export default class Map {
         zipDropdown,
         zipInput,
         false,
-        'zip-dropdown__link'
+        'zip-dropdown__link',
+        this.place
       );
     } catch (error) {
       console.error('Error fetching location data:', error);
