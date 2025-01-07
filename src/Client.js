@@ -242,8 +242,6 @@ export default class Client {
               '.client-link.active .client-link__info'
             );
 
-            console.log(firstClient);
-
             clientName.textContent = firstClient.company_name;
 
             // Check if `firstClient.image` is null
@@ -288,6 +286,8 @@ export default class Client {
               clientLink.classList.add('client-link', 'not-selected');
               clientLink.setAttribute('client-id', client.id);
               clientLink.href = '?client_id=' + client.id;
+
+              console.log(client.image);
 
               clientLink.innerHTML = `
   ${
