@@ -258,6 +258,12 @@ export default class Client {
                   .charAt(0)
                   .toUpperCase();
               });
+
+              document
+                .querySelectorAll('.nav-placeholder-image')
+                .forEach((element) => {
+                  element.style.display = 'none';
+                });
             } else {
               // Set the image source if `firstClient.image` is not null
               clientImage.src = firstClient.image.url;
