@@ -149,7 +149,7 @@ zipInput.addEventListener('focus', () => {
 zipInput.addEventListener(
   'input',
   tool.debounce(async function () {
-    await map.searchZip(zipInput, zipDropdown);
+    await map.searchZip(zipInput, zipDropdown, place);
   }, 300)
 );
 

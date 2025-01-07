@@ -283,7 +283,7 @@ export default class Map {
     document.querySelector('.town-radius__dropdown').classList.add('hidden');
   }
 
-  async searchZip(zipInput, zipDropdown) {
+  async searchZip(zipInput, zipDropdown, place) {
     const query = zipInput.value.trim();
 
     if (query.length < 3) {
@@ -311,7 +311,8 @@ export default class Map {
         zipDropdown,
         zipInput,
         false,
-        'zip-dropdown__link'
+        'zip-dropdown__link',
+        place
       );
     } catch (error) {
       console.error('Error fetching location data:', error);
