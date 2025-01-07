@@ -294,6 +294,8 @@ export default class Tool {
           }
           item.appendChild(span);
         });
+        console.log(place);
+        console.log(item.classList);
         if (item.classList.contains('zip-dropdown__link')) {
           console.log(place);
 
