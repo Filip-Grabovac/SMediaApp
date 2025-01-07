@@ -245,7 +245,23 @@ export default class Client {
             console.log(firstClient);
 
             clientName.textContent = firstClient.company_name;
-            clientImage.src = firstClient.image.url;
+            
+            // Check if `firstClient.image` is null
+            if (firstClient.image === null || !firstClient.image.url) {
+              // Set the display of the placeholder element to "flex"
+              const noImageAvatar = document.querySelector(
+                '.no-users__avatar.no-image__avatar'
+              );
+              noImageAvatar.style.display = 'flex';
+
+              // Set the text content to the first letter of `company_name`
+              noImageAvatar.textContent = firstClient.company_name
+                .charAt(0)
+                .toUpperCase();
+            } else {
+              // Set the image source if `firstClient.image` is not null
+              clientImage.src = firstClient.image.url;
+            }
 
             activeClientImage.src = firstClient.image.url;
             activeClientName.innerHTML = `${firstClient.company_name}<br>`;
