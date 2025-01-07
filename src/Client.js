@@ -245,7 +245,7 @@ export default class Client {
             console.log(firstClient);
 
             clientName.textContent = firstClient.company_name;
-            
+
             // Check if `firstClient.image` is null
             if (firstClient.image === null || !firstClient.image.url) {
               // Set the display of the placeholder element to "flex"
@@ -261,9 +261,9 @@ export default class Client {
             } else {
               // Set the image source if `firstClient.image` is not null
               clientImage.src = firstClient.image.url;
+              activeClientImage.src = firstClient.image.url;
             }
 
-            activeClientImage.src = firstClient.image.url;
             activeClientName.innerHTML = `${firstClient.company_name}<br>`;
 
             navClients.classList.remove('hidden');
