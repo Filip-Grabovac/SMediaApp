@@ -12,7 +12,7 @@ import Tool from 'https://smediaapp.pages.dev/src/Tool.js';
 
 const user = new User();
 const place = new Place();
-const map = new Map(place);
+const map = new Map();
 const client = new Client();
 const tool = new Tool(map, place);
 

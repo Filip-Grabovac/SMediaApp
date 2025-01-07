@@ -268,8 +268,7 @@ export default class Tool {
     input,
     isSelectedCity,
     dropdownItemClass,
-    highlightColor = '#0c0b0e',
-    place
+    highlightColor = '#0c0b0e'
   ) {
     dropdown.innerHTML = ''; // Clear previous items
     const query = input.value.trim(); // Get current input value
@@ -296,7 +295,7 @@ export default class Tool {
         });
         if (item.classList.contains('zip-dropdown__link')) {
           item.addEventListener('click', () => {
-            this.zipDraw(itemData, place);
+            this.zipDraw(itemData);
           });
         }
 
@@ -414,7 +413,7 @@ export default class Tool {
     tooltip.style.left = `${thumbPosition - tooltipWidth / 2 + 33}px`; // +10 centers it relative to the thumb
   }
 
-  zipDraw(itemData, place) {
+  zipDraw(itemData) {
     const zipCode = itemData.name.match(/^\d+/)?.[0];
     const authToken = localStorage.getItem('authToken');
 
