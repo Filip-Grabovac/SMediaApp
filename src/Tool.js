@@ -433,51 +433,60 @@ export default class Tool {
           },
         }
       )
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(
-              'Network response was not ok: ' + response.statusText
-            );
-          }
-          return response.json();
-        })
-        .then((data) => {
-          if (
-            data.response &&
-            data.response.result &&
-            data.response.result.features &&
-            data.response.result.features.length > 0
-          ) {
-            const coordinates =
-              data.response.result.features[0].geometry.coordinates[0];
-            const latLngs = coordinates.map((coord) => [coord[1], coord[0]]);
-            const boundaryPolygon = L.polygon(latLngs, {
-              color: 'blue',
-              fillColor: '#3388ff',
-              fillOpacity: 0.3,
-            }).addTo(map);
-
-            boundaryPolygon
-              .getElement()
-              .classList.add('custom-polygon__searched');
-            boundaryPolygon.getElement().setAttribute('shapeId', shapeId);
-
-            if (this.excludedBtn.classList.contains('active')) {
-              boundaryPolygon.getElement().classList.add('excluded');
+        .then(
+          function (response) {
+            if (!response.ok) {
+              throw new Error(
+                'Network response was not ok: ' + response.statusText
+              );
             }
+            return response.json();
+          }.bind(this)
+        )
+        .then(
+          function (data) {
+            if (
+              data.response &&
+              data.response.result &&
+              data.response.result.features &&
+              data.response.result.features.length > 0
+            ) {
+              const coordinates =
+                data.response.result.features[0].geometry.coordinates[0];
+              const latLngs = coordinates.map((coord) => [coord[1], coord[0]]);
+              const boundaryPolygon = L.polygon(latLngs, {
+                color: 'blue',
+                fillColor: '#3388ff',
+                fillOpacity: 0.3,
+              }).addTo(map);
 
-            // Use this.place here
-            this.place.processLayer(boundaryPolygon, shapeId);
+              boundaryPolygon
+                .getElement()
+                .classList.add('custom-polygon__searched');
+              boundaryPolygon.getElement().setAttribute('shapeId', shapeId);
 
-            map.fitBounds(boundaryPolygon.getBounds());
-            window.nonEditableItems.addLayer(boundaryPolygon);
-          } else {
-            console.error('No features found in the response data');
-          }
-        })
-        .catch((error) => {
-          console.error('Error fetching ZIP code boundaries from Xano:', error);
-        });
+              if (this.excludedBtn.classList.contains('active')) {
+                boundaryPolygon.getElement().classList.add('excluded');
+              }
+
+              // Use this.place here
+              this.place.processLayer(boundaryPolygon, shapeId);
+
+              map.fitBounds(boundaryPolygon.getBounds());
+              window.nonEditableItems.addLayer(boundaryPolygon);
+            } else {
+              console.error('No features found in the response data');
+            }
+          }.bind(this)
+        )
+        .catch(
+          function (error) {
+            console.error(
+              'Error fetching ZIP code boundaries from Xano:',
+              error
+            );
+          }.bind(this)
+        );
     } else {
       console.error('ZIP code not found in itemData name');
     }
