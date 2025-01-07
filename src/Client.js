@@ -299,7 +299,7 @@ export default class Client {
   ${
     client.image
       ? `<img src="${client.image.url}" loading="lazy" alt="" class="client-nav__image">`
-      : `<div class="client-avatar" style="background-color: #767676;">${client.company_name
+      : `<div class="no-users__avatar" style="background-color: #767676;">${client.company_name
           .charAt(0)
           .toUpperCase()}</div>`
   }
