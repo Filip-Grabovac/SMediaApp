@@ -337,6 +337,7 @@ export default class Tool {
         dropdown.appendChild(item);
       });
     } else {
+      // City dropdown
       items.forEach((itemData) => {
         const item = document.createElement('div');
         item.className = 'dropdown-item';
