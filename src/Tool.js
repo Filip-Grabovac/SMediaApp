@@ -317,22 +317,24 @@ export default class Tool {
             (city) => city.name === itemData.name
           );
 
-          // Adjust the radius for the selected city
-          if (selectedCityInfo) {
-            this.setupRadiusAdjustment(selectedCityInfo);
-          }
+          // // Adjust the radius for the selected city
+          // if (selectedCityInfo) {
+          //   this.setupRadiusAdjustment(selectedCityInfo);
+          // }
 
-          if (item.classList.contains('state-dropdown__link')) {
-            // Get the full text content of the element
-            let stateInputSearch = item.textContent.trim(); // Remove any leading/trailing whitespace
+          // if (item.classList.contains('state-dropdown__link')) {
+          //   // Get the full text content of the element
+          //   let stateInputSearch = item.textContent.trim(); // Remove any leading/trailing whitespace
 
-            // Save it to the window object
-            window.stateInputSearch = stateInputSearch;
-          }
+          //   // Save it to the window object
+          //   window.stateInputSearch = stateInputSearch;
+          // }
 
-          input.value = itemData.name;
-          dropdown.style.display = 'none';
-          input.value = '';
+          console.log(selectedCityInfo);
+
+          // input.value = itemData.name;
+          // dropdown.style.display = 'none';
+          // input.value = '';
         });
 
         dropdown.appendChild(item);
