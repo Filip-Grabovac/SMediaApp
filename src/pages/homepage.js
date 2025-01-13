@@ -230,4 +230,3 @@ uploadZipBtn.addEventListener('click', async () => {
     }
   }
 });
-console.log("Test");

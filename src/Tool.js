@@ -316,17 +316,27 @@ export default class Tool {
             (city) => city.name === itemData.name
           );
 
-          console.log(selectedCityInfo);
+          // Adjust the radius for the selected city
+          if (selectedCityInfo) {
+            this.setupRadiusAdjustment(selectedCityInfo);
+          }
 
-          // input.value = itemData.name;
-          // dropdown.style.display = 'none';
-          // input.value = '';
+          if (item.classList.contains('state-dropdown__link')) {
+            // Get the full text content of the element
+            let stateInputSearch = item.textContent.trim(); // Remove any leading/trailing whitespace
+
+            // Save it to the window object
+            window.stateInputSearch = stateInputSearch;
+          }
+
+          input.value = itemData.name;
+          dropdown.style.display = 'none';
+          input.value = '';
         });
 
         dropdown.appendChild(item);
       });
     } else {
-      // City dropdown
       items.forEach((itemData) => {
         const item = document.createElement('div');
         item.className = 'dropdown-item';
@@ -334,6 +344,7 @@ export default class Tool {
         item.textContent = itemData.name;
 
         item.addEventListener('click', () => {
+          console.log("Clicked");
           itemData.onSelect(); // Draw the town circle on map
           if (item.classList.contains('selected-city')) {
             document
