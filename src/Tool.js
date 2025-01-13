@@ -304,6 +304,7 @@ export default class Tool {
 
         // Handle city selection
         item.addEventListener('click', () => {
+          console.log("Clicked2");
           itemData.onSelect(); // Draw the town circle on map
           if (isSelectedCity) {
             document
@@ -344,7 +345,6 @@ export default class Tool {
         item.textContent = itemData.name;
 
         item.addEventListener('click', () => {
-          console.log("Clicked");
           itemData.onSelect(); // Draw the town circle on map
           if (item.classList.contains('selected-city')) {
             document
