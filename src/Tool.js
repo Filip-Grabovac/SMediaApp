@@ -304,37 +304,34 @@ export default class Tool {
 
         // Handle city selection
         item.addEventListener('click', () => {
-          console.log("Clicked2");
-          // itemData.onSelect(); // Draw the town circle on map
-          // if (isSelectedCity) {
-          //   document
-          //     .querySelector('.town-radius__dropdown')
-          //     .classList.toggle('hidden');
-          // }
+          itemData.onSelect(); // Draw the town circle on map
+          if (isSelectedCity) {
+            document
+              .querySelector('.town-radius__dropdown')
+              .classList.toggle('hidden');
+          }
 
           // Here, we pass the specific cityInfo of the clicked item
           const selectedCityInfo = window.drawnCities.find(
             (city) => city.name === itemData.name
           );
 
-          // // Adjust the radius for the selected city
-          // if (selectedCityInfo) {
-          //   this.setupRadiusAdjustment(selectedCityInfo);
-          // }
+          // Adjust the radius for the selected city
+          if (selectedCityInfo) {
+            this.setupRadiusAdjustment(selectedCityInfo);
+          }
 
-          // if (item.classList.contains('state-dropdown__link')) {
-          //   // Get the full text content of the element
-          //   let stateInputSearch = item.textContent.trim(); // Remove any leading/trailing whitespace
+          if (item.classList.contains('state-dropdown__link')) {
+            // Get the full text content of the element
+            let stateInputSearch = item.textContent.trim(); // Remove any leading/trailing whitespace
 
-          //   // Save it to the window object
-          //   window.stateInputSearch = stateInputSearch;
-          // }
+            // Save it to the window object
+            window.stateInputSearch = stateInputSearch;
+          }
 
-          console.log(selectedCityInfo);
-
-          // input.value = itemData.name;
-          // dropdown.style.display = 'none';
-          // input.value = '';
+          input.value = itemData.name;
+          dropdown.style.display = 'none';
+          input.value = '';
         });
 
         dropdown.appendChild(item);
