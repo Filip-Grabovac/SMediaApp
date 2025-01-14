@@ -228,7 +228,7 @@ export default class Tool {
     place.processLayer(circle, shapeId);
   }
 
-  drawCityBorder(cityData, place) {
+  drawCityBorder(cityData, place, updateButtonState) {
     // Extract the name and osm_id from cityData
     const { name, osm_id } = cityData;
 
@@ -280,7 +280,7 @@ export default class Tool {
           window.map.fitBounds(bounds); // Fit the map to the boundary
 
           // Optionally, update the button state after drawing
-          map.updateButtonState();
+          updateButtonState();
         } else {
           console.error('City boundary data not found or unavailable.');
         }
