@@ -313,6 +313,74 @@ export default class Tool {
       });
   }
 
+  fetchAndDrawWays(wayMembers, place) {
+    const wayIds = wayMembers.map((member) => member.ref);
+    const apiUrl = `https://overpass-api.de/api/interpreter?data=[out:json];way(id:${wayIds.join(
+      ','
+    )});(._;>;);out geom;`;
+
+    fetch(apiUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`API request failed with status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        // Parse ways and nodes to build a single shape
+        const nodesMap = new Map();
+        const ways = [];
+
+        // Build a map of nodes and collect ways
+        data.elements.forEach((element) => {
+          if (element.type === 'node') {
+            nodesMap.set(element.id, [element.lat, element.lon]);
+          } else if (element.type === 'way' && element.nodes) {
+            ways.push(element.nodes);
+          }
+        });
+
+        // Assemble ways into a single continuous shape
+        const assembledCoordinates = this.assembleWays(ways, nodesMap);
+
+        if (assembledCoordinates.length > 0) {
+          this.drawPolygon(assembledCoordinates, place);
+        } else {
+          console.log('Failed to assemble a continuous shape.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching ways data from Overpass API:', error);
+      });
+  }
+
+  assembleWays(ways, nodesMap) {
+    const assembled = [];
+    const visitedWays = new Set();
+
+    // Start with the first way
+    let currentWay = ways.shift();
+    visitedWays.add(currentWay);
+
+    // Assemble ways into a continuous sequence
+    while (currentWay) {
+      const coordinates = currentWay.map((nodeId) => nodesMap.get(nodeId));
+      assembled.push(...coordinates);
+
+      // Find the next connecting way
+      const lastNode = currentWay[currentWay.length - 1];
+      currentWay = ways.find(
+        (way) => way[0] === lastNode && !visitedWays.has(way)
+      );
+
+      if (currentWay) {
+        visitedWays.add(currentWay);
+      }
+    }
+
+    return assembled;
+  }
+
   drawPolygon(coordinates, place) {
     const shapeId = `shape-${Date.now()}-${Math.random()
       .toString(36)
@@ -322,6 +390,7 @@ export default class Tool {
     const polygon = L.polygon(coordinates, {
       color: 'blue',
       weight: 2,
+      fillOpacity: 0.5,
     });
 
     polygon.addTo(window.map);
@@ -329,13 +398,9 @@ export default class Tool {
     // Adjust map view to fit the polygon
     window.map.fitBounds(polygon.getBounds());
 
-    // Add custom attributes or classes if needed
-    L.DomUtil.addClass(polygon._path, 'custom-polygon__searched');
-    polygon._path.setAttribute('shapeId', shapeId);
-
-    console.log('Polygon drawn with shapeId:', shapeId);
+    console.log('Solid polygon drawn with shapeId:', shapeId);
   }
-
+  
   drawState(state, map) {
     const shapeId = `shape-${Date.now()}-${Math.random()
       .toString(36)
