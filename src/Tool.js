@@ -304,7 +304,6 @@ export default class Tool {
 
         // Handle city selection
         item.addEventListener('click', () => {
-          itemData.onSelect(); // Draw the town circle on map
           // if (isSelectedCity) {
           //   document
           //     .querySelector('.town-radius__dropdown')
@@ -322,11 +321,16 @@ export default class Tool {
           // }
 
           if (item.classList.contains('state-dropdown__link')) {
+            // itemData.onSelect();
             // Get the full text content of the element
             let stateInputSearch = item.textContent.trim(); // Remove any leading/trailing whitespace
 
             // Save it to the window object
             window.stateInputSearch = stateInputSearch;
+          }
+
+          if(item.classList.contains('zip-dropdown__link')) {
+            // itemData.onSelect();
           }
 
           console.log("Test");
