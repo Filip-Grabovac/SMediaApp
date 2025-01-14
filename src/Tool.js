@@ -267,7 +267,7 @@ export default class Tool {
                 });
 
                 // Call `processLayer` method on the place object (if required)
-                this.place.processLayer(layer, shapeId);
+                place.processLayer(layer, shapeId);
               }
             },
           }).addTo(window.map); // Add to the global map variable
