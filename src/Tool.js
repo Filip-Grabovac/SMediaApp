@@ -232,13 +232,13 @@ export default class Tool {
     console.log('City border drawing');
     console.log(cityData);
 
-    // Extracting the name from cityData
-    const { name } = cityData;
+    // Extract the name and osm_id from cityData
+    const { name, osm_id } = cityData;
 
     // Overpass API URL with the city name dynamically included
     const apiUrl = `https://overpass-api.de/api/interpreter?data=[out:json];relation['name'='${name}']['boundary'='administrative']['admin_level'='8'][boundary=administrative][type=boundary];out body;>;out skel qt;`;
 
-    // Fetching data from the Overpass API
+    // Fetch data from the Overpass API
     fetch(apiUrl)
       .then((response) => {
         if (!response.ok) {
@@ -247,11 +247,19 @@ export default class Tool {
         return response.json();
       })
       .then((data) => {
-        // Logging the fetched data
-        console.log('Fetched data from Overpass API:', data);
+        // Find the element that matches the osm_id
+        const matchingElement = data.elements.find(
+          (element) => element.id === osm_id
+        );
+
+        if (matchingElement) {
+          console.log('Matching element:', matchingElement);
+        } else {
+          console.log(`No element found with osm_id: ${osm_id}`);
+        }
       })
       .catch((error) => {
-        // Logging errors in case of failure
+        // Log any errors
         console.error('Error fetching data from Overpass API:', error);
       });
   }
