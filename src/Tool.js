@@ -254,6 +254,17 @@ export default class Tool {
 
         if (matchingElement) {
           console.log('Matching element:', matchingElement);
+
+          // Filter out "node" members and process only "way" members
+          const wayMembers = matchingElement.members.filter(
+            (member) => member.type === 'way'
+          );
+
+          if (wayMembers.length > 0) {
+            this.fetchAndDrawWays(wayMembers, place);
+          } else {
+            console.log('No "way" members found for the city border.');
+          }
         } else {
           console.log(`No element found with osm_id: ${osm_id}`);
         }
@@ -262,6 +273,67 @@ export default class Tool {
         // Log any errors
         console.error('Error fetching data from Overpass API:', error);
       });
+  }
+
+  fetchAndDrawWays(wayMembers, place) {
+    const wayIds = wayMembers.map((member) => member.ref);
+    const apiUrl = `https://overpass-api.de/api/interpreter?data=[out:json];way(id:${wayIds.join(
+      ','
+    )});out geom;`;
+
+    fetch(apiUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`API request failed with status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        const coordinates = [];
+
+        // Extract coordinates from the fetched "ways"
+        data.elements.forEach((element) => {
+          if (element.type === 'way' && element.geometry) {
+            const wayCoordinates = element.geometry.map((point) => [
+              point.lat,
+              point.lon,
+            ]);
+            coordinates.push(...wayCoordinates);
+          }
+        });
+
+        if (coordinates.length > 0) {
+          this.drawPolygon(coordinates, place);
+        } else {
+          console.log('No coordinates found for the city border.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching ways data from Overpass API:', error);
+      });
+  }
+
+  drawPolygon(coordinates, place) {
+    const shapeId = `shape-${Date.now()}-${Math.random()
+      .toString(36)
+      .substr(2, 9)}`;
+
+    // Create a polygon using Leaflet
+    const polygon = L.polygon(coordinates, {
+      color: 'blue',
+      weight: 2,
+    });
+
+    polygon.addTo(window.map);
+
+    // Adjust map view to fit the polygon
+    window.map.fitBounds(polygon.getBounds());
+
+    // Add custom attributes or classes if needed
+    L.DomUtil.addClass(polygon._path, 'custom-polygon__searched');
+    polygon._path.setAttribute('shapeId', shapeId);
+
+    console.log('Polygon drawn with shapeId:', shapeId);
   }
 
   drawState(state, map) {
