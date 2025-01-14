@@ -311,11 +311,11 @@ export default class Tool {
         item.addEventListener('click', () => {
           itemData.onSelect();
 
-          if (isSelectedCity) {
-            document
-              .querySelector('.town-radius__dropdown')
-              .classList.toggle('hidden');
-          }
+          // if (isSelectedCity) {
+          //   document
+          //     .querySelector('.town-radius__dropdown')
+          //     .classList.toggle('hidden');
+          // }
 
           // Here, we pass the specific cityInfo of the clicked item
           const selectedCityInfo = window.drawnCities.find(
@@ -351,11 +351,12 @@ export default class Tool {
 
         item.addEventListener('click', () => {
           itemData.onSelect(); // Draw the town circle on map
-          if (item.classList.contains('selected-city')) {
-            document
-              .querySelector('.town-radius__dropdown')
-              .classList.toggle('hidden');
-          }
+          
+          // if (item.classList.contains('selected-city')) {
+          //   document
+          //     .querySelector('.town-radius__dropdown')
+          //     .classList.toggle('hidden');
+          // }
 
           // Here, we pass the specific cityInfo of the clicked item
           const selectedCityInfo = window.drawnCities.find(
