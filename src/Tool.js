@@ -328,11 +328,13 @@ export default class Tool {
             window.stateInputSearch = stateInputSearch;
           } else {
             console.log('City');
+            itemData.onSelect();
+
           }
 
-          // input.value = itemData.name;
-          // dropdown.style.display = 'none';
-          // input.value = '';
+          input.value = itemData.name;
+          dropdown.style.display = 'none';
+          input.value = '';
         });
 
         dropdown.appendChild(item);
