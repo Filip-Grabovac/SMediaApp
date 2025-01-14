@@ -231,7 +231,29 @@ export default class Tool {
   drawCityBorder(cityData, place) {
     console.log('City border drawing');
     console.log(cityData);
-    console.log(place);
+
+    // Extracting the name from cityData
+    const { name } = cityData;
+
+    // Overpass API URL with the city name dynamically included
+    const apiUrl = `https://overpass-api.de/api/interpreter?data=[out:json];relation['name'='${name}']['boundary'='administrative']['admin_level'='8'][boundary=administrative][type=boundary];out body;>;out skel qt;`;
+
+    // Fetching data from the Overpass API
+    fetch(apiUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`API request failed with status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        // Logging the fetched data
+        console.log('Fetched data from Overpass API:', data);
+      })
+      .catch((error) => {
+        // Logging errors in case of failure
+        console.error('Error fetching data from Overpass API:', error);
+      });
   }
 
   drawState(state, map) {
@@ -351,7 +373,7 @@ export default class Tool {
 
         item.addEventListener('click', () => {
           itemData.onSelect(); // Draw the town circle on map
-          
+
           // if (item.classList.contains('selected-city')) {
           //   document
           //     .querySelector('.town-radius__dropdown')
