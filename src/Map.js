@@ -244,7 +244,7 @@ export default class Map {
           name: city.display_name, // Extract city names
           lat: city.lat, // Extract latitude
           lon: city.lon, // Extract longitude
-          onSelect: () => this.tool.drawTownCircle(city, place), // Define the action on selection
+          onSelect: () => this.tool.drawCityBorder(city, place), // Define the action on selection
         }));
         this.tool.createDropdown(
           suggestions,

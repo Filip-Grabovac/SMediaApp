@@ -182,7 +182,7 @@ export default class Tool {
     }
   }
 
-  drawTownCircle(cityData, place) {
+  drawTownCircleOLD(cityData, place) {
     const lat = cityData.lat;
     const lon = cityData.lon;
     const shapeId = `shape-${Date.now()}-${Math.random()
@@ -226,6 +226,12 @@ export default class Tool {
 
     // Process the circle with the provided shapeId
     place.processLayer(circle, shapeId);
+  }
+
+  drawCityBorder(cityData, place) {
+    console.log('City border drawing');
+    console.log(cityData);
+    console.log(place);
   }
 
   drawState(state, map) {
@@ -303,11 +309,13 @@ export default class Tool {
 
         // Handle city selection
         item.addEventListener('click', () => {
-          // if (isSelectedCity) {
-          //   document
-          //     .querySelector('.town-radius__dropdown')
-          //     .classList.toggle('hidden');
-          // }
+          itemData.onSelect();
+
+          if (isSelectedCity) {
+            document
+              .querySelector('.town-radius__dropdown')
+              .classList.toggle('hidden');
+          }
 
           // Here, we pass the specific cityInfo of the clicked item
           const selectedCityInfo = window.drawnCities.find(
@@ -315,21 +323,16 @@ export default class Tool {
           );
 
           // Adjust the radius for the selected city
-          // if (selectedCityInfo) {
-          //   this.setupRadiusAdjustment(selectedCityInfo);
-          // }
+          if (selectedCityInfo) {
+            this.setupRadiusAdjustment(selectedCityInfo);
+          }
 
           if (item.classList.contains('state-dropdown__link')) {
-            itemData.onSelect();
             // Get the full text content of the element
             let stateInputSearch = item.textContent.trim(); // Remove any leading/trailing whitespace
 
             // Save it to the window object
             window.stateInputSearch = stateInputSearch;
-          } else {
-            console.log('City');
-            itemData.onSelect();
-
           }
 
           input.value = itemData.name;
