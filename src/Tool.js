@@ -254,17 +254,6 @@ export default class Tool {
 
         if (matchingElement) {
           console.log('Matching element:', matchingElement);
-
-          // Filter out "node" members and process only "way" members
-          const wayMembers = matchingElement.members.filter(
-            (member) => member.type === 'way'
-          );
-
-          if (wayMembers.length > 0) {
-            this.fetchAndDrawWays(wayMembers, place);
-          } else {
-            console.log('No "way" members found for the city border.');
-          }
         } else {
           console.log(`No element found with osm_id: ${osm_id}`);
         }
@@ -273,94 +262,6 @@ export default class Tool {
         // Log any errors
         console.error('Error fetching data from Overpass API:', error);
       });
-  }
-
-  fetchAndDrawWays(wayMembers, place) {
-    const wayIds = wayMembers.map((member) => member.ref);
-    const apiUrl = `https://overpass-api.de/api/interpreter?data=[out:json];way(id:${wayIds.join(
-      ','
-    )});(._;>;);out geom;`;
-
-    fetch(apiUrl)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`API request failed with status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        // Parse ways and nodes to build a single shape
-        const nodesMap = new Map();
-        const ways = [];
-
-        // Build a map of nodes and collect ways
-        data.elements.forEach((element) => {
-          if (element.type === 'node') {
-            nodesMap.set(element.id, [element.lat, element.lon]);
-          } else if (element.type === 'way' && element.nodes) {
-            ways.push(element.nodes);
-          }
-        });
-
-        // Assemble ways into a single continuous shape
-        const assembledCoordinates = this.assembleWays(ways, nodesMap);
-
-        if (assembledCoordinates.length > 0) {
-          this.drawPolygon(assembledCoordinates, place);
-        } else {
-          console.log('Failed to assemble a continuous shape.');
-        }
-      })
-      .catch((error) => {
-        console.error('Error fetching ways data from Overpass API:', error);
-      });
-  }
-
-  assembleWays(ways, nodesMap) {
-    const assembled = [];
-    const visitedWays = new Set();
-
-    // Start with the first way
-    let currentWay = ways.shift();
-    visitedWays.add(currentWay);
-
-    // Assemble ways into a continuous sequence
-    while (currentWay) {
-      const coordinates = currentWay.map((nodeId) => nodesMap.get(nodeId));
-      assembled.push(...coordinates);
-
-      // Find the next connecting way
-      const lastNode = currentWay[currentWay.length - 1];
-      currentWay = ways.find(
-        (way) => way[0] === lastNode && !visitedWays.has(way)
-      );
-
-      if (currentWay) {
-        visitedWays.add(currentWay);
-      }
-    }
-
-    return assembled;
-  }
-
-  drawPolygon(coordinates, place) {
-    const shapeId = `shape-${Date.now()}-${Math.random()
-      .toString(36)
-      .substr(2, 9)}`;
-
-    // Create a polygon using Leaflet
-    const polygon = L.polygon(coordinates, {
-      color: 'blue',
-      weight: 2,
-      fillOpacity: 0.5,
-    });
-
-    polygon.addTo(window.map);
-
-    // Adjust map view to fit the polygon
-    window.map.fitBounds(polygon.getBounds());
-
-    console.log('Solid polygon drawn with shapeId:', shapeId);
   }
 
   drawState(state, map) {
