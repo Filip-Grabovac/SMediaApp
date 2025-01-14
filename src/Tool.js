@@ -279,44 +279,6 @@ export default class Tool {
     const wayIds = wayMembers.map((member) => member.ref);
     const apiUrl = `https://overpass-api.de/api/interpreter?data=[out:json];way(id:${wayIds.join(
       ','
-    )});out geom;`;
-
-    fetch(apiUrl)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`API request failed with status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        const coordinates = [];
-
-        // Extract coordinates from the fetched "ways"
-        data.elements.forEach((element) => {
-          if (element.type === 'way' && element.geometry) {
-            const wayCoordinates = element.geometry.map((point) => [
-              point.lat,
-              point.lon,
-            ]);
-            coordinates.push(...wayCoordinates);
-          }
-        });
-
-        if (coordinates.length > 0) {
-          this.drawPolygon(coordinates, place);
-        } else {
-          console.log('No coordinates found for the city border.');
-        }
-      })
-      .catch((error) => {
-        console.error('Error fetching ways data from Overpass API:', error);
-      });
-  }
-
-  fetchAndDrawWays(wayMembers, place) {
-    const wayIds = wayMembers.map((member) => member.ref);
-    const apiUrl = `https://overpass-api.de/api/interpreter?data=[out:json];way(id:${wayIds.join(
-      ','
     )});(._;>;);out geom;`;
 
     fetch(apiUrl)
@@ -400,7 +362,7 @@ export default class Tool {
 
     console.log('Solid polygon drawn with shapeId:', shapeId);
   }
-  
+
   drawState(state, map) {
     const shapeId = `shape-${Date.now()}-${Math.random()
       .toString(36)
