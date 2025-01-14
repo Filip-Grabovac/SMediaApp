@@ -304,7 +304,7 @@ export default class Tool {
 
         // Handle city selection
         item.addEventListener('click', () => {
-          // itemData.onSelect(); // Draw the town circle on map
+          itemData.onSelect(); // Draw the town circle on map
           // if (isSelectedCity) {
           //   document
           //     .querySelector('.town-radius__dropdown')
