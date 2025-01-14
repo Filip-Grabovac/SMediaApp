@@ -304,12 +304,12 @@ export default class Tool {
 
         // Handle city selection
         item.addEventListener('click', () => {
-          itemData.onSelect(); // Draw the town circle on map
-          if (isSelectedCity) {
-            document
-              .querySelector('.town-radius__dropdown')
-              .classList.toggle('hidden');
-          }
+          // itemData.onSelect(); // Draw the town circle on map
+          // if (isSelectedCity) {
+          //   document
+          //     .querySelector('.town-radius__dropdown')
+          //     .classList.toggle('hidden');
+          // }
 
           // Here, we pass the specific cityInfo of the clicked item
           const selectedCityInfo = window.drawnCities.find(
@@ -329,9 +329,11 @@ export default class Tool {
             window.stateInputSearch = stateInputSearch;
           }
 
-          input.value = itemData.name;
-          dropdown.style.display = 'none';
-          input.value = '';
+          console.log("Test");
+
+          // input.value = itemData.name;
+          // dropdown.style.display = 'none';
+          // input.value = '';
         });
 
         dropdown.appendChild(item);
