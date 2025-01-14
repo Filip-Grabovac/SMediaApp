@@ -13,7 +13,7 @@ export default class Tool {
 
     this.excludedBtn = document.querySelector('.option_button.exclude');
     this.place = place;
-    this.drawTownCircle = this.drawTownCircle.bind(this);
+    this.drawCityBorder = this.drawCityBorder.bind(this);
   }
 
   disableActiveTool() {
