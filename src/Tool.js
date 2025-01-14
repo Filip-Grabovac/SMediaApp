@@ -229,38 +229,64 @@ export default class Tool {
   }
 
   drawCityBorder(cityData, place) {
-    console.log('City border drawing');
-    console.log(cityData);
-
     // Extract the name and osm_id from cityData
     const { name, osm_id } = cityData;
 
-    // Overpass API URL with the city name dynamically included
-    const apiUrl = `https://overpass-api.de/api/interpreter?data=[out:json];relation['name'='${name}']['boundary'='administrative']['admin_level'='8'][boundary=administrative][type=boundary];out body;>;out skel qt;`;
+    // Generate a unique shapeId for this city boundary
+    const shapeId = `shape-${Date.now()}-${Math.random()
+      .toString(36)
+      .substr(2, 9)}`;
 
-    // Fetch data from the Overpass API
-    fetch(apiUrl)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`API request failed with status: ${response.status}`);
-        }
-        return response.json();
-      })
+    // Fetch the city's boundary from Nominatim API (using the name extracted)
+    const url = `https://nominatim.openstreetmap.org/search?q=${name}&format=json&addressdetails=1&polygon_geojson=1`;
+
+    // Fetch the data
+    fetch(url)
+      .then((response) => response.json())
       .then((data) => {
-        // Find the element that matches the osm_id
-        const matchingElement = data.elements.find(
-          (element) => element.id === osm_id
-        );
+        if (data && data.length > 0) {
+          const geoJson = data[0].geojson; // Get the GeoJSON for the city boundary
 
-        if (matchingElement) {
-          console.log('Matching element:', matchingElement);
+          // Create a GeoJSON layer for the city boundary polygon
+          const polygon = L.geoJSON(geoJson, {
+            style: {
+              color: 'blue', // Set polygon color
+              weight: 2,
+            },
+            onEachFeature: (feature, layer) => {
+              if (layer instanceof L.Polygon) {
+                // Add class and shapeId when the layer is added to the map
+                layer.on('add', () => {
+                  L.DomUtil.addClass(layer._path, 'custom-circle__searched'); // Add class to the polygon
+                  layer._path.setAttribute('shapeId', shapeId); // Set the shapeId attribute
+
+                  // Optionally, handle exclusions
+                  if (this.excludedBtn.classList.contains('active')) {
+                    L.DomUtil.addClass(layer._path, 'excluded');
+                  }
+                });
+
+                // Call `processLayer` method on the place object (if required)
+                this.place.processLayer(layer, shapeId);
+              }
+            },
+          }).addTo(window.map); // Add to the global map variable
+
+          // Add the polygon to the drawnItems FeatureGroup (if needed)
+          window.nonEditableItems.addLayer(polygon);
+
+          // Center and zoom the map to the polygon's bounds
+          const bounds = polygon.getBounds();
+          window.map.fitBounds(bounds); // Fit the map to the boundary
+
+          // Optionally, update the button state after drawing
+          map.updateButtonState();
         } else {
-          console.log(`No element found with osm_id: ${osm_id}`);
+          console.error('City boundary data not found or unavailable.');
         }
       })
       .catch((error) => {
-        // Log any errors
-        console.error('Error fetching data from Overpass API:', error);
+        console.error('Error fetching city boundary:', error);
       });
   }
 
