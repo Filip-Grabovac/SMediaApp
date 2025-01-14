@@ -296,7 +296,6 @@ export default class Tool {
         });
 
         if (item.classList.contains('zip-dropdown__link')) {
-
           item.addEventListener('click', () => {
             this.zipDraw(itemData, place);
           });
@@ -321,19 +320,15 @@ export default class Tool {
           // }
 
           if (item.classList.contains('state-dropdown__link')) {
-            // itemData.onSelect();
+            itemData.onSelect();
             // Get the full text content of the element
             let stateInputSearch = item.textContent.trim(); // Remove any leading/trailing whitespace
 
             // Save it to the window object
             window.stateInputSearch = stateInputSearch;
+          } else {
+            console.log('City');
           }
-
-          if(item.classList.contains('zip-dropdown__link')) {
-            // itemData.onSelect();
-          }
-
-          console.log("Test");
 
           // input.value = itemData.name;
           // dropdown.style.display = 'none';
@@ -423,7 +418,6 @@ export default class Tool {
   }
 
   zipDraw(itemData, place) {
-
     console.log(itemData);
 
     const zipCode = itemData.name.match(/^\d+/)?.[0];
