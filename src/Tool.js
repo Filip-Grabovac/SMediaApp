@@ -317,9 +317,9 @@ export default class Tool {
           );
 
           // Adjust the radius for the selected city
-          if (selectedCityInfo) {
-            this.setupRadiusAdjustment(selectedCityInfo);
-          }
+          // if (selectedCityInfo) {
+          //   this.setupRadiusAdjustment(selectedCityInfo);
+          // }
 
           if (item.classList.contains('state-dropdown__link')) {
             // Get the full text content of the element
