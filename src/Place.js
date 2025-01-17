@@ -99,17 +99,45 @@ export default class Place {
 
   listPlaces(citiesWrap, cities, shapeId) {
     if (citiesWrap && cities.length > 0) {
-      cities.forEach((city) => {
-        if (!city.tags.wikipedia) {
-            console.log(city);
+      cities.forEach(async (city) => {
+        const { tags } = city;
+
+        // Check if the place is a "city" or "town"
+        if (!tags.place || !['town', 'city'].includes(tags.place)) {
+          console.log(`Skipping ${tags.name}: Not a city or town.`);
           return;
         }
 
-        const cityName = city.tags.name;
-        let state =
-          city.tags.wikipedia.split(', ').length > 1
-            ? city.tags.wikipedia.split(', ')[1]
-            : city.tags.wikipedia.split(', ')[0].replaceAll('en:', '');
+        const cityName = tags.name;
+        let state;
+
+        // Check if "wikipedia" is available
+        if (tags.wikipedia) {
+          state =
+            tags.wikipedia.split(', ').length > 1
+              ? tags.wikipedia.split(', ')[1]
+              : tags.wikipedia.split(', ')[0].replaceAll('en:', '');
+        } else {
+          // Fetch state using Nominatim if "wikipedia" is missing
+          try {
+            const response = await fetch(
+              `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+                cityName
+              )}&format=json&addressdetails=1`
+            );
+            const data = await response.json();
+
+            if (data.length > 0) {
+              state = data[0]?.address?.state || 'State not found';
+            } else {
+              console.log(`No state found for ${cityName}.`);
+              return;
+            }
+          } catch (error) {
+            console.error(`Error fetching state for ${cityName}:`, error);
+            return;
+          }
+        }
 
         // Return if we are getting border places from another state
         if (
@@ -131,7 +159,7 @@ export default class Place {
         // Create a div for the city name
         const stateNameText = document.createElement('div');
         stateNameText.classList.add('state-name-text');
-        stateNameText.textContent = cityName + ', ' + state; // Add city name
+        stateNameText.textContent = `${cityName}, ${state}`; // Add city name
 
         // Create the SVG element for the toggle arrow
         const svg = document.createElementNS(
@@ -144,17 +172,18 @@ export default class Place {
         svg.setAttribute('fill', 'none');
         svg.classList.add('toggle-arrow-svg');
         svg.innerHTML = `
-                        <path d="M11.7578 12.393L7.67002 8.30518L6.96489 9.01031L10.4374 12.4828H0V13.4806H10.4374L6.96489 16.9531L7.67002 17.6582L11.7578 13.5704C12.0805 13.2478 12.0805 12.7189 11.7578 12.393Z" fill="currentColor"></path>
-                        <path d="M0.242183 5.60752L4.32998 9.69531L5.03511 8.99018L1.56265 5.51771L12 5.51771V4.51988L1.56265 4.51988L5.03511 1.04741L4.32998 0.342276L0.242183 4.43007C-0.0804501 4.75271 -0.0804501 5.28156 0.242183 5.60752Z" fill="currentColor"></path>
-                    `;
+                          <path d="M11.7578 12.393L7.67002 8.30518L6.96489 9.01031L10.4374 12.4828H0V13.4806H10.4374L6.96489 16.9531L7.67002 17.6582L11.7578 13.5704C12.0805 13.2478 12.0805 12.7189 11.7578 12.393Z" fill="currentColor"></path>
+                          <path d="M0.242183 5.60752L4.32998 9.69531L5.03511 8.99018L1.56265 5.51771L12 5.51771V4.51988L1.56265 4.51988L5.03511 1.04741L4.32998 0.342276L0.242183 4.43007C-0.0804501 4.75271 -0.0804501 5.28156 0.242183 5.60752Z" fill="currentColor"></path>
+                      `;
 
         // Append the name text and SVG to the state-row
         stateRow.appendChild(stateNameText);
         stateRow.appendChild(svg);
 
-        // Append the state-row to the states_wrap container
+        // Append the state-row to the citiesWrap container
         citiesWrap.appendChild(stateRow);
       });
+
       document.querySelector('.included-num__placeholder').textContent =
         document.querySelectorAll('.states_wrap.included .state-row').length;
       document.querySelector('.excluded-num__placeholder').textContent =
