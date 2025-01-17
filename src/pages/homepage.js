@@ -10,6 +10,8 @@ import Place from 'https://smediaapp.pages.dev/src/Place.js';
 import Client from 'https://smediaapp.pages.dev/src/Client.js';
 import Tool from 'https://smediaapp.pages.dev/src/Tool.js';
 
+console.log("Test");
+
 const user = new User();
 const place = new Place();
 const map = new Map();
