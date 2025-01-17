@@ -107,6 +107,8 @@ export default class Place {
           return;
         }
 
+        console.log(city);
+
         const cityName = tags.name;
         let state;
 
