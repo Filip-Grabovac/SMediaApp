@@ -129,7 +129,32 @@ export default class Place {
             const data = await response.json();
 
             if (data.length > 0) {
-              state = data[0]?.address?.state || 'State not found';
+              // Find the closest place
+              const closestPlace = data.reduce((closest, current) => {
+                const currentDistance = this.getDistance(
+                  city.lat,
+                  city.lon,
+                  parseFloat(current.lat),
+                  parseFloat(current.lon)
+                );
+                const closestDistance = closest
+                  ? this.getDistance(
+                      city.lat,
+                      city.lon,
+                      parseFloat(closest.lat),
+                      parseFloat(closest.lon)
+                    )
+                  : Infinity;
+
+                return currentDistance < closestDistance ? current : closest;
+              }, null);
+
+              if (closestPlace) {
+                state = closestPlace.address?.state || 'State not found';
+              } else {
+                console.log(`No closest state found for ${cityName}.`);
+                return;
+              }
             } else {
               console.log(`No state found for ${cityName}.`);
               return;
@@ -201,6 +226,24 @@ export default class Place {
     } else {
       console.log('No cities found in this area.');
     }
+  }
+
+  // Haversine formula to calculate distance between two lat/lon coordinates
+  getDistance(lat1, lon1, lat2, lon2) {
+    const toRadians = (degrees) => degrees * (Math.PI / 180);
+    const R = 6371; // Radius of Earth in km
+    const dLat = toRadians(lat2 - lat1);
+    const dLon = toRadians(lon2 - lon1);
+
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRadians(lat1)) *
+        Math.cos(toRadians(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c;
   }
 
   searchIncludedExcludedPlaces(inputSelector, wrapperSelector) {
