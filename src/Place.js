@@ -102,12 +102,12 @@ export default class Place {
       const promises = cities.map(async (city) => {
         const { tags } = city;
 
+        console.log(city);
+
         // Check if the place is a "city" or "town"
         if (!tags.place || !['town', 'city'].includes(tags.place)) {
           return;
         }
-
-        console.log(city);
 
         const cityName = tags.name;
         let state;
