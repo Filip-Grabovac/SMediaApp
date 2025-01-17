@@ -97,14 +97,13 @@ export default class Place {
       });
   }
 
-  listPlaces(citiesWrap, cities, shapeId) {
+  async listPlaces(citiesWrap, cities, shapeId) {
     if (citiesWrap && cities.length > 0) {
-      cities.forEach(async (city) => {
+      const promises = cities.map(async (city) => {
         const { tags } = city;
 
         // Check if the place is a "city" or "town"
         if (!tags.place || !['town', 'city'].includes(tags.place)) {
-          console.log(`Skipping ${tags.name}: Not a city or town.`);
           return;
         }
 
@@ -184,6 +183,10 @@ export default class Place {
         citiesWrap.appendChild(stateRow);
       });
 
+      // Wait for all promises to complete
+      await Promise.all(promises);
+
+      // Update the placeholders and show the section only after all cities are listed
       document.querySelector('.included-num__placeholder').textContent =
         document.querySelectorAll('.states_wrap.included .state-row').length;
       document.querySelector('.excluded-num__placeholder').textContent =
