@@ -269,4 +269,33 @@ export default class Place {
       );
     }
   }
+
+  exportTable() {
+    // Get the table element
+    const table = document.getElementById('main-data-table');
+    let csvContent = '';
+
+    // Loop through each row in the table
+    for (const row of table.rows) {
+      const cells = Array.from(row.cells).map(
+        (cell) => `"${cell.textContent}"`
+      ); // Escape cells
+      csvContent += cells.join(',') + '\n';
+    }
+
+    // Create a Blob from the CSV content
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+
+    // Create a download link and trigger it
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'table-data.csv'; // File name for the CSV
+    document.body.appendChild(a);
+    a.click();
+
+    // Cleanup
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
 }

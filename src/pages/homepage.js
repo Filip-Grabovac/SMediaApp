@@ -10,7 +10,7 @@ import Place from 'https://smediaapp.pages.dev/src/Place.js';
 import Client from 'https://smediaapp.pages.dev/src/Client.js';
 import Tool from 'https://smediaapp.pages.dev/src/Tool.js';
 
-console.log("Test");
+console.log('Test');
 
 const user = new User();
 const place = new Place();
@@ -26,6 +26,7 @@ const searchArrow = document.querySelector('.search-input__arrow');
 
 const stateInput = document.getElementById('state-input');
 const stateDropdown = document.getElementById('state-dropdown');
+const exportBtn = document.getElementById('tableExportBtn');
 
 const zipInput = document.getElementById('zip-input');
 const zipDropdown = document.getElementById('zip-dropdown');
@@ -231,4 +232,9 @@ uploadZipBtn.addEventListener('click', async () => {
       await tool.zipDraw({ name: zip }, place);
     }
   }
+});
+
+// EXPORT TO CSV
+exportBtn.addEventListener('click', () => {
+  place.exportTable();
 });
