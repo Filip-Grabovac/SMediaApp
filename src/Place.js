@@ -270,25 +270,32 @@ export default class Place {
     }
   }
 
-  exportTable() {
-    // Get the table element
+  exportTableToCSV(filename = 'table-data.csv') {
     const table = document.getElementById('main-data-table');
-    const rows = Array.from(table.querySelectorAll('tr'));
+    let csvContent = '';
 
-    // Extract table data into an array of arrays
-    const csvData = rows.map((row) =>
-      Array.from(row.querySelectorAll('th, td')).map(
-        (cell) => cell.textContent.trim().replace(/"/g, '""') // Escape quotes
-      )
+    // Process <thead> for column headers
+    const headers = Array.from(table.querySelectorAll('thead tr th')).map(
+      (th) => th.textContent.trim().replace(/"/g, '""') // Escape quotes and trim whitespace
     );
+    csvContent += headers.join(',') + '\n'; // Add header row
 
-    // Convert array data to CSV using PapaParse with a semicolon delimiter
-    const csv = Papa.unparse(csvData, {
-      delimiter: ',', // Change to ';' if needed for your locale
-    });
+    // Process <tbody> for table rows
+    const rows = table.querySelectorAll('tbody tr');
+    for (const row of rows) {
+      const rowData = Array.from(row.querySelectorAll('td')).map(
+        (td) => td.textContent.trim().replace(/"/g, '""') // Escape quotes and trim whitespace
+      );
+      csvContent += rowData.join(',') + '\n'; // Add data row
+    }
 
-    // Create a Blob and save the file using FileSaver.js
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    saveAs(blob, 'table-data.csv'); // Download as 'table-data.csv'
+    // Create a Blob and trigger download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 }
