@@ -22,10 +22,6 @@ $(document).ready(function () {
     },
   });
 
-  $('#tableExportBtn').on('click', function () {
-    table.buttons('.buttons-excel').trigger(); // Trigger the Excel export
-  });
-
   window.mainTable = table;
 
   function formatNumber(number) {
