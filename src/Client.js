@@ -100,10 +100,6 @@ export default class Client {
             <td><a href="${
               client.website
             }" target="_blank" class="website-link">${client.website}</a></td>
-            <td><a href="mailto:${client.email}" class="email-link">${
-              client.email
-            }</a></td>
-            <td class="light">${client.phone_number}</td>
             <td class="light">${new Date(
               client.created_at
             ).toLocaleDateString()}</td>
