@@ -273,25 +273,20 @@ export default class Place {
   exportTable() {
     // Get the table element
     const table = document.getElementById('main-data-table');
+    const rows = Array.from(table.querySelectorAll('tr'));
 
-    // Use TableExport to export the table
-    const tableExport = new TableExport(table, {
-      headers: true, // Include headers
-      footers: false, // Exclude footers
-      formats: ['csv'], // Specify the format to export
-      filename: 'table-data', // File name without extension
-      bootstrap: false, // Not using bootstrap styling
-      exportButtons: false, // Do not show export buttons automatically
-      trimWhitespace: true, // Trim white spaces in data
-    });
-
-    // Trigger download
-    const csvData = tableExport.getExportData()['main-data-table']['csv'];
-    tableExport.export2file(
-      csvData.data, // Data to export
-      csvData.mimeType, // MIME type
-      csvData.filename, // File name
-      csvData.fileExtension // File extension
+    // Extract table data into an array of arrays
+    const csvData = rows.map((row) =>
+      Array.from(row.querySelectorAll('th, td')).map(
+        (cell) => cell.textContent.trim().replace(/"/g, '""') // Escape quotes
+      )
     );
+
+    // Convert array data to CSV using PapaParse
+    const csv = Papa.unparse(csvData);
+
+    // Create a Blob and save the file using FileSaver.js
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, 'table-data.csv'); // Download as 'table-data.csv'
   }
 }
