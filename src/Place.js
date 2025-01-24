@@ -282,8 +282,10 @@ export default class Place {
       )
     );
 
-    // Convert array data to CSV using PapaParse
-    const csv = Papa.unparse(csvData);
+    // Convert array data to CSV using PapaParse with a semicolon delimiter
+    const csv = Papa.unparse(csvData, {
+      delimiter: ',', // Change to ';' if needed for your locale
+    });
 
     // Create a Blob and save the file using FileSaver.js
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
