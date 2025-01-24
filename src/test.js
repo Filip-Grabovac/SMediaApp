@@ -11,6 +11,7 @@ $(document).ready(function () {
     lengthChange: false, // Hides the "Show n entries" dropdown
     info: false,
     bPaginate: false,
+    dom: 'Blfrtip',
     fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
       // Calculate the correct row number across all pages
       const pageInfo = this.api().page.info();
@@ -232,18 +233,18 @@ $(document).ready(function () {
 
   $('.submit-selection').on('click', async function () {
     const notificationElement = document.querySelector('.notification');
-    
+
     // Remove the "active" class from the button
     $(this).removeClass('active');
-    
+
     table.clear().draw();
-    
+
     // Save shapes in database
     map.saveMapInDB();
-    
+
     const stateRows = $('.states_wrap.included .state-row');
     const authToken = localStorage.getItem('authToken');
-    
+
     // FIRST DELETE ALREADY EXISTING PLACES IN DATABASE FOR THAT CLIENT
     try {
       await deletePlaces(currentClientId, authToken);
