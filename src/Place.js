@@ -273,38 +273,25 @@ export default class Place {
   exportTable() {
     // Get the table element
     const table = document.getElementById('main-data-table');
-    let csvContent = '';
 
-    // Include table headers (if present)
-    const headers = Array.from(table.querySelectorAll('thead tr th')).map(
-      (header) => header.textContent.replace(/"/g, '').trim() // Clean header content
+    // Use TableExport to export the table
+    const tableExport = new TableExport(table, {
+      headers: true, // Include headers
+      footers: false, // Exclude footers
+      formats: ['csv'], // Specify the format to export
+      filename: 'table-data', // File name without extension
+      bootstrap: false, // Not using bootstrap styling
+      exportButtons: false, // Do not show export buttons automatically
+      trimWhitespace: true, // Trim white spaces in data
+    });
+
+    // Trigger download
+    const csvData = tableExport.getExportData()['main-data-table']['csv'];
+    tableExport.export2file(
+      csvData.data, // Data to export
+      csvData.mimeType, // MIME type
+      csvData.filename, // File name
+      csvData.fileExtension // File extension
     );
-    if (headers.length > 0) {
-      csvContent += headers.join(',') + '\n'; // Add headers to CSV
-    }
-
-    // Include table rows
-    const rows = table.querySelectorAll('tbody tr'); // Select rows from <tbody>
-    for (const row of rows) {
-      const cells = Array.from(row.cells).map(
-        (cell) => cell.textContent.replace(/"/g, '').trim() // Clean cell content
-      );
-      csvContent += cells.join(',') + '\n'; // Add row data to CSV
-    }
-
-    // Create a Blob from the CSV content
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-
-    // Create a download link and trigger it
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'table-data.csv'; // File name for the CSV
-    document.body.appendChild(a);
-    a.click();
-
-    // Cleanup
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
   }
 }
