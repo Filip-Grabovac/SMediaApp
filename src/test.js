@@ -254,6 +254,7 @@ $(document).ready(function () {
     }
 
     for (let i = 0; i < stateRows.length; i++) {
+      console.log(`${i} of ${stateRows.length}`);
       const stateRow = $(stateRows[i]);
 
       // Extract place information
