@@ -278,9 +278,9 @@ export default class Place {
     // Loop through each row in the table
     for (const row of table.rows) {
       const cells = Array.from(row.cells).map(
-        (cell) => `"${cell.textContent}"`
-      ); // Escape cells
-      csvContent += cells.join(',') + '\n';
+        (cell) => cell.textContent.replace(/"/g, '') // Remove all double quotes from cell content
+      );
+      csvContent += cells.join(',') + '\n'; // Join cells with commas and add a new line
     }
 
     // Create a Blob from the CSV content
