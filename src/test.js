@@ -235,6 +235,9 @@ $(document).ready(function () {
     notificationElement.textContent = 'Generating city/town data...';
     notificationElement.classList.remove('hidden');
 
+    // Remove the "active" class from the button
+    $(this).removeClass('active');
+
     table.clear().draw();
 
     // Save shapes in database
