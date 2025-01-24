@@ -11,7 +11,8 @@ $(document).ready(function () {
     lengthChange: false, // Hides the "Show n entries" dropdown
     info: false,
     bPaginate: false,
-    dom: 'Blfrtip',
+    dom: 'Bfrtip',
+    buttons: ['excel'],
     fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
       // Calculate the correct row number across all pages
       const pageInfo = this.api().page.info();
