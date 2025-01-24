@@ -274,19 +274,38 @@ export default class Place {
     const table = document.getElementById('main-data-table');
     let csvContent = '';
 
-    // Process <thead> for column headers
-    const headers = Array.from(table.querySelectorAll('thead tr th')).map(
-      (th) => th.textContent.trim().replace(/"/g, '""') // Escape quotes and trim whitespace
-    );
-    csvContent += headers.join(',') + '\n'; // Add header row
+    // Predefine column headers
+    const headers = [
+      '#',
+      'City',
+      'State',
+      'Population',
+      'Avg. Household Income',
+      'Approx. # of Single Family Homes',
+      'Avg. Home Value',
+      'Total Home Value',
+      'Closest Office (miles)',
+      '% of Total Pop.',
+      'Cumulative Pop. %',
+      'Total Population',
+      'Norm. Pop.',
+      'Norm. Avg. Household Income',
+      'Norm. Approx. # of Single Family Homes',
+      'Norm. Avg. Home Value',
+      'Norm. Closest Office',
+      'Weighted Score',
+    ];
 
-    // Process <tbody> for table rows
+    // Add headers to CSV content
+    csvContent += headers.join(',') + '\n';
+
+    // Process <tbody> rows only (skip <thead>)
     const rows = table.querySelectorAll('tbody tr');
     for (const row of rows) {
       const rowData = Array.from(row.querySelectorAll('td')).map(
         (td) => td.textContent.trim().replace(/"/g, '""') // Escape quotes and trim whitespace
       );
-      csvContent += rowData.join(',') + '\n'; // Add data row
+      csvContent += rowData.join(',') + '\n';
     }
 
     // Create a Blob and trigger download
