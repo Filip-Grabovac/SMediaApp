@@ -346,9 +346,7 @@ export default class Client {
 
   gatherClientData(client) {
     client.company_name = document.getElementById('company').value;
-    client.email = document.getElementById('email').value;
     client.website = document.getElementById('website').value;
-    client.phone_number = document.getElementById('phone-number').value;
 
     // Gather multiple addresses
     client.company_office_adr = Array.from(
@@ -388,9 +386,7 @@ export default class Client {
     // Build client data object dynamically from the extracted weights
     const clientData = {
       company_name: client.company_name,
-      email: client.email,
       website: client.website,
-      phone_number: client.phone_number,
       population_factor: factors['Population'],
       avg_household_income_factor: factors['Average household income'],
       single_family_homes_factor: factors['Number of single-family homes'],
