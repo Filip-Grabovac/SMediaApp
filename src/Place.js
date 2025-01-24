@@ -275,12 +275,21 @@ export default class Place {
     const table = document.getElementById('main-data-table');
     let csvContent = '';
 
-    // Loop through each row in the table
-    for (const row of table.rows) {
+    // Include table headers (if present)
+    const headers = Array.from(table.querySelectorAll('thead tr th')).map(
+      (header) => header.textContent.replace(/"/g, '').trim() // Clean header content
+    );
+    if (headers.length > 0) {
+      csvContent += headers.join(',') + '\n'; // Add headers to CSV
+    }
+
+    // Include table rows
+    const rows = table.querySelectorAll('tbody tr'); // Select rows from <tbody>
+    for (const row of rows) {
       const cells = Array.from(row.cells).map(
-        (cell) => cell.textContent.replace(/"/g, '').trim() // Remove all double quotes and trim spaces
+        (cell) => cell.textContent.replace(/"/g, '').trim() // Clean cell content
       );
-      csvContent += cells.join(',') + '\n'; // Join cells with a comma and add a new line
+      csvContent += cells.join(',') + '\n'; // Add row data to CSV
     }
 
     // Create a Blob from the CSV content
