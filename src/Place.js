@@ -270,7 +270,7 @@ export default class Place {
     }
   }
 
-  exportTableToCSV(filename = 'table-data.csv') {
+  exportTable(filename = 'table-data.csv') {
     const table = document.getElementById('main-data-table');
     let csvContent = '';
 
