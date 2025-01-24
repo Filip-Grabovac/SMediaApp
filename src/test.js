@@ -232,20 +232,18 @@ $(document).ready(function () {
 
   $('.submit-selection').on('click', async function () {
     const notificationElement = document.querySelector('.notification');
-    notificationElement.textContent = 'Generating city/town data...';
-    notificationElement.classList.remove('hidden');
-
+    
     // Remove the "active" class from the button
     $(this).removeClass('active');
-
+    
     table.clear().draw();
-
+    
     // Save shapes in database
     map.saveMapInDB();
-
+    
     const stateRows = $('.states_wrap.included .state-row');
     const authToken = localStorage.getItem('authToken');
-
+    
     // FIRST DELETE ALREADY EXISTING PLACES IN DATABASE FOR THAT CLIENT
     try {
       await deletePlaces(currentClientId, authToken);
@@ -253,8 +251,10 @@ $(document).ready(function () {
       return; // Exit early if deletion fails
     }
 
+    notificationElement.classList.remove('hidden');
+
     for (let i = 0; i < stateRows.length; i++) {
-      console.log(`${i} of ${stateRows.length}`);
+      notificationElement.textContent = `Generating city/town data - ${i} of ${stateRows.length}`;
       const stateRow = $(stateRows[i]);
 
       // Extract place information
