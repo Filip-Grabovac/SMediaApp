@@ -239,6 +239,4 @@ uploadZipBtn.addEventListener('click', async () => {
 //   place.exportTable();
 // });
 
-$('#tableExportBtn').on('click', function () {
-  table.buttons('.buttons-excel').trigger(); // Trigger the Excel export
-});
+
