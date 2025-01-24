@@ -235,6 +235,10 @@ uploadZipBtn.addEventListener('click', async () => {
 });
 
 // EXPORT TO CSV
-exportBtn.addEventListener('click', () => {
-  place.exportTable();
+// exportBtn.addEventListener('click', () => {
+//   place.exportTable();
+// });
+
+$('#tableExportBtn').on('click', function () {
+  table.buttons('.buttons-excel').trigger(); // Trigger the Excel export
 });
