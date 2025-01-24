@@ -278,13 +278,13 @@ export default class Place {
     // Loop through each row in the table
     for (const row of table.rows) {
       const cells = Array.from(row.cells).map(
-        (cell) => cell.textContent.replace(/"/g, '') // Remove all double quotes from cell content
+        (cell) => cell.textContent.replace(/"/g, '').trim() // Remove all double quotes and trim spaces
       );
-      csvContent += cells.join(',') + '\n'; // Join cells with commas and add a new line
+      csvContent += cells.join(',') + '\n'; // Join cells with a comma and add a new line
     }
 
     // Create a Blob from the CSV content
-    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
 
     // Create a download link and trigger it
