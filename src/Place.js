@@ -79,11 +79,7 @@ export default class Place {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
-        const cities = data.elements.filter(
-          (el) => el.tags && el.type === 'node' && el.tags.name
-        );
-        console.log(cities);
+        const cities = data.elements.filter((el) => el.tags && el.tags.name);
         // Check if new drawn shape needs to be added to incuded or excluded section
         const excludeButton = document.querySelector('.option_button.exclude');
         const citiesWrap = document.querySelector(
@@ -104,46 +100,47 @@ export default class Place {
       for (const city of cities) {
         const { tags } = city;
 
-        // Check if the place is a "city" or "town"
-        if (!tags.place || !['town', 'city'].includes(tags.place)) {
-          continue;
-        }
-
         const cityName = tags.name;
         let state;
-        console.log(cityName);
 
-        // Use Overpass API to fetch state information
-        try {
-          const query = `
-            [out:json];
-            is_in(${city.lat}, ${city.lon});
-            area._[admin_level~"4"];
-            out tags;
-          `;
-          const response = await fetch(
-            `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(
-              query
-            )}`
-          );
-          const data = await response.json();
-
-          if (data.elements.length > 0) {
-            // Find the most relevant administrative boundary
-            const adminBoundary = data.elements.find(
-              (element) => element.tags && element.tags.admin_level === '4'
+        // Check if "wikipedia" is available
+        if (tags.wikipedia) {
+          state =
+            tags.wikipedia.split(', ').length > 1
+              ? tags.wikipedia.split(', ')[1]
+              : tags.wikipedia.split(', ')[0].replaceAll('en:', '');
+        } else {
+          // Use Overpass API to fetch state information
+          try {
+            console.log(`Fetching state for ${cityName}`);
+            const query = `
+              [out:json];
+              is_in(${city.lat}, ${city.lon});
+              area._[admin_level~"4"];
+              out tags;
+            `;
+            const response = await fetch(
+              `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(
+                query
+              )}`
             );
-            state = adminBoundary?.tags?.name || 'State not found';
-          } else {
-            console.log(`No state found for ${cityName}.`);
+            const data = await response.json();
+
+            if (data.elements.length > 0) {
+              // Find the most relevant administrative boundary
+              const adminBoundary = data.elements.find(
+                (element) => element.tags && element.tags.admin_level === '4'
+              );
+              state = adminBoundary?.tags?.name || 'State not found';
+            } else {
+              console.log(`No state found for ${cityName}.`);
+              continue;
+            }
+          } catch (error) {
+            console.error(`Error fetching state for ${cityName}:`, error);
             continue;
           }
-        } catch (error) {
-          console.error(`Error fetching state for ${cityName}:`, error);
-          continue;
         }
-
-        console.log(state);
 
         // Return if we are getting border places from another state
         if (
@@ -159,13 +156,12 @@ export default class Place {
 
         stateRow.setAttribute('data-lat', city.lat);
         stateRow.setAttribute('data-lon', city.lon);
-
         stateRow.setAttribute('shapeId', shapeId);
 
         // Create a div for the city name
         const stateNameText = document.createElement('div');
         stateNameText.classList.add('state-name-text');
-        stateNameText.textContent = `${cityName}, ${state}`; // Add city name
+        stateNameText.textContent = `${cityName}, ${state}`; // Add city name and state
 
         // Create the SVG element for the toggle arrow
         const svg = document.createElementNS(
