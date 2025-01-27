@@ -108,6 +108,8 @@ export default class Place {
         const cityName = tags.name;
         let state;
 
+        console.log(city);
+
         // Use Overpass API to fetch state information
         try {
           const query = `
@@ -130,7 +132,6 @@ export default class Place {
             );
             state = adminBoundary?.tags?.name || 'State not found';
           } else {
-            console.log(`No state found for ${cityName}.`);
             return;
           }
         } catch (error) {
