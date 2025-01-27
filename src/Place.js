@@ -204,6 +204,30 @@ export default class Place {
     }
   }
 
+  searchIncludedExcludedPlaces(inputSelector, wrapperSelector) {
+    const inputElement = document.querySelector(inputSelector);
+    const wrapperElement = document.querySelector(wrapperSelector);
+
+    if (inputElement && wrapperElement) {
+      inputElement.addEventListener('input', () => {
+        const searchValue = inputElement.value.toLowerCase();
+        const stateRows = wrapperElement.querySelectorAll('.state-row');
+
+        stateRows.forEach((row) => {
+          const stateName =
+            row.querySelector('.state-name-text')?.textContent.toLowerCase() ||
+            '';
+          // Show or hide based on matching text
+          row.style.display = stateName.includes(searchValue) ? 'flex' : 'none';
+        });
+      });
+    } else {
+      console.warn(
+        `Elements not found for selectors: ${inputSelector}, ${wrapperSelector}`
+      );
+    }
+  }
+
   exportTable(filename = 'table-data.xlsx') {
     // Get the table element
     const table = document.getElementById('main-data-table');
