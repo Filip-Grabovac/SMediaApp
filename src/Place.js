@@ -108,7 +108,7 @@ export default class Place {
 
         const cityName = tags.name;
         let state;
-
+        console.log(cityName);
         // Use Overpass API to fetch state information
         try {
           const query = `
@@ -136,6 +136,8 @@ export default class Place {
           console.error(`Error fetching state for ${cityName}:`, error);
           return;
         }
+
+        console.log(state);
 
         // Return if we are getting border places from another state
         if (
