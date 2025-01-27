@@ -35,8 +35,6 @@ export default class Place {
                 [out:json];
                 (
                     node["place"~"city|town|village"](${bbox});
-                    way["place"~"city|town|village"](${bbox});
-                    relation["place"~"city|town|village"](${bbox});
                 );
                 out body;`;
     } else if (layer instanceof L.Circle) {
