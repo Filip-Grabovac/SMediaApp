@@ -79,6 +79,7 @@ export default class Place {
     })
       .then((response) => response.json())
       .then((data) => {
+        console.log(data);
         const cities = data.elements.filter(
           (el) => el.tags && el.type === 'node' && el.tags.name
         );
