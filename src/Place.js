@@ -111,10 +111,11 @@ export default class Place {
         // Use Overpass API to fetch state information
         try {
           const query = `
-            [out:json];
-            is_in(${city.lat}, ${city.lon});
-            area._[boundary=administrative][admin_level=4];
-            out body;`;
+        [out:json];
+        is_in(${city.lat}, ${city.lon});
+        area._[admin_level~"4"];
+        out tags;
+      `;
           const response = await fetch(
             `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(
               query
