@@ -288,9 +288,6 @@ export default class Client {
               clientLink.classList.add('client-link', 'not-selected');
               clientLink.setAttribute('client-id', client.id);
               clientLink.href = '?client_id=' + client.id;
-
-              console.log(client.image);
-
               clientLink.innerHTML = `
   ${
     client.image

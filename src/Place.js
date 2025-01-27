@@ -122,7 +122,7 @@ export default class Place {
             )}`
           );
           const data = await response.json();
-
+          console.log(data);
           if (data.elements.length > 0) {
             // Find the most relevant administrative boundary
             const adminBoundary = data.elements.find(
