@@ -79,6 +79,7 @@ export default class Place {
     })
       .then((response) => response.json())
       .then((data) => {
+        console.log(data);
         const cities = data.elements.filter((el) => el.tags && el.tags.name);
         console.log(cities);
         // Check if new drawn shape needs to be added to incuded or excluded section
