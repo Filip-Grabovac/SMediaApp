@@ -44,8 +44,6 @@ export default class Place {
                 [out:json];
                 (
                     node["place"~"city|town|village"](around:${radius}, ${center.lat}, ${center.lng});
-                    way["place"~"city|town|village"](around:${radius}, ${center.lat}, ${center.lng});
-                    relation["place"~"city|town|village"](around:${radius}, ${center.lat}, ${center.lng});
                 );
                 out body;`;
     } else if (layer instanceof L.GeoJSON) {
@@ -55,8 +53,6 @@ export default class Place {
                 [out:json];
                 (
                     node["place"~"city|town|village"](${bbox});
-                    way["place"~"city|town|village"](${bbox});
-                    relation["place"~"city|town|village"](${bbox});
                 );
                 out body;`;
     } else {
