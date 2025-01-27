@@ -79,9 +79,7 @@ export default class Place {
     })
       .then((response) => response.json())
       .then((data) => {
-        const cities = data.elements.filter(
-          (el) => el.tags && el.tags.name
-        );
+        const cities = data.elements.filter((el) => el.tags && el.tags.name);
         // Check if new drawn shape needs to be added to incuded or excluded section
         const excludeButton = document.querySelector('.option_button.exclude');
         const citiesWrap = document.querySelector(
@@ -102,8 +100,6 @@ export default class Place {
       const promises = cities.map(async (city) => {
         const { tags } = city;
 
-        console.log(city);
-
         // Check if the place is a "city" or "town"
         if (!tags.place || !['town', 'city'].includes(tags.place)) {
           return;
@@ -112,57 +108,33 @@ export default class Place {
         const cityName = tags.name;
         let state;
 
-        // Check if "wikipedia" is available
-        if (tags.wikipedia) {
-          state =
-            tags.wikipedia.split(', ').length > 1
-              ? tags.wikipedia.split(', ')[1]
-              : tags.wikipedia.split(', ')[0].replaceAll('en:', '');
-        } else {
-          // Fetch state using Nominatim if "wikipedia" is missing
-          try {
-            const response = await fetch(
-              `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
-                cityName
-              )}&format=json&addressdetails=1`
+        // Use Overpass API to fetch state information
+        try {
+          const query = `
+            [out:json];
+            is_in(${city.lat}, ${city.lon});
+            area._[boundary=administrative][admin_level=4];
+            out body;`;
+          const response = await fetch(
+            `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(
+              query
+            )}`
+          );
+          const data = await response.json();
+
+          if (data.elements.length > 0) {
+            // Find the most relevant administrative boundary
+            const adminBoundary = data.elements.find(
+              (element) => element.tags && element.tags.admin_level === '4'
             );
-            const data = await response.json();
-
-            if (data.length > 0) {
-              // Find the closest place
-              const closestPlace = data.reduce((closest, current) => {
-                const currentDistance = this.getDistance(
-                  city.lat,
-                  city.lon,
-                  parseFloat(current.lat),
-                  parseFloat(current.lon)
-                );
-                const closestDistance = closest
-                  ? this.getDistance(
-                      city.lat,
-                      city.lon,
-                      parseFloat(closest.lat),
-                      parseFloat(closest.lon)
-                    )
-                  : Infinity;
-
-                return currentDistance < closestDistance ? current : closest;
-              }, null);
-
-              if (closestPlace) {
-                state = closestPlace.address?.state || 'State not found';
-              } else {
-                console.log(`No closest state found for ${cityName}.`);
-                return;
-              }
-            } else {
-              console.log(`No state found for ${cityName}.`);
-              return;
-            }
-          } catch (error) {
-            console.error(`Error fetching state for ${cityName}:`, error);
+            state = adminBoundary?.tags?.name || 'State not found';
+          } else {
+            console.log(`No state found for ${cityName}.`);
             return;
           }
+        } catch (error) {
+          console.error(`Error fetching state for ${cityName}:`, error);
+          return;
         }
 
         // Return if we are getting border places from another state
