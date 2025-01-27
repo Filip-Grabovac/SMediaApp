@@ -38,10 +38,7 @@ export default class Place {
                     way["place"~"city|town|village"](${bbox});
                     relation["place"~"city|town|village"](${bbox});
                 );
-                out center;  // Include the center coordinates for ways and relations
-                >;
-                out meta;   // Request metadata to better distinguish features
-                `;
+                out body;`;
     } else if (layer instanceof L.Circle) {
       const center = layer.getLatLng();
       const radius = layer.getRadius();
