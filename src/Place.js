@@ -79,7 +79,8 @@ export default class Place {
     })
       .then((response) => response.json())
       .then((data) => {
-        const cities = data.elements.filter((el) => el.tags && el.tags.name);
+        const cities = data.elements.filter((el) => el.tags && el.type === 'node' && el.tags.name);
+        console.log(cities);
         // Check if new drawn shape needs to be added to incuded or excluded section
         const excludeButton = document.querySelector('.option_button.exclude');
         const citiesWrap = document.querySelector(
@@ -108,8 +109,6 @@ export default class Place {
         const cityName = tags.name;
         let state;
 
-        console.log(city);
-
         // Use Overpass API to fetch state information
         try {
           const query = `
@@ -124,7 +123,6 @@ export default class Place {
             )}`
           );
           const data = await response.json();
-          console.log(data);
           if (data.elements.length > 0) {
             // Find the most relevant administrative boundary
             const adminBoundary = data.elements.find(
