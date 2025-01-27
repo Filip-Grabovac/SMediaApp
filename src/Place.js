@@ -105,39 +105,8 @@ export default class Place {
             tags.wikipedia.split(', ').length > 1
               ? tags.wikipedia.split(', ')[1]
               : tags.wikipedia.split(', ')[0].replaceAll('en:', '');
-        } else {
-          // Use Overpass API to fetch state information
-          try {
-            console.log(`Fetching state for ${cityName}`);
-            const query = `
-              [out:json];
-              is_in(${city.lat}, ${city.lon});
-              area._[admin_level~"4"];
-              out tags;
-            `;
-            const response = await fetch(
-              `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(
-                query
-              )}`
-            );
-            const data = await response.json();
-
-            if (data.elements.length > 0) {
-              // Find the most relevant administrative boundary
-              const adminBoundary = data.elements.find(
-                (element) => element.tags && element.tags.admin_level === '4'
-              );
-              state = adminBoundary?.tags?.name || 'State not found';
-            } else {
-              console.log(`No state found for ${cityName}.`);
-              continue;
-            }
-          } catch (error) {
-            console.error(`Error fetching state for ${cityName}:`, error);
-            continue;
-          }
         }
-
+        
         // Return if we are getting border places from another state
         if (
           typeof window.stateInputSearch !== 'undefined' &&
