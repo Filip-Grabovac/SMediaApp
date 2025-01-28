@@ -141,6 +141,10 @@ export default class Place {
             continue;
           }
         }
+        
+        console.log(window.stateInputSearch); 
+        console.log(state);
+        console.log(stateName);
 
         // Return if we are getting border places from another state
         if (
