@@ -16,6 +16,8 @@ export default class Place {
     this.tool.showNotification('List is Generating', true);
     let query;
 
+    console.log(layer);
+
     // Process polygons and rectangles
     if (layer instanceof L.Polygon || layer instanceof L.Rectangle) {
       let latlngs = layer.getLatLngs()[0];
