@@ -306,7 +306,7 @@ export default class Tool {
           layer.on('add', () => {
             L.DomUtil.addClass(layer._path, 'custom-polygon__searched'); // Add class to the polygon
             layer._path.setAttribute('shapeId', shapeId);
-            layer._path.setAttribute('state', window.stateInputSearch);
+            layer._path.setAttribute('state', document.querySelector(".state-input").value);
 
             if (this.excludedBtn.classList.contains('active')) {
               L.DomUtil.addClass(layer._path, 'excluded');
