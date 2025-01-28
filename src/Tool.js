@@ -306,7 +306,7 @@ export default class Tool {
           layer.on('add', () => {
             L.DomUtil.addClass(layer._path, 'custom-polygon__searched'); // Add class to the polygon
             layer._path.setAttribute('shapeId', shapeId);
-            layer._path.setAttribute('state', document.querySelector("#state-input").value);
+            layer._path.setAttribute('state', window.stateInputSearch);
 
             if (this.excludedBtn.classList.contains('active')) {
               L.DomUtil.addClass(layer._path, 'excluded');
@@ -366,8 +366,6 @@ export default class Tool {
 
         // Handle city selection
         item.addEventListener('click', () => {
-          itemData.onSelect();
-
           // if (isSelectedCity) {
           //   document
           //     .querySelector('.town-radius__dropdown')
@@ -391,6 +389,8 @@ export default class Tool {
             // Save it to the window object
             window.stateInputSearch = stateInputSearch;
           }
+
+          itemData.onSelect();
 
           input.value = itemData.name;
           dropdown.style.display = 'none';
