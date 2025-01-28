@@ -312,7 +312,7 @@ export default class Tool {
               L.DomUtil.addClass(layer._path, 'excluded');
             }
           });
-
+          console.log(document.querySelector("#state-input").value);
           this.place.processLayer(layer, shapeId, document.querySelector("#state-input").value);
         }
       },
