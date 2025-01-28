@@ -378,6 +378,7 @@ export default class Map {
     shapes.forEach((shape) => {
       // Retrieve shapeId and class attributes
       const shapeId = shape.getAttribute('shapeId');
+      const state = shape.getAttribute('state');
       if (!shapeId) return; // Skip shapes without a shapeId
 
       const classes = shape.getAttribute('class');
@@ -394,6 +395,7 @@ export default class Map {
           geometry: null,
           properties: {
             shapeId: shapeId,
+            state: state ? state : null,
             classes: classes ? classes.split(' ') : [],
             editable: true,
           },
