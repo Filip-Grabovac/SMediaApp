@@ -141,11 +141,7 @@ export default class Place {
             continue;
           }
         }
-
-        console.log(state);
-        console.log(window.stateInputSearch);
-        console.log(stateInputSearch);
-
+        
         // Return if we are getting border places from another state
         if (
           typeof window.stateInputSearch !== 'undefined' &&
