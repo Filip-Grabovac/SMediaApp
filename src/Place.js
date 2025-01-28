@@ -113,7 +113,6 @@ export default class Place {
         } else {
           // Use Overpass API to fetch state information
           try {
-            console.log(`Fetching state for ${cityName}`);
             const query = `
                         [out:json];
                         is_in(${city.lat}, ${city.lon});
@@ -142,6 +141,10 @@ export default class Place {
             continue;
           }
         }
+
+        console.log(state);
+        console.log(window.stateInputSearch);
+        console.log(stateInputSearch);
 
         // Return if we are getting border places from another state
         if (
