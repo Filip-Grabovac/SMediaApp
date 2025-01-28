@@ -69,6 +69,7 @@ export default class Place {
   }
 
   sendOverpassQuery(query, shapeId, layer, state) {
+    console.log(state);
     fetch('https://overpass-api.de/api/interpreter', {
       method: 'POST',
       body: query,
@@ -94,6 +95,7 @@ export default class Place {
   }
 
   async listPlaces(citiesWrap, cities, shapeId, stateName) {
+    console.log(stateName);
     if (citiesWrap && cities.length > 0) {
       const totalCities = cities.length;
 
