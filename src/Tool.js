@@ -295,8 +295,6 @@ export default class Tool {
       .toString(36)
       .substr(2, 9)}`;
 
-      console.log(state);
-
     // Create a GeoJSON layer for the state polygon
     const polygon = L.geoJSON(state, {
       style: {
@@ -314,7 +312,7 @@ export default class Tool {
               L.DomUtil.addClass(layer._path, 'excluded');
             }
           });
-          this.place.processLayer(layer, shapeId, document.querySelector("#state-input").value);
+          this.place.processLayer(layer, shapeId, state);
         }
       },
     }).addTo(window.map); // Add to the global map variable
