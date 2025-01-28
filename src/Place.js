@@ -16,8 +16,6 @@ export default class Place {
     this.tool.showNotification('List is Generating', true);
     let query;
 
-    console.log(state);
-
     // Process polygons and rectangles
     if (layer instanceof L.Polygon || layer instanceof L.Rectangle) {
       let latlngs = layer.getLatLngs()[0];
@@ -69,7 +67,6 @@ export default class Place {
   }
 
   sendOverpassQuery(query, shapeId, layer, state) {
-    console.log(state);
     fetch('https://overpass-api.de/api/interpreter', {
       method: 'POST',
       body: query,
@@ -95,7 +92,6 @@ export default class Place {
   }
 
   async listPlaces(citiesWrap, cities, shapeId, stateName) {
-    console.log(stateName);
     if (citiesWrap && cities.length > 0) {
       const totalCities = cities.length;
 

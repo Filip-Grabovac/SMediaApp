@@ -312,8 +312,7 @@ export default class Tool {
               L.DomUtil.addClass(layer._path, 'excluded');
             }
           });
-          console.log(state);
-          this.place.processLayer(layer, shapeId, state);
+          this.place.processLayer(layer, shapeId, state.properties.name);
         }
       },
     }).addTo(window.map); // Add to the global map variable
