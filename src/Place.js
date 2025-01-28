@@ -34,7 +34,7 @@ export default class Place {
       query = `
                 [out:json];
                 (
-                    node["place"~"city|town|village|hamlet|suburb"](${bbox});
+                    node["place"~"city|town|village|hamlet"](${bbox});
                 );
                 out body;`;
     } else if (layer instanceof L.Circle) {
@@ -43,7 +43,7 @@ export default class Place {
       query = `
                 [out:json];
                 (
-                    node["place"~"city|town|village|hamlet|suburb"](around:${radius}, ${center.lat}, ${center.lng});
+                    node["place"~"city|town|village|hamlet"](around:${radius}, ${center.lat}, ${center.lng});
                 );
                 out body;`;
     } else if (layer instanceof L.GeoJSON) {
@@ -52,7 +52,7 @@ export default class Place {
       query = `
                 [out:json];
                 (
-                    node["place"~"city|town|village|hamlet|suburb"](${bbox});
+                    node["place"~"city|town|village|hamlet"](${bbox});
                 );
                 out body;`;
     } else {
