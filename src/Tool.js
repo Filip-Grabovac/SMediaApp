@@ -313,7 +313,7 @@ export default class Tool {
             }
           });
 
-          this.place.processLayer(layer, shapeId);
+          this.place.processLayer(layer, shapeId, document.querySelector("#state-input").value);
         }
       },
     }).addTo(window.map); // Add to the global map variable
