@@ -43,7 +43,7 @@ export default class Map {
   loadGeojson(geojson, place) {
     L.geoJSON(geojson, {
       onEachFeature: function (feature, layer) {
-        place.processLayer(layer, feature.properties.shapeId);
+        place.processLayer(layer, feature.properties.shapeId, feature.properties.state);
 
         // Check the feature type to decide whether it's editable or not
         if (feature.properties && feature.properties.editable === false) {

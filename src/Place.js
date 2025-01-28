@@ -12,7 +12,7 @@ export default class Place {
     this.tool = new Tool();
   }
 
-  processLayer(layer, shapeId) {
+  processLayer(layer, shapeId, state) {
     this.tool.showNotification('List is Generating', true);
     let query;
 
@@ -65,10 +65,10 @@ export default class Place {
     }
 
     this.pendingRequests++;
-    this.sendOverpassQuery(query, shapeId, layer);
+    this.sendOverpassQuery(query, shapeId, layer, state);
   }
 
-  sendOverpassQuery(query, shapeId, layer) {
+  sendOverpassQuery(query, shapeId, layer, state) {
     fetch('https://overpass-api.de/api/interpreter', {
       method: 'POST',
       body: query,
@@ -86,14 +86,14 @@ export default class Place {
           }`
         );
 
-        this.listPlaces(citiesWrap, cities, shapeId);
+        this.listPlaces(citiesWrap, cities, shapeId, state);
       })
       .catch((err) => {
         console.error('Error querying Overpass API:', err);
       });
   }
 
-  async listPlaces(citiesWrap, cities, shapeId) {
+  async listPlaces(citiesWrap, cities, shapeId, stateName) {
     if (citiesWrap && cities.length > 0) {
       const totalCities = cities.length;
 
@@ -141,11 +141,11 @@ export default class Place {
             continue;
           }
         }
-        
+
         // Return if we are getting border places from another state
         if (
-          typeof window.stateInputSearch !== 'undefined' &&
-          state !== stateInputSearch
+          (typeof window.stateInputSearch !== 'undefined' &&
+          state !== stateInputSearch) || (state !== stateName)
         ) {
           continue;
         }
