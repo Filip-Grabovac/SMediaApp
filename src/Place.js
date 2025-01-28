@@ -93,7 +93,10 @@ export default class Place {
 
   async listPlaces(citiesWrap, cities, shapeId) {
     if (citiesWrap && cities.length > 0) {
-      for (const city of cities) {
+      const totalCities = cities.length;
+
+      for (let i = 0; i < totalCities; i++) {
+        const city = cities[i];
         const { tags } = city;
 
         const cityName = tags.name;
@@ -110,11 +113,11 @@ export default class Place {
           try {
             console.log(`Fetching state for ${cityName}`);
             const query = `
-              [out:json];
-              is_in(${city.lat}, ${city.lon});
-              area._[admin_level~"4"];
-              out tags;
-            `;
+                        [out:json];
+                        is_in(${city.lat}, ${city.lon});
+                        area._[admin_level~"4"];
+                        out tags;
+                    `;
             const response = await fetch(
               `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(
                 query
@@ -170,9 +173,9 @@ export default class Place {
         svg.setAttribute('fill', 'none');
         svg.classList.add('toggle-arrow-svg');
         svg.innerHTML = `
-          <path d="M11.7578 12.393L7.67002 8.30518L6.96489 9.01031L10.4374 12.4828H0V13.4806H10.4374L6.96489 16.9531L7.67002 17.6582L11.7578 13.5704C12.0805 13.2478 12.0805 12.7189 11.7578 12.393Z" fill="currentColor"></path>
-          <path d="M0.242183 5.60752L4.32998 9.69531L5.03511 8.99018L1.56265 5.51771L12 5.51771V4.51988L1.56265 4.51988L5.03511 1.04741L4.32998 0.342276L0.242183 4.43007C-0.0804501 4.75271 -0.0804501 5.28156 0.242183 5.60752Z" fill="currentColor"></path>
-        `;
+                <path d="M11.7578 12.393L7.67002 8.30518L6.96489 9.01031L10.4374 12.4828H0V13.4806H10.4374L6.96489 16.9531L7.67002 17.6582L11.7578 13.5704C12.0805 13.2478 12.0805 12.7189 11.7578 12.393Z" fill="currentColor"></path>
+                <path d="M0.242183 5.60752L4.32998 9.69531L5.03511 8.99018L1.56265 5.51771L12 5.51771V4.51988L1.56265 4.51988L5.03511 1.04741L4.32998 0.342276L0.242183 4.43007C-0.0804501 4.75271 -0.0804501 5.28156 0.242183 5.60752Z" fill="currentColor"></path>
+            `;
 
         // Append the name text and SVG to the state-row
         stateRow.appendChild(stateNameText);
@@ -180,6 +183,12 @@ export default class Place {
 
         // Append the state-row to the citiesWrap container
         citiesWrap.appendChild(stateRow);
+
+        // Calculate and update the progress percentage
+        const percentage = Math.round(((i + 1) / totalCities) * 100);
+        document.querySelector(
+          '.notification'
+        ).textContent = `List is generating - ${percentage}%`;
       }
 
       // Update the placeholders and show the section only after all cities are listed
