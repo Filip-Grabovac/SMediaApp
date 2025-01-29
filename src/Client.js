@@ -472,7 +472,7 @@ export default class Client {
 
     e.target.classList.remove('second-step', 'active');
     e.target.classList.add('add-client');
-    // e.target.classList.add('active');
+    e.target.classList.add('active');
     e.target.textContent = 'Add new Client';
   }
 
