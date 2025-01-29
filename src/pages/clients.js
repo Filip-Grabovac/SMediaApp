@@ -92,7 +92,6 @@ document
  */
 nextStepButton.addEventListener('click', (e) => {
   e.preventDefault();
-  console.log("Test1");
   if (step === 1) {
     client.gatherClientData(clientData);
     step++;
@@ -105,7 +104,6 @@ nextStepButton.addEventListener('click', (e) => {
 });
 
 form.addEventListener('input', () => {
-  console.log("Test2");
   client.validateForm(form, nextStepButton);
 });
 
