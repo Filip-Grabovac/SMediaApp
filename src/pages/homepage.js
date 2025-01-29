@@ -74,7 +74,6 @@ icons.forEach(function (icon) {
 
 townInput.addEventListener('focus', () => {
   map.disableTools();
-  document.querySelector('.town-radius__dropdown').classList.add('hidden');
 });
 
 townInput.addEventListener(
