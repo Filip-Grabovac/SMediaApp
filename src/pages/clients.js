@@ -140,6 +140,7 @@ fileInput.addEventListener('change', (e) => {
 addressInput.addEventListener(
   'input',
   tool.debounce((event) => {
+    nextStepButton.classList.remove("active");
     client.getAddressSuggestion(event.target); // Trigger address suggestion for the new input
   }, 300)
 );

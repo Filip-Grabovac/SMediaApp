@@ -495,6 +495,7 @@ export default class Client {
 
   addNewAddressField(addressCount, form) {
     addressCount++;
+    const nextStepBtn = document.querySelector('.next-step');
     // Clone the last address input field
     const lastInput = form.querySelectorAll('.form-input__wrapper');
     const lastAddressField = lastInput[lastInput.length - 1];
@@ -524,6 +525,7 @@ export default class Client {
     newInput.addEventListener(
       'input',
       this.tool.debounce((event) => {
+        nextStepBtn && nextStepBtn.classList.remove('active');
         this.getAddressSuggestion(event.target); // Trigger address suggestion for the new input
       }, 300)
     );
