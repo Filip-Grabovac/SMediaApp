@@ -22,7 +22,6 @@ const logoutBtn = document.querySelector('.logout-btn');
 const townInput = document.getElementById('town-input');
 const townDropdown = document.getElementById('town-dropdown');
 const closeTownDropdown = document.querySelector('.close-town__dropdown');
-const searchArrow = document.querySelector('.search-input__arrow');
 
 const stateInput = document.getElementById('state-input');
 const stateDropdown = document.getElementById('state-dropdown');
@@ -91,10 +90,6 @@ townInput.addEventListener(
     map.fetchCitySuggestions(query, townInput, townDropdown, place);
   }, 300)
 );
-
-searchArrow.addEventListener('click', () => {
-  map.showDrawnCities(townDropdown, townInput);
-});
 
 map.hideDropdownOnClick(townDropdown, townInput);
 
