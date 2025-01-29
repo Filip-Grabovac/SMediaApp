@@ -5,6 +5,7 @@ import Client from 'https://smediaapp.pages.dev/src/Client.js';
 import User from 'https://smediaapp.pages.dev/src/User.js';
 import Tool from 'https://smediaapp.pages.dev/src/Tool.js';
 
+
 let tool = new Tool();
 const client = new Client(tool);
 const user = new User();
@@ -136,10 +137,9 @@ fileInput.addEventListener('change', (e) => {
 /**
  * ADDRESS SUGGESTION INPUT
  */
-addressInput.addEventListener('input', (event) => {
-  tool.debounce(() => {
-    client.getAddressSuggestion(event.target); // This is debounced
-  }, 300)();
-
-  nextStepButton.classList.remove('active'); // This runs immediately
-});
+addressInput.addEventListener(
+  'input',
+  tool.debounce((event) => {
+    client.getAddressSuggestion(event.target); // Trigger address suggestion for the new input
+  }, 300)
+);
