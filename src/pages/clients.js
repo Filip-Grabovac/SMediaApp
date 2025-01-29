@@ -137,9 +137,9 @@ fileInput.addEventListener('change', (e) => {
  * ADDRESS SUGGESTION INPUT
  */
 addressInput.addEventListener('input', (event) => {
-  nextStepButton.classList.remove('active'); // This runs immediately
-
   tool.debounce(() => {
     client.getAddressSuggestion(event.target); // This is debounced
   }, 300)();
+
+  nextStepButton.classList.remove('active'); // This runs immediately
 });
