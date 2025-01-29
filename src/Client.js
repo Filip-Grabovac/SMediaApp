@@ -951,9 +951,7 @@ export default class Client {
     const clientId = new URLSearchParams(window.location.search).get(
       'client_id'
     );
-    const email = document.querySelector('#profile-email').value;
     const website = document.querySelector('#profile-website').value;
-    const phoneNumber = document.querySelector('#profile-phone').value;
     const companyName = document.querySelector('#profile-company').value;
 
     // Get the bearer token from localStorage
@@ -962,9 +960,7 @@ export default class Client {
     // Construct the request body
     const requestBody = {
       clients_id: clientId,
-      email: email,
       website: website,
-      phone_number: phoneNumber,
       company_name: companyName,
     };
 
