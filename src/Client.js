@@ -623,9 +623,7 @@ export default class Client {
 
         // Populate text fields
         company.value = data.company_name;
-        email.value = data.email;
         website.value = data.website;
-        phone.value = data.phone_number;
         companyTitle.textContent = data.company_name;
 
         // Populate client offices
