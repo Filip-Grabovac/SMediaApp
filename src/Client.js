@@ -477,7 +477,6 @@ export default class Client {
   }
 
   validateForm(form, nextStepButton) {
-    console.log(Array.from(form.querySelectorAll('.form-input[required]')));
     const isValid = Array.from(
       form.querySelectorAll('.form-input[required]')
     ).every((input) => {
