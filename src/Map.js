@@ -279,8 +279,6 @@ export default class Map {
       'city-dropdown__link',
       true
     );
-
-    document.querySelector('.town-radius__dropdown').classList.add('hidden');
   }
 
   async searchZip(zipInput, zipDropdown, place) {

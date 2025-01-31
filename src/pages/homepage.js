@@ -92,7 +92,7 @@ map.hideDropdownOnClick(townDropdown, townInput);
 
 closeTownDropdown &&
   closeTownDropdown.addEventListener('click', function () {
-    document.querySelector('.town-radius__dropdown').classList.add('hidden');
+    // document.querySelector('.town-radius__dropdown').classList.add('hidden');
   });
 
 /**
@@ -101,7 +101,7 @@ closeTownDropdown &&
 
 stateInput.addEventListener('focus', () => {
   map.disableTools();
-  document.querySelector('.town-radius__dropdown').classList.add('hidden');
+  // document.querySelector('.town-radius__dropdown').classList.add('hidden');
 });
 
 function filterStates(query) {
@@ -140,7 +140,7 @@ stateInput.addEventListener('input', (event) => {
 
 zipInput.addEventListener('focus', () => {
   map.disableTools();
-  document.querySelector('.town-radius__dropdown').classList.add('hidden');
+  // document.querySelector('.town-radius__dropdown').classList.add('hidden');
 });
 
 zipInput.addEventListener(

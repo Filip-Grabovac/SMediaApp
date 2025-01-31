@@ -35,8 +35,6 @@ export default class Tool {
       });
       this.editMode = false;
     }
-
-    document.querySelector('.town-radius__dropdown').classList.add('hidden');
   }
 
   deleteElement() {
