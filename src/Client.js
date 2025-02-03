@@ -777,13 +777,12 @@ export default class Client {
             const dropdownItem = document.createElement('div');
             dropdownItem.classList.add('dropdown-item', 'client-address__item');
             dropdownItem.innerHTML = `<span>${item.display_name}</span>`;
-            const nextStepBtn = document.querySelector('.next-step');
 
             // When a suggestion is clicked, add it to the corresponding input
             dropdownItem.addEventListener('click', () => {
               inputElement.value = item.display_name; // Set input value to the selected address
               dropdown.innerHTML = ''; // Clear the dropdown after selection
-              nextStepBtn && nextStepBtn.classList.add('active');
+              console.log("clicked");
 
               // Add custom properties to the input element (latitude and longitude)
               inputElement.dataset.latitude = item.lat;
