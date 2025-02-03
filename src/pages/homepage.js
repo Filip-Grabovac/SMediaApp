@@ -210,24 +210,25 @@ uploadZipBtn.addEventListener('click', async () => {
   let zipTextArea = document.querySelector('.zip-modal-textarea');
   let zipText = zipTextArea.value.trim();
 
-  if (!zipText) return;
+  if (zipText.length === 0) {
+    return;
+  }
 
   let zipCodes = zipText.split(',').map((zip) => zip.trim());
 
-  console.log('Processing ZIPs in parallel...');
-
-  // Run all zipDraw calls at once and wait for all to finish
-  await Promise.all(
-    zipCodes.map((zip) => zip && tool.zipDraw({ name: zip }, place))
-  );
-
-  let modalOverlay = document.querySelector('.zip-bulk-modal__overlay');
-  if (modalOverlay) {
-    modalOverlay.style.opacity = '0';
-    setTimeout(() => {
-      modalOverlay.style.display = 'none';
-    }, 300);
+  for (let zip of zipCodes) {
+    if (zip) {
+      try {
+        console.log(`⏳ Processing ZIP: ${zip}...`);
+        await tool.zipDraw({ name: zip }, place);
+        console.log(`✅ Finished processing ZIP: ${zip}`);
+      } catch (error) {
+        console.error(`⚠️ Error processing ZIP: ${zip}`, error);
+      }
+    }
   }
+
+  console.log('🎉 All ZIP codes processed!');
 });
 
 // EXPORT TO CSV

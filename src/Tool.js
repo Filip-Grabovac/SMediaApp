@@ -479,10 +479,15 @@ export default class Tool {
   }
 
   zipDraw(itemData, place) {
-    const zipCode = itemData.name.match(/^\d+/)?.[0];
-    const authToken = localStorage.getItem('authToken');
+    return new Promise((resolve, reject) => {
+      const zipCode = itemData.name.match(/^\d+/)?.[0];
+      const authToken = localStorage.getItem('authToken');
 
-    if (zipCode) {
+      if (!zipCode) {
+        console.error('ZIP code not found in itemData name');
+        return reject('ZIP code not found');
+      }
+
       // Generate unique shapeId
       const shapeId = `shape-${Date.now()}-${Math.random()
         .toString(36)
@@ -508,18 +513,17 @@ export default class Tool {
           return response.json();
         })
         .then((data) => {
-          // Check if the response has the expected structure
+          // Check if response has valid structure
           if (
             data.response &&
             data.response.result &&
             data.response.result.features &&
             data.response.result.features.length > 0
           ) {
-            // Extract coordinates from the response
             const coordinates =
               data.response.result.features[0].geometry.coordinates[0];
 
-            // Convert coordinates to [latitude, longitude] format for Leaflet
+            // Convert coordinates to Leaflet format
             const latLngs = coordinates.map((coord) => [coord[1], coord[0]]);
 
             // Create and add polygon to the map
@@ -529,7 +533,7 @@ export default class Tool {
               fillOpacity: 0.3,
             }).addTo(map);
 
-            // Add class and set shapeId for the polygon element
+            // Add class and set shapeId
             boundaryPolygon
               .getElement()
               .classList.add('custom-polygon__searched');
@@ -539,22 +543,25 @@ export default class Tool {
               boundaryPolygon.getElement().classList.add('excluded');
             }
 
-            // Process the layer using the shapeId
+            // Process the layer using shapeId
             place.processLayer(boundaryPolygon, shapeId, null, true);
 
-            // Fit map bounds to the polygon and add to non-editable items
+            // Fit map bounds and add to non-editable items
             map.fitBounds(boundaryPolygon.getBounds());
             window.nonEditableItems.addLayer(boundaryPolygon);
+
+            console.log(`✅ ZIP ${zipCode} processed successfully.`);
+            resolve(); // Resolve after processing completes
           } else {
-            console.error('No features found in the response data');
+            console.error(`❌ No features found for ZIP ${zipCode}`);
+            reject(`No features found for ZIP ${zipCode}`);
           }
         })
         .catch((error) => {
-          console.error('Error fetching ZIP code boundaries from Xano:', error);
+          console.error(`❌ Error processing ZIP ${zipCode}:`, error);
+          reject(error);
         });
-    } else {
-      console.error('ZIP code not found in itemData name');
-    }
+    });
   }
 
   debounce(func, delay) {
