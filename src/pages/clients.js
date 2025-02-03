@@ -149,3 +149,5 @@ addressInput.addEventListener(
 
 client.validateWeights();
 client.sortRowsByWeight();
+client.initSortable();
+client.setupEventListeners();
