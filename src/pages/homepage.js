@@ -224,6 +224,11 @@ uploadZipBtn.addEventListener('click', async () => {
       await tool.zipDraw({ name: zip }, place);
     }
   }
+
+  // Hide the modal after the loop completes
+  let modalOverlay = document.querySelector('.zip-bulk-modal__overlay');
+  modalOverlay.style.opacity = '0';
+  modalOverlay.style.display = 'none';
 });
 
 // EXPORT TO CSV
