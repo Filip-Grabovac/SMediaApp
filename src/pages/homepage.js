@@ -208,27 +208,26 @@ map.toggleStateRow();
 // ZIP BULK UPLOAD
 uploadZipBtn.addEventListener('click', async () => {
   let zipTextArea = document.querySelector('.zip-modal-textarea');
-  let zipText = zipTextArea.value.trim(); // Get and trim the textarea value
+  let zipText = zipTextArea.value.trim();
 
-  if (zipText.length === 0) {
-    return;
-  }
+  if (!zipText) return;
 
-  // Get the value from the textarea and split it into an array of zip codes
   let zipCodes = zipText.split(',').map((zip) => zip.trim());
 
-  // Process each zip code sequentially
-  for (let zip of zipCodes) {
-    if (zip) {
-      // Ensure the zip code is not empty
-      await tool.zipDraw({ name: zip }, place);
-    }
-  }
+  console.log('Processing ZIPs in parallel...');
 
-  // Hide the modal after the loop completes
+  // Run all zipDraw calls at once and wait for all to finish
+  await Promise.all(
+    zipCodes.map((zip) => zip && tool.zipDraw({ name: zip }, place))
+  );
+
   let modalOverlay = document.querySelector('.zip-bulk-modal__overlay');
-  modalOverlay.style.opacity = '0';
-  modalOverlay.style.display = 'none';
+  if (modalOverlay) {
+    modalOverlay.style.opacity = '0';
+    setTimeout(() => {
+      modalOverlay.style.display = 'none';
+    }, 300);
+  }
 });
 
 // EXPORT TO CSV
