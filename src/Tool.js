@@ -227,6 +227,9 @@ export default class Tool {
   }
 
   drawCityBorder(cityData, place, updateButtonState) {
+    console.log(cityData);
+    console.log(place);
+    console.log(updateButtonState);
     // Extract the name and osm_id from cityData
     const { name, osm_id } = cityData;
 
@@ -419,8 +422,6 @@ export default class Tool {
           const selectedCityInfo = window.drawnCities.find(
             (city) => city.name === itemData.name
           );
-
-          console.log(selectedCityInfo);
 
           // Adjust the radius for the selected city
           if (selectedCityInfo) {
