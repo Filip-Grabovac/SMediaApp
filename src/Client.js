@@ -19,6 +19,8 @@ export default class Client {
     this.addButton = document.querySelector(".main-button.next-step");
     this.initialWeights = [];
     this.weightsEdited = false;
+
+    window.isCitySelected = false;
   }
 
   loadClients(isInitialLoad, page, per_page, offset, search) {
