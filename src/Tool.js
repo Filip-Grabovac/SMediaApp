@@ -479,88 +479,88 @@ export default class Tool {
   }
 
   zipDraw(itemData, place) {
-    return new Promise((resolve, reject) => {
-      const zipCode = itemData.name.match(/^\d+/)?.[0];
-      const authToken = localStorage.getItem('authToken');
+    return new Promise(async (resolve, reject) => {
+      try {
+        const zipCode = itemData.name.match(/^\d+/)?.[0];
+        const authToken = localStorage.getItem('authToken');
 
-      if (!zipCode) {
-        console.error('ZIP code not found in itemData name');
-        return reject('ZIP code not found');
-      }
-
-      // Generate unique shapeId
-      const shapeId = `shape-${Date.now()}-${Math.random()
-        .toString(36)
-        .substr(2, 9)}`;
-
-      // Fetch ZIP code boundary data from Xano
-      fetch(
-        `https://xrux-avyn-v7a8.n7d.xano.io/api:4o1s7k_j/get_zip_geojson?zipCode=${zipCode}`,
-        {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-            'Content-Type': 'application/json',
-          },
+        if (!zipCode) {
+          console.error('ZIP code not found in itemData name');
+          return reject('ZIP code not found');
         }
-      )
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(
-              'Network response was not ok: ' + response.statusText
-            );
+
+        // Generate unique shapeId
+        const shapeId = `shape-${Date.now()}-${Math.random()
+          .toString(36)
+          .substr(2, 9)}`;
+
+        // Fetch ZIP code boundary data from Xano
+        const response = await fetch(
+          `https://xrux-avyn-v7a8.n7d.xano.io/api:4o1s7k_j/get_zip_geojson?zipCode=${zipCode}`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+              'Content-Type': 'application/json',
+            },
           }
-          return response.json();
-        })
-        .then((data) => {
-          // Check if response has valid structure
-          if (
-            data.response &&
-            data.response.result &&
-            data.response.result.features &&
-            data.response.result.features.length > 0
-          ) {
-            const coordinates =
-              data.response.result.features[0].geometry.coordinates[0];
+        );
 
-            // Convert coordinates to Leaflet format
-            const latLngs = coordinates.map((coord) => [coord[1], coord[0]]);
+        if (!response.ok) {
+          throw new Error(
+            'Network response was not ok: ' + response.statusText
+          );
+        }
 
-            // Create and add polygon to the map
-            const boundaryPolygon = L.polygon(latLngs, {
-              color: 'blue',
-              fillColor: '#3388ff',
-              fillOpacity: 0.3,
-            }).addTo(map);
+        const data = await response.json();
 
-            // Add class and set shapeId
-            boundaryPolygon
-              .getElement()
-              .classList.add('custom-polygon__searched');
-            boundaryPolygon.getElement().setAttribute('shapeId', shapeId);
+        // Check if response has valid structure
+        if (
+          data.response &&
+          data.response.result &&
+          data.response.result.features &&
+          data.response.result.features.length > 0
+        ) {
+          const coordinates =
+            data.response.result.features[0].geometry.coordinates[0];
 
-            if (this.excludedBtn.classList.contains('active')) {
-              boundaryPolygon.getElement().classList.add('excluded');
-            }
+          // Convert coordinates to Leaflet format
+          const latLngs = coordinates.map((coord) => [coord[1], coord[0]]);
 
-            // Process the layer using shapeId
-            place.processLayer(boundaryPolygon, shapeId, null, true);
+          // Create and add polygon to the map
+          const boundaryPolygon = L.polygon(latLngs, {
+            color: 'blue',
+            fillColor: '#3388ff',
+            fillOpacity: 0.3,
+          }).addTo(map);
 
-            // Fit map bounds and add to non-editable items
-            map.fitBounds(boundaryPolygon.getBounds());
-            window.nonEditableItems.addLayer(boundaryPolygon);
+          // Add class and set shapeId
+          boundaryPolygon
+            .getElement()
+            .classList.add('custom-polygon__searched');
+          boundaryPolygon.getElement().setAttribute('shapeId', shapeId);
 
-            console.log(`✅ ZIP ${zipCode} processed successfully.`);
-            resolve(); // Resolve after processing completes
-          } else {
-            console.error(`❌ No features found for ZIP ${zipCode}`);
-            reject(`No features found for ZIP ${zipCode}`);
+          if (this.excludedBtn.classList.contains('active')) {
+            boundaryPolygon.getElement().classList.add('excluded');
           }
-        })
-        .catch((error) => {
-          console.error(`❌ Error processing ZIP ${zipCode}:`, error);
-          reject(error);
-        });
+
+          // ⚠️ Ensure `processLayer` fully completes before resolving
+          await place.processLayer(boundaryPolygon, shapeId, null, true);
+
+          // Fit map bounds and add to non-editable items
+          map.fitBounds(boundaryPolygon.getBounds());
+          window.nonEditableItems.addLayer(boundaryPolygon);
+
+          console.log(`✅ ZIP ${zipCode} processed successfully.`);
+          resolve(); // Resolve after everything inside is done
+        } else {
+          console.error(`❌ No features found for ZIP ${zipCode}`);
+          reject(`No features found for ZIP ${zipCode}`);
+        }
+      } catch (error) {
+        console.error(`❌ Error processing ZIP ${zipCode}:`, error);
+        reject(error);
+      }
     });
   }
 

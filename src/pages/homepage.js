@@ -220,7 +220,7 @@ uploadZipBtn.addEventListener('click', async () => {
     if (zip) {
       try {
         console.log(`⏳ Processing ZIP: ${zip}...`);
-        await tool.zipDraw({ name: zip }, place);
+        await tool.zipDraw({ name: zip }, place); // ✅ Now correctly waits!
         console.log(`✅ Finished processing ZIP: ${zip}`);
       } catch (error) {
         console.error(`⚠️ Error processing ZIP: ${zip}`, error);
