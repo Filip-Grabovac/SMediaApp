@@ -219,16 +219,14 @@ uploadZipBtn.addEventListener('click', async () => {
   for (let zip of zipCodes) {
     if (zip) {
       try {
-        console.log(`⏳ Processing ZIP: ${zip}...`);
         await tool.zipDraw({ name: zip }, place); // ✅ Now correctly waits!
-        console.log(`✅ Finished processing ZIP: ${zip}`);
       } catch (error) {
         console.error(`⚠️ Error processing ZIP: ${zip}`, error);
       }
     }
   }
 
-  console.log('🎉 All ZIP codes processed!');
+  document.querySelector('.zip-bulk-modal__overlay').style = "opacity: 0; display: none;"
 });
 
 // EXPORT TO CSV
