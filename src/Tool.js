@@ -337,7 +337,10 @@ export default class Tool {
     if (query.length > 0) {
       const regex = new RegExp(`(${query})`, 'gi'); // Case-insensitive regex for matching query
 
+      console.log(items);
+
       items.forEach((itemData) => {
+        console.log(itemData);
         const item = document.createElement('div');
         item.className = 'dropdown-item';
         item.classList.add(dropdownItemClass);
