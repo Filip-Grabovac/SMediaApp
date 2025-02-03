@@ -18,7 +18,6 @@ export default class Place {
 
     // Process polygons and rectangles
     if (layer instanceof L.Polygon || layer instanceof L.Rectangle) {
-      console.log("Test1");
       let latlngs = layer.getLatLngs()[0];
 
       // If it's array inside array, take it out (we need flat array)
@@ -32,14 +31,24 @@ export default class Place {
         ...latlngs.map((c) => c.lng)
       )}`;
 
-      query = `
-                [out:json];
-                (
-                    node["place"~"city|town|village"](${bbox});
-                );
-                out body;`;
+      if (isZip) {
+        query = `
+            [out:json];
+            (
+                node["place"~"city|town|village|neighbourhood|suburb"](${bbox});
+            );
+            out body;
+        `;
+      } else {
+        query = `
+            [out:json];
+            (
+                node["place"~"city|town|village"](${bbox});
+            );
+            out body;
+        `;
+      }
     } else if (layer instanceof L.Circle) {
-      console.log("Test2");
       const center = layer.getLatLng();
       const radius = layer.getRadius();
       query = `
@@ -49,7 +58,6 @@ export default class Place {
                 );
                 out body;`;
     } else if (layer instanceof L.GeoJSON) {
-      console.log("Test3");
       const bounds = layer.getBounds();
       const bbox = `${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()}`;
       query = `
