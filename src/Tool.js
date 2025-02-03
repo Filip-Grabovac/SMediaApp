@@ -338,10 +338,7 @@ export default class Tool {
     if (query.length > 0) {
       const regex = new RegExp(`(${query})`, 'gi'); // Case-insensitive regex for matching query
 
-      console.log(items);
-
       items.forEach((itemData) => {
-        console.log(itemData);
         const item = document.createElement('div');
         item.className = 'dropdown-item';
         item.classList.add(dropdownItemClass);
@@ -482,8 +479,6 @@ export default class Tool {
   }
 
   zipDraw(itemData, place) {
-    console.log(itemData);
-
     const zipCode = itemData.name.match(/^\d+/)?.[0];
     const authToken = localStorage.getItem('authToken');
 
