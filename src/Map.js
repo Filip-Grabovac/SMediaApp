@@ -43,7 +43,11 @@ export default class Map {
   loadGeojson(geojson, place) {
     L.geoJSON(geojson, {
       onEachFeature: function (feature, layer) {
-        place.processLayer(layer, feature.properties.shapeId, feature.properties.state);
+        place.processLayer(
+          layer,
+          feature.properties.shapeId,
+          feature.properties.state
+        );
 
         // Check the feature type to decide whether it's editable or not
         if (feature.properties && feature.properties.editable === false) {
@@ -244,7 +248,8 @@ export default class Map {
           name: city.display_name, // Extract city names
           lat: city.lat, // Extract latitude
           lon: city.lon, // Extract longitude
-          onSelect: () => this.tool.drawCityBorder(city, place, this.updateButtonState), // Define the action on selection
+          onSelect: () =>
+            this.tool.drawCityBorder(city, place, this.updateButtonState), // Define the action on selection
         }));
         this.tool.createDropdown(
           suggestions,
@@ -489,7 +494,6 @@ export default class Map {
         return response.json();
       })
       .then((data) => {
-
         if (data.length === 0) {
           return;
         }
@@ -500,7 +504,7 @@ export default class Map {
 
         // Iterate through the data to find min and max distance
         data.forEach((item) => {
-          console.log(item);
+          if (!item) return;
           const distanceMatch = item.closest_office?.match(/([\d.]+) miles$/);
           const distance = distanceMatch ? parseFloat(distanceMatch[1]) : 0;
           if (distance < minDistance) minDistance = distance;
@@ -509,7 +513,7 @@ export default class Map {
 
         // Iterate through the fetched data and populate the table
         data.forEach((item) => {
-          console.log(item);
+          if (!item) return;
           const distanceMatch = item.closest_office?.match(/([\d.]+) miles$/);
           const distance = distanceMatch ? parseFloat(distanceMatch[1]) : 0;
 
