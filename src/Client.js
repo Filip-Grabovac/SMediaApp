@@ -488,7 +488,7 @@ export default class Client {
       form.querySelectorAll('.form-input[required]')
     ).every((input) => {
       return (
-        input.value &&
+        input.value && isCitySelected && 
         (input.type !== 'email' || this.validateEmail(input.value))
       );
     });
@@ -782,7 +782,7 @@ export default class Client {
             dropdownItem.addEventListener('click', () => {
               inputElement.value = item.display_name; // Set input value to the selected address
               dropdown.innerHTML = ''; // Clear the dropdown after selection
-              console.log("clicked");
+              window.isCitySelected = true;
 
               // Add custom properties to the input element (latitude and longitude)
               inputElement.dataset.latitude = item.lat;
