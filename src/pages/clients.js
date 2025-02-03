@@ -5,7 +5,6 @@ import Client from 'https://smediaapp.pages.dev/src/Client.js';
 import User from 'https://smediaapp.pages.dev/src/User.js';
 import Tool from 'https://smediaapp.pages.dev/src/Tool.js';
 
-
 let tool = new Tool();
 const client = new Client(tool);
 const user = new User();
@@ -143,3 +142,10 @@ addressInput.addEventListener(
     client.getAddressSuggestion(event.target); // Trigger address suggestion for the new input
   }, 300)
 );
+
+/**
+ * FACTORS LOGIC
+ */
+
+client.validateWeights();
+client.sortRowsByWeight();

@@ -12,6 +12,18 @@ export default class Client {
     this.map = new Map();
     this.place = new Place();
     this.tool = tool;
+
+    this.tableBody = document.querySelector(tableSelector);
+    this.errorMessage = document.querySelector(errorSelector);
+    this.currentSumSpan = document.querySelector(sumSelector);
+    this.addButton = document.querySelector(buttonSelector);
+    this.initialWeights = [];
+    this.weightsEdited = false;
+
+    this.initSortable();
+    this.setupEventListeners();
+    this.updateInitialWeights();
+    this.validateWeights();
   }
 
   loadClients(isInitialLoad, page, per_page, offset, search) {
@@ -994,5 +1006,110 @@ export default class Client {
       .catch((error) => {
         console.error('Error updating client:', error);
       });
+  }
+
+  updateInitialWeights() {
+    this.initialWeights = Array.from(this.tableBody.querySelectorAll('tr')).map(
+      (row) => row.querySelector('td:nth-child(3) p').innerText
+    );
+  }
+
+  validateWeights() {
+    let totalSum = 0;
+    const rows = this.tableBody.querySelectorAll('tr');
+
+    rows.forEach((row) => {
+      const weightText = row
+        .querySelector('td:nth-child(3) p')
+        .innerText.trim();
+      const weight = parseFloat(weightText);
+      totalSum += isNaN(weight) ? 0 : weight;
+    });
+
+    this.currentSumSpan.innerText = totalSum.toFixed(2);
+
+    if (
+      document
+        .querySelector('.modal-dropdown.factors .modal-dropdown__text')
+        .classList.contains('active')
+    ) {
+      if (totalSum.toFixed(2) !== '1.00') {
+        this.errorMessage.classList.remove('hidden');
+        this.addButton.classList.remove('active');
+      } else {
+        this.errorMessage.classList.add('hidden');
+        this.addButton.classList.add('active');
+      }
+    }
+  }
+
+  sortRowsByWeight(focusedElement = null, caretPosition = null) {
+    const rows = Array.from(this.tableBody.querySelectorAll('tr'));
+
+    rows.sort((a, b) => {
+      const weightA =
+        parseFloat(a.querySelector('td:nth-child(3) p').innerText) || 0;
+      const weightB =
+        parseFloat(b.querySelector('td:nth-child(3) p').innerText) || 0;
+      return weightB - weightA;
+    });
+
+    rows.forEach((row, index) => {
+      this.tableBody.appendChild(row);
+      row.querySelector(
+        'td:first-child'
+      ).innerHTML = `<img src="https://cdn.prod.website-files.com/66eab8d4420be36698ed221a/677b99b66b939636fa2650d9_drag-icon.svg">${
+        index + 1
+      }.`;
+    });
+
+    if (focusedElement && caretPosition !== null) {
+      focusedElement.focus();
+      const range = document.createRange();
+      const sel = window.getSelection();
+      range.setStart(focusedElement.firstChild, caretPosition);
+      range.setEnd(focusedElement.firstChild, caretPosition);
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+
+    this.updateInitialWeights();
+  }
+
+  initSortable() {
+    new Sortable(this.tableBody, {
+      animation: 150,
+      handle: 'img',
+      onEnd: () => {
+        const rows = this.tableBody.querySelectorAll('tr');
+        rows.forEach((row, index) => {
+          row.querySelector(
+            'td:first-child'
+          ).innerHTML = `<img src="https://cdn.prod.website-files.com/66eab8d4420be36698ed221a/677b99b66b939636fa2650d9_drag-icon.svg">${
+            index + 1
+          }.`;
+        });
+
+        if (!this.weightsEdited) {
+          rows.forEach((row, index) => {
+            row.querySelector('td:nth-child(3) p').innerText =
+              this.initialWeights[index];
+          });
+        }
+      },
+    });
+  }
+
+  setupEventListeners() {
+    this.tableBody.addEventListener('input', (event) => {
+      const target = event.target;
+      if (target.tagName === 'P' && target.closest('td:nth-child(3)')) {
+        this.weightsEdited = true;
+        const selection = window.getSelection();
+        const caretPosition = selection.focusOffset;
+        this.sortRowsByWeight(target, caretPosition);
+        this.validateWeights();
+      }
+    });
   }
 }
