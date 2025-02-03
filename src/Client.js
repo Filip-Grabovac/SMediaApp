@@ -13,10 +13,10 @@ export default class Client {
     this.place = new Place();
     this.tool = tool;
 
-    this.tableBody = document.querySelector(tableSelector);
-    this.errorMessage = document.querySelector(errorSelector);
-    this.currentSumSpan = document.querySelector(sumSelector);
-    this.addButton = document.querySelector(buttonSelector);
+    this.tableBody = document.querySelector("#factors-table tbody");
+    this.errorMessage = document.querySelector(".factors-error");
+    this.currentSumSpan = document.querySelector(".current-factors-sum");
+    this.addButton = document.querySelector(".main-button.next-step");
     this.initialWeights = [];
     this.weightsEdited = false;
 
