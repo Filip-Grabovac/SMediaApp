@@ -136,13 +136,15 @@ fileInput.addEventListener('change', (e) => {
 /**
  * ADDRESS SUGGESTION INPUT
  */
+addressInput.addEventListener(
+  'input',
+  tool.debounce((event) => {
+    client.getAddressSuggestion(event.target); // Trigger address suggestion for the new input
+  }, 300)
+);
 addressInput.addEventListener('input', (event) => {
   window.isCitySelected = false;
   client.validateForm(form, nextStepButton);
-
-  tool.debounce(() => {
-    client.getAddressSuggestion(event.target); // This is debounced
-  }, 300)();
 });
 
 /**
