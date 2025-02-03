@@ -509,6 +509,7 @@ export default class Map {
 
         // Iterate through the fetched data and populate the table
         data.forEach((item) => {
+          console.log(item);
           const distanceMatch = item.closest_office?.match(/([\d.]+) miles$/);
           const distance = distanceMatch ? parseFloat(distanceMatch[1]) : 0;
 
