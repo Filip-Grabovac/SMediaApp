@@ -13,7 +13,6 @@ export default class Place {
   }
 
   processLayer(layer, shapeId, state, isZip) {
-    console.log("Is zip: " + isZip);
     this.tool.showNotification('List is Generating', true);
     let query;
 
@@ -48,6 +47,7 @@ export default class Place {
                 );
                 out body;`;
     } else if (layer instanceof L.GeoJSON) {
+      console.log("Test");
       const bounds = layer.getBounds();
       const bbox = `${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()}`;
       query = `
