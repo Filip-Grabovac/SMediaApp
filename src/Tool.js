@@ -540,7 +540,7 @@ export default class Tool {
             }
 
             // Process the layer using the shapeId
-            place.processLayer(boundaryPolygon, shapeId);
+            place.processLayer(boundaryPolygon, shapeId, null, true);
 
             // Fit map bounds to the polygon and add to non-editable items
             map.fitBounds(boundaryPolygon.getBounds());

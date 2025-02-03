@@ -12,7 +12,8 @@ export default class Place {
     this.tool = new Tool();
   }
 
-  processLayer(layer, shapeId, state) {
+  processLayer(layer, shapeId, state, isZip) {
+    console.log("Is zip: " + isZip);
     this.tool.showNotification('List is Generating', true);
     let query;
 
