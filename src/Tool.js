@@ -377,6 +377,8 @@ export default class Tool {
             (city) => city.name === itemData.name
           );
 
+          console.log(selectedCityInfo);
+
           // Adjust the radius for the selected city
           if (selectedCityInfo) {
             this.setupRadiusAdjustment(selectedCityInfo);
