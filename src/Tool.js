@@ -232,6 +232,7 @@ export default class Tool {
     console.log(updateButtonState);
     // Extract the name and osm_id from cityData
     const { name, osm_id } = cityData;
+    const state = cityData.address.state;
 
     // Generate a unique shapeId for this city boundary
     const shapeId = `shape-${Date.now()}-${Math.random()
@@ -239,7 +240,7 @@ export default class Tool {
       .substr(2, 9)}`;
 
     // Fetch the city's boundary from Nominatim API (using the name extracted)
-    const url = `https://nominatim.openstreetmap.org/search?q=${name}&format=json&addressdetails=1&polygon_geojson=1`;
+    const url = `https://nominatim.openstreetmap.org/search?q=${name}, ${state}&format=json&addressdetails=1&polygon_geojson=1`;
 
     // Fetch the data
     fetch(url)
