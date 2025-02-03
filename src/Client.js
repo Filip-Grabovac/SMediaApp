@@ -13,10 +13,10 @@ export default class Client {
     this.place = new Place();
     this.tool = tool;
 
-    this.tableBody = document.querySelector("#factors-table tbody");
-    this.errorMessage = document.querySelector(".factors-error");
-    this.currentSumSpan = document.querySelector(".current-factors-sum");
-    this.addButton = document.querySelector(".main-button.next-step");
+    this.tableBody = document.querySelector('#factors-table tbody');
+    this.errorMessage = document.querySelector('.factors-error');
+    this.currentSumSpan = document.querySelector('.current-factors-sum');
+    this.addButton = document.querySelector('.main-button.next-step');
     this.initialWeights = [];
     this.weightsEdited = false;
 
@@ -490,7 +490,8 @@ export default class Client {
       form.querySelectorAll('.form-input[required]')
     ).every((input) => {
       return (
-        input.value && isCitySelected && 
+        input.value &&
+        isCitySelected &&
         (input.type !== 'email' || this.validateEmail(input.value))
       );
     });
@@ -762,6 +763,8 @@ export default class Client {
   getAddressSuggestion(inputElement) {
     let query = inputElement.value;
     const modifiedQuery = `${query}, United States`;
+    const nextStepButton = document.querySelector('.main-button.next-step');
+    const form = document.querySelector('.client-modal-form');
     const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
       modifiedQuery
     )}&format=json&addressdetails=1&limit=3`;
@@ -785,6 +788,8 @@ export default class Client {
               inputElement.value = item.display_name; // Set input value to the selected address
               dropdown.innerHTML = ''; // Clear the dropdown after selection
               window.isCitySelected = true;
+
+              this.validateForm(form, nextStepButton);
 
               // Add custom properties to the input element (latitude and longitude)
               inputElement.dataset.latitude = item.lat;
