@@ -227,9 +227,6 @@ export default class Tool {
   }
 
   drawCityBorder(cityData, place, updateButtonState) {
-    console.log(cityData);
-    console.log(place);
-    console.log(updateButtonState);
     // Extract the name and osm_id from cityData
     const { name, osm_id } = cityData;
     const state = cityData.address.state;
