@@ -196,7 +196,12 @@ export default class Place {
 
       document.querySelector('.notification').classList.add('hidden');
     } else {
-      console.log('No cities found in this area.');
+      document.querySelector(
+        '.notification'
+      ).textContent = `No cities found in this area.`;
+      setTimeout(() => {
+        document.querySelector('.notification').classList.add('hidden');
+      }, 3000);
     }
   }
 
