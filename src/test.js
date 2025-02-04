@@ -7,23 +7,18 @@ $(document).ready(function () {
 
   // Initialize DataTable
   const table = $('#main-data-table').DataTable({
+    // Hide the "Show n entries" dropdown and the original search
     lengthChange: false, // Hides the "Show n entries" dropdown
     info: false,
     bPaginate: false,
     dom: 'Bfrtip',
     buttons: ['excel'],
-    columnDefs: [{ targets: 0, orderable: false }], // Disable sorting on the index column
-    drawCallback: function (settings) {
-      const api = this.api();
-      // Only update indexes after the table is ordered
-      if (settings._iDisplayStart === 0 && !settings._drawHold) {
-        settings._drawHold = true; // Ensure we don't run the logic prematurely
-        return; // Skip index update on initial draw
-      }
-      api.rows({ page: 'all' }).every(function (rowIdx, tableLoop, rowLoop) {
-        const index = rowIdx + 1; // Row number in the current order
-        $(this.node()).find('td:eq(0)').html(index);
-      });
+    fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+      // Calculate the correct row number across all pages
+      const pageInfo = this.api().page.info();
+      const index = pageInfo.start + iDisplayIndex + 1; // Start index + current row index
+      $('td:eq(0)', nRow).html(index); // Update the first cell of the row
+      return nRow;
     },
   });
 
@@ -391,12 +386,6 @@ $(document).ready(function () {
       this.data(data);
     });
 
-    // Trigger sorting, then update indexes after the draw
-    table.on('order', function () {
-      table.draw(); // Recalculate indexes after sorting
-    });
-
-    // Initial order, trigger once
     table.order([17, 'desc']).draw();
     notificationElement.classList.add('hidden');
   });
