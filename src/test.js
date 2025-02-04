@@ -6,6 +6,8 @@ $(document).ready(function () {
   let totalPopulation = 0;
 
   // Initialize DataTable
+  let isSorted = false; // Track whether sorting has occurred
+
   const table = $('#main-data-table').DataTable({
     lengthChange: false,
     info: false,
@@ -15,12 +17,18 @@ $(document).ready(function () {
     columnDefs: [
       { targets: 0, searchable: false, orderable: false }, // Disable sorting for the index column
     ],
+    createdRow: function (row, data, dataIndex) {
+      // Store the original index as a data attribute
+      $(row).attr('data-original-index', dataIndex + 1);
+      $('td:eq(0)', row).html(dataIndex + 1); // Initial indexing
+    },
     drawCallback: function (settings) {
-      // Recalculate index numbers on every draw
+      if (!isSorted) return; // Do nothing if sorting hasn't happened
+
       let api = this.api();
       api.rows({ order: 'current' }).every(function (index) {
         let row = this.node();
-        $('td:eq(0)', row).html(index + 1); // Update the first column with the new index
+        $('td:eq(0)', row).html(index + 1); // Update index after sorting
       });
     },
   });
@@ -389,7 +397,9 @@ $(document).ready(function () {
       this.data(data);
     });
 
-    table.order([17, 'desc']).draw();
+    table.on('order.dt', function () {
+      isSorted = true; // Mark that sorting has happened
+    });
     notificationElement.classList.add('hidden');
   });
 });
