@@ -18,30 +18,30 @@ $(document).ready(function () {
       { targets: 0, searchable: false, orderable: false }, // Disable sorting for the index column
     ],
     createdRow: function (row, data, dataIndex) {
-      // Store the original index as a data attribute
-      $(row).attr('data-original-index', dataIndex + 1);
+      $(row).attr('data-original-index', dataIndex + 1); // Store original index
       $('td:eq(0)', row).html(dataIndex + 1); // Set initial index numbers
     },
-    drawCallback: function (settings) {
+    drawCallback: function () {
       let api = this.api();
 
-      if (!isSorted) {
-        // Keep original index numbers before sorting
-        api.rows().every(function (index) {
+      if (isSorted) {
+        // Update index numbers after sorting
+        api.rows({ order: 'current' }).every(function (index) {
+          let row = this.node();
+          $('td:eq(0)', row).html(index + 1); // Assign new index
+          $(row).attr('data-final-index', index + 1); // Store new fixed index
+        });
+      } else {
+        // Keep original indexes before sorting
+        api.rows().every(function () {
           let row = this.node();
           let originalIndex = $(row).attr('data-original-index'); // Get stored index
           $('td:eq(0)', row).html(originalIndex); // Keep original index
         });
-      } else {
-        // Update index numbers after sorting
-        api.rows({ order: 'current' }).every(function (index) {
-          let row = this.node();
-          $('td:eq(0)', row).html(index + 1); // Assign new index based on sorted order
-        });
       }
     },
   });
-
+  
   window.mainTable = table;
 
   function formatNumber(number) {
