@@ -20,16 +20,25 @@ $(document).ready(function () {
     createdRow: function (row, data, dataIndex) {
       // Store the original index as a data attribute
       $(row).attr('data-original-index', dataIndex + 1);
-      $('td:eq(0)', row).html(dataIndex + 1); // Initial indexing
+      $('td:eq(0)', row).html(dataIndex + 1); // Set initial index numbers
     },
     drawCallback: function (settings) {
-      if (!isSorted) return; // Do nothing if sorting hasn't happened
-
       let api = this.api();
-      api.rows({ order: 'current' }).every(function (index) {
-        let row = this.node();
-        $('td:eq(0)', row).html(index + 1); // Update index after sorting
-      });
+
+      if (!isSorted) {
+        // Keep original index numbers before sorting
+        api.rows().every(function (index) {
+          let row = this.node();
+          let originalIndex = $(row).attr('data-original-index'); // Get stored index
+          $('td:eq(0)', row).html(originalIndex); // Keep original index
+        });
+      } else {
+        // Update index numbers after sorting
+        api.rows({ order: 'current' }).every(function (index) {
+          let row = this.node();
+          $('td:eq(0)', row).html(index + 1); // Assign new index based on sorted order
+        });
+      }
     },
   });
 
