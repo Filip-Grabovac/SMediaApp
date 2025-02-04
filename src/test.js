@@ -6,42 +6,22 @@ $(document).ready(function () {
   let totalPopulation = 0;
 
   // Initialize DataTable
-  let isSorted = false; // Track whether sorting has occurred
-
   const table = $('#main-data-table').DataTable({
-    lengthChange: false,
+    // Hide the "Show n entries" dropdown and the original search
+    lengthChange: false, // Hides the "Show n entries" dropdown
     info: false,
     bPaginate: false,
     dom: 'Bfrtip',
     buttons: ['excel'],
-    columnDefs: [
-      { targets: 0, searchable: false, orderable: false }, // Disable sorting for the index column
-    ],
-    createdRow: function (row, data, dataIndex) {
-      $(row).attr('data-original-index', dataIndex + 1); // Store original index
-      $('td:eq(0)', row).html(dataIndex + 1); // Set initial index numbers
-    },
-    drawCallback: function () {
-      let api = this.api();
-
-      if (isSorted) {
-        // Update index numbers after sorting
-        api.rows({ order: 'current' }).every(function (index) {
-          let row = this.node();
-          $('td:eq(0)', row).html(index + 1); // Assign new index
-          $(row).attr('data-final-index', index + 1); // Store new fixed index
-        });
-      } else {
-        // Keep original indexes before sorting
-        api.rows().every(function () {
-          let row = this.node();
-          let originalIndex = $(row).attr('data-original-index'); // Get stored index
-          $('td:eq(0)', row).html(originalIndex); // Keep original index
-        });
-      }
+    fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+      // Calculate the correct row number across all pages
+      const pageInfo = this.api().page.info();
+      const index = pageInfo.start + iDisplayIndex + 1; // Start index + current row index
+      $('td:eq(0)', nRow).html(index); // Update the first cell of the row
+      return nRow;
     },
   });
-  
+
   window.mainTable = table;
 
   function formatNumber(number) {
@@ -406,9 +386,7 @@ $(document).ready(function () {
       this.data(data);
     });
 
-    table.on('order.dt', function () {
-      isSorted = true; // Mark that sorting has happened
-    });
+    table.order([17, 'desc']).draw();
     notificationElement.classList.add('hidden');
   });
 });
