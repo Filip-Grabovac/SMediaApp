@@ -7,18 +7,21 @@ $(document).ready(function () {
 
   // Initialize DataTable
   const table = $('#main-data-table').DataTable({
-    // Hide the "Show n entries" dropdown and the original search
-    lengthChange: false, // Hides the "Show n entries" dropdown
+    lengthChange: false,
     info: false,
     bPaginate: false,
     dom: 'Bfrtip',
     buttons: ['excel'],
-    fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-      // Calculate the correct row number across all pages
-      const pageInfo = this.api().page.info();
-      const index = pageInfo.start + iDisplayIndex + 1; // Start index + current row index
-      $('td:eq(0)', nRow).html(index); // Update the first cell of the row
-      return nRow;
+    columnDefs: [
+      { targets: 0, searchable: false, orderable: false }, // Disable sorting for the index column
+    ],
+    drawCallback: function (settings) {
+      // Recalculate index numbers on every draw
+      let api = this.api();
+      api.rows({ order: 'current' }).every(function (index) {
+        let row = this.node();
+        $('td:eq(0)', row).html(index + 1); // Update the first column with the new index
+      });
     },
   });
 
