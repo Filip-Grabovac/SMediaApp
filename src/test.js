@@ -355,8 +355,10 @@ $(document).ready(function () {
       const normalizedSingleFamilyHomes =
         (singleFamilyHomes - minSingleFamilyHomes) /
         (maxSingleFamilyHomes - minSingleFamilyHomes);
+      // const normalizedAvgHomeValue =
+      //   (avgHomeValue - minAvgHomeValue) / (maxAvgHomeValue - minAvgHomeValue);
       const normalizedAvgHomeValue =
-        (avgHomeValue - minAvgHomeValue) / (maxAvgHomeValue - minAvgHomeValue);
+        (maxAvgHomeValue - avgHomeValue) / (maxAvgHomeValue - minAvgHomeValue);
 
       // Extract and normalize distance
       const distanceMatch = data[8]?.match(/([\d.]+) miles$/);
