@@ -518,6 +518,7 @@ export default class Map {
 
           if (renderedPlaces.includes(item.place)) return;
           renderedPlaces.push(item.place);
+          console.log(item)
 
           const distanceMatch = item.closest_office?.match(/([\d.]+) miles$/);
           const distance = distanceMatch ? parseFloat(distanceMatch[1]) : 0;
