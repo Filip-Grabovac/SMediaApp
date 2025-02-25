@@ -258,7 +258,10 @@ $(document).ready(function () {
 
     notificationElement.classList.remove('hidden');
 
+    let renderedPlaces = [];
+
     for (let i = 0; i < stateRows.length; i++) {
+
       notificationElement.textContent = `Generating city/town data - ${i} of ${stateRows.length}`;
       const stateRow = $(stateRows[i]);
 
@@ -267,9 +270,13 @@ $(document).ready(function () {
         .find('.state-name-text')
         .text()
         .trim();
+
+      if (renderedPlaces.includes(stateNameWithPlace)) return;
+      renderedPlaces.push(stateNameWithPlace);
+
       const [placeName, stateName] = stateNameWithPlace
-        .split(',')
-        .map((part) => part.trim());
+          .split(',')
+          .map((part) => part.trim());
 
       // Extract lat and lon
       const placeLat = parseFloat(stateRow.attr('data-lat'));

@@ -516,8 +516,8 @@ export default class Map {
         data.forEach((item) => {
           if (!item) return;
 
-          // if (renderedPlaces.includes(item.place)) return;
-          renderedPlaces.push(item.place);
+          if (renderedPlaces.includes(item.place + ',' + item.state)) return;
+          renderedPlaces.push(item.place + ',' + item.state);
 
           if (item.household_income === 'No data' || item.avg_home_value === 'No data') return;
 
