@@ -642,11 +642,11 @@ export default class Client {
         company.value = data.company_name;
         website.value = data.website;
         companyTitle.textContent = data.company_name;
-        populationFactor.textContent = data.population_factor;
-        avgHouseholdIncomeFactor.textContent = data.avg_household_income_factor;
-        singleFamilyHomesFactor.textContent = data.single_family_homes_factor;
-        avgHomeValueFactor.textContent = data.avg_home_value_factor;
-        distanceFromHQFactor.textContent = data.distance_from_hq_factor;
+        populationFactor.value = data.population_factor;
+        avgHouseholdIncomeFactor.value = data.avg_household_income_factor;
+        singleFamilyHomesFactor.value = data.single_family_homes_factor;
+        avgHomeValueFactor.value = data.avg_home_value_factor;
+        distanceFromHQFactor.value = data.distance_from_hq_factor;
 
         // Populate client offices
         this.populateClientOffices(client_offices);

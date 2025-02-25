@@ -65,7 +65,6 @@ icons.forEach(function (icon) {
     this.closest('.tool-wrapper').classList.add('active');
   });
 });
-console.log('test');
 
 /**
  * TOWN/CITY
