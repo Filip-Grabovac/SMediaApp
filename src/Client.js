@@ -630,6 +630,11 @@ export default class Client {
         const phone = document.getElementById('profile-phone');
         const companyTitle = document.querySelector('.client_name_text');
         const { client_offices } = data;
+        const populationFactor = document.getElementById('profile-population_factor');
+        const avgHouseholdIncomeFactor = document.getElementById('profile-avg_household_income_factor');
+        const singleFamilyHomesFactor = document.getElementById('profile-single_family_homes_factor');
+        const avgHomeValueFactor = document.getElementById('profile-avg_home_value_factor');
+        const distanceFromHQFactor = document.getElementById('profile-distance_from_hq_factor');
 
         const img = document.getElementById('client-img');
 
@@ -637,6 +642,11 @@ export default class Client {
         company.value = data.company_name;
         website.value = data.website;
         companyTitle.textContent = data.company_name;
+        populationFactor.textContent = data.population_factor;
+        avgHouseholdIncomeFactor.textContent = data.avg_household_income_factor;
+        singleFamilyHomesFactor.textContent = data.single_family_homes_factor;
+        avgHomeValueFactor.textContent = data.avg_home_value_factor;
+        distanceFromHQFactor.textContent = data.distance_from_hq_factor;
 
         // Populate client offices
         this.populateClientOffices(client_offices);
@@ -970,6 +980,11 @@ export default class Client {
     );
     const website = document.querySelector('#profile-website').value;
     const companyName = document.querySelector('#profile-company').value;
+    const populationFactor = document.getElementById('profile-population_factor').value;
+    const avgHouseholdIncomeFactor = document.getElementById('profile-avg_household_income_factor').value;
+    const singleFamilyHomesFactor = document.getElementById('profile-single_family_homes_factor').value;
+    const avgHomeValueFactor = document.getElementById('profile-avg_home_value_factor').value;
+    const distanceFromHQFactor = document.getElementById('profile-distance_from_hq_factor').value;
 
     // Get the bearer token from localStorage
     const authToken = localStorage.getItem('authToken');
@@ -979,6 +994,11 @@ export default class Client {
       clients_id: clientId,
       website: website,
       company_name: companyName,
+      population_factor: populationFactor,
+      avg_household_income_factor: avgHouseholdIncomeFactor,
+      single_family_homes_factor: singleFamilyHomesFactor,
+      avg_home_value_factor: avgHomeValueFactor,
+      distance_from_hq_factor: distanceFromHQFactor,
     };
 
     // Make the PATCH request
