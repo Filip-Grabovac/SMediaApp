@@ -84,6 +84,9 @@ $(document).ready(function () {
 
       const [headers, values] = detailedData; // Destructure response into headers and values
 
+      // Skip if No Data
+      if (String(values[1]).includes('-666') || String(values[2]).includes('-666')) return;
+
       const population = values[0]; // Total population (B01003_001E)
       const medianHouseholdIncome = String(values[1]).includes('-666')
         ? 'No data'

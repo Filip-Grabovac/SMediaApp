@@ -520,6 +520,8 @@ export default class Map {
           renderedPlaces.push(item.place);
           console.log(item)
 
+          if (item.household_income === 'No data' || item.avg_home_value === 'No data') return;
+
           const distanceMatch = item.closest_office?.match(/([\d.]+) miles$/);
           const distance = distanceMatch ? parseFloat(distanceMatch[1]) : 0;
 
