@@ -497,6 +497,7 @@ export default class Map {
         if (data.length === 0) {
           return;
         }
+        let renderedPlaces = [];
 
         // Variables to calculate min and max for normalization
         let minDistance = Infinity;
@@ -514,6 +515,10 @@ export default class Map {
         // Iterate through the fetched data and populate the table
         data.forEach((item) => {
           if (!item) return;
+
+          if (renderedPlaces.includes(item.place)) return;
+          renderedPlaces.push(item.place);
+
           const distanceMatch = item.closest_office?.match(/([\d.]+) miles$/);
           const distance = distanceMatch ? parseFloat(distanceMatch[1]) : 0;
 
