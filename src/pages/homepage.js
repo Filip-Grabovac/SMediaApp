@@ -58,11 +58,30 @@ logoutBtn.addEventListener('click', function (event) {
 
 icons.forEach(function (icon) {
   icon.addEventListener('click', function () {
+    const toolWrapper = this.closest('.tool-wrapper');
+
+    // If the clicked wrapper is already active, deactivate it and return early
+    if (toolWrapper.classList.contains('active')) {
+      toolWrapper.classList.remove('active');
+      return;
+    }
+
+    // Remove 'active' from all wrappers first
     document.querySelectorAll('.tool-wrapper').forEach(function (wrapper) {
       wrapper.classList.remove('active');
     });
 
-    this.closest('.tool-wrapper').classList.add('active');
+    // Add 'active' to the clicked one
+    toolWrapper.classList.add('active');
+  });
+
+
+  icon.addEventListener('mouseenter', function () {
+      this.previousElementSibling.classList.add('active');
+  });
+
+  icon.addEventListener('mouseleave', function () {
+    this.previousElementSibling.classList.remove('active');
   });
 });
 

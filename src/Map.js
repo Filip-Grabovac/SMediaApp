@@ -2,10 +2,6 @@
 
 import Tool from 'https://smediaapp.pages.dev/src/Tool.js';
 
-
-
-
-
 // User.js
 export default class Map {
   constructor() {
@@ -661,22 +657,23 @@ export default class Map {
     table.order([17, 'desc']).draw();
   }
 
-  toggleStateRow() {
+  toggleStateRow = () => {
     // Attach event listener to the SVG icon within each state-row
-    $(document).on('click', '.state-row .toggle-arrow-svg', function () {
-      const stateRow = $(this).closest('.state-row'); // Get the clicked state-row element
+    $(document).on('click', '.state-row .toggle-arrow-svg', (event) => {
+      this.updateButtonState();
+      const stateRow = $(event.currentTarget).closest('.state-row'); // Get the clicked state-row element
       const includedWrapper = $('.states_wrap.included');
       const excludedWrapper = $('.states_wrap.excluded');
-
+  
       const lat = parseFloat(stateRow.attr('data-lat'));
       const lon = parseFloat(stateRow.attr('data-lon'));
-
+  
       const shapeId = `excluded-${stateRow.attr('shapeid')}`; // Unique ID for the circle
-
+  
       if (stateRow.closest('.states_wrap').hasClass('included')) {
         // Move the state-row to the excluded wrapper
         excludedWrapper.append(stateRow);
-
+  
         // Add a red circle to the map
         if (typeof map.addLayer === 'function') {
           const circle = L.circle([lat, lon], {
@@ -685,24 +682,24 @@ export default class Map {
             fillOpacity: 0.5,
             radius: 500, // Adjust radius as needed
           }).addTo(map);
-
+  
           // Store the circle on the stateRow for easy removal
           stateRow.data('circle', circle);
         }
-
+  
         // Update included and excluded numbers
         updateCount();
       } else {
         // Move the state-row back to the included wrapper
         includedWrapper.append(stateRow);
-
+  
         // Remove the red circle from the map if it exists
         const circle = stateRow.data('circle');
         if (circle) {
           map.removeLayer(circle);
           stateRow.removeData('circle'); // Clear the reference
         }
-
+  
         // Update included and excluded numbers
         updateCount();
       }
@@ -712,10 +709,10 @@ export default class Map {
     function updateCount() {
       const includedCount = $('.states_wrap.included .state-row').length;
       const excludedCount = $('.states_wrap.excluded .state-row').length;
-
+    
       // Update the placeholder numbers
       $('.included-num__placeholder').text(includedCount);
       $('.excluded-num__placeholder').text(excludedCount);
     }
-  }
+  };
 }
