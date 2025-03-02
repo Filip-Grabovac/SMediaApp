@@ -133,58 +133,53 @@ export default class Map {
       window.map.zoomOut();
     });
 
-    // Polygon draw control
-    document.getElementById('polygon').addEventListener(
-      'click',
-      function () {
-        this.tool.disableActiveTool();
-        this.activeTool = new L.Draw.Polygon(window.map); // Activate the new tool
-        this.activeTool.enable();
-      }.bind(this)
-    );
-
-    // Square (Rectangle) draw control
-    document.getElementById('square').addEventListener(
-      'click',
-      function () {
-        this.tool.disableActiveTool();
-        this.activeTool = new L.Draw.Rectangle(window.map); // Activate the new tool
-        this.activeTool.enable();
-      }.bind(this)
-    );
-
-    // Circle draw control
-    document.getElementById('circle').addEventListener(
-      'click',
-      function () {
-        this.tool.disableActiveTool();
-        this.activeTool = new L.Draw.Circle(window.map); // Activate the new tool
-        this.activeTool.enable();
-      }.bind(this)
-    );
-
+    const tools = {
+      polygon: L.Draw.Polygon,
+      square: L.Draw.Rectangle,
+      circle: L.Draw.Circle,
+      edit: null // Special case, handled separately
+    };
+    
+    Object.keys(tools).forEach((toolId) => {
+      document.getElementById(toolId).addEventListener(
+        'click',
+        function (event) {
+          if (event.currentTarget.classList.contains('active')) {
+            event.currentTarget.classList.remove('active');
+            this.tool.disableActiveTool();
+          } else {
+            // Deactivate all tools before activating the new one
+            Object.keys(tools).forEach((id) => {
+              document.getElementById(id).classList.remove('active');
+            });
+    
+            event.currentTarget.classList.add('active');
+            this.tool.disableActiveTool();
+    
+            if (tools[toolId]) {
+              this.activeTool = new tools[toolId](window.map); // Activate the new tool
+              this.activeTool.enable();
+            } else if (toolId === "edit") {
+              this.tool.edit(); // Enable editing mode
+            }
+          }
+        }.bind(this)
+      );
+    });
+    
     // Modify the custom trash control to delete shapes by selecting them
     document.getElementById('trash').addEventListener(
       'click',
       function () {
         this.tool.deleteElement();
       }.bind(this)
-    );
+    );    
 
     // Handle the draw:created event to keep the drawn shapes on the map
     window.map.on(
       L.Draw.Event.CREATED,
       function (e) {
         this.tool.drawElement(e, place);
-      }.bind(this)
-    );
-
-    // Custom edit control to enable or disable editing for all layers
-    document.getElementById('edit').addEventListener(
-      'click',
-      function () {
-        this.tool.disableActiveTool();
-        this.tool.edit();
       }.bind(this)
     );
   }
@@ -715,4 +710,5 @@ export default class Map {
       $('.excluded-num__placeholder').text(excludedCount);
     }
   };
+  
 }
