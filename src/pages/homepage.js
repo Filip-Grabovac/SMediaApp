@@ -60,15 +60,20 @@ icons.forEach(function (icon) {
   icon.addEventListener('click', function () {
     const toolWrapper = this.closest('.tool-wrapper');
 
-    // If the clicked wrapper is already active, deactivate it and return early
     if (toolWrapper.classList.contains('active')) {
       toolWrapper.classList.remove('active');
+      
+      const activeChildren = toolWrapper.querySelectorAll('.active');
+      activeChildren.forEach(child => child.classList.remove('active'));
+      
       return;
     }
 
-    // Remove 'active' from all wrappers first
-    document.querySelectorAll('.tool-wrapper').forEach(function (wrapper) {
+    document.querySelectorAll('.tool-wrapper').forEach(wrapper => {
       wrapper.classList.remove('active');
+      
+      const activeChildren = wrapper.querySelectorAll('.active');
+      activeChildren.forEach(child => child.classList.remove('active'));
     });
 
     // Add 'active' to the clicked one

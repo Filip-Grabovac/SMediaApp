@@ -1,6 +1,3 @@
-// import Map from './Map';
-// import Tool from './Tool';
-
 import Map from 'https://smediaapp.pages.dev/src/Map.js';
 import Tool from 'https://smediaapp.pages.dev/src/Tool.js';
 
@@ -10,21 +7,24 @@ export default class Place {
     this.pendingRequests = 0;
     this.map = new Map();
     this.tool = new Tool();
+
+    // 1) Create a single wrapper for all shape notifications
+    this.notificationWrapper = document.createElement('div');
+    this.notificationWrapper.classList.add('notification-wrapper');
+    document.body.appendChild(this.notificationWrapper);
   }
 
   processLayer(layer, shapeId, state, isZip) {
-    this.tool.showNotification('List is Generating', true);
-    let query;
+    let query = null;
+    let isRecognized = false;
 
-    // Process polygons and rectangles
+    // Build Overpass query based on layer type
     if (layer instanceof L.Polygon || layer instanceof L.Rectangle) {
+      isRecognized = true;
       let latlngs = layer.getLatLngs()[0];
-
-      // If it's array inside array, take it out (we need flat array)
       if (Array.isArray(latlngs[0])) {
         latlngs = latlngs[0];
       }
-
       const bbox = `${Math.min(...latlngs.map((c) => c.lat))},${Math.min(
         ...latlngs.map((c) => c.lng)
       )},${Math.max(...latlngs.map((c) => c.lat))},${Math.max(
@@ -33,51 +33,64 @@ export default class Place {
 
       if (isZip) {
         query = `
-            [out:json];
-            (
-                node["place"~"city|town|village|neighbourhood|suburb"](${bbox});
-            );
-            out body;
+          [out:json];
+          (
+            node["place"~"city|town|village|neighbourhood|suburb"](${bbox});
+          );
+          out body;
         `;
       } else {
         query = `
-            [out:json];
-            (
-                node["place"~"city|town|village"](${bbox});
-            );
-            out body;
+          [out:json];
+          (
+            node["place"~"city|town|village"](${bbox});
+          );
+          out body;
         `;
       }
     } else if (layer instanceof L.Circle) {
+      isRecognized = true;
       const center = layer.getLatLng();
       const radius = layer.getRadius();
       query = `
-                [out:json];
-                (
-                    node["place"~"city|town|village"](around:${radius}, ${center.lat}, ${center.lng});
-                );
-                out body;`;
+        [out:json];
+        (
+          node["place"~"city|town|village"](around:${radius}, ${center.lat}, ${center.lng});
+        );
+        out body;
+      `;
     } else if (layer instanceof L.GeoJSON) {
+      isRecognized = true;
       const bounds = layer.getBounds();
       const bbox = `${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()}`;
       query = `
-                [out:json];
-                (
-                    node["place"~"city|town|village"](${bbox});
-                );
-                out body;`;
-    } else {
-      console.warn(
-        'Unsupported layer type. Only polygon, rectangle, circle, and geoJSON are supported.'
-      );
+        [out:json];
+        (
+          node["place"~"city|town|village"](${bbox});
+        );
+        out body;
+      `;
+    }
+
+    // If unrecognized or no query, stop before creating notification
+    if (!isRecognized || !query) {
+      console.warn('Unsupported or empty shape. Skipping.');
       return;
     }
 
+    // 2) Create a dedicated notification element per shape
+    const notification = document.createElement('div');
+    notification.classList.add('shape-notification', `shape-notification--${shapeId}`);
+    notification.textContent = 'List is Generating...';
+
+    // 3) Append it inside the wrapper
+    this.notificationWrapper.appendChild(notification);
+
     this.pendingRequests++;
-    this.sendOverpassQuery(query, shapeId, layer, state);
+    this.sendOverpassQuery(query, shapeId, layer, state, notification);
   }
 
-  sendOverpassQuery(query, shapeId, layer, state) {
+  sendOverpassQuery(query, shapeId, layer, state, notification) {
     fetch('https://overpass-api.de/api/interpreter', {
       method: 'POST',
       body: query,
@@ -85,47 +98,45 @@ export default class Place {
       .then((response) => response.json())
       .then((data) => {
         const cities = data.elements.filter((el) => el.tags && el.tags.name);
-        // Check if new drawn shape needs to be added to incuded or excluded section
-        const excludeButton = document.querySelector('.option_button.exclude');
         const citiesWrap = document.querySelector(
           `.states_wrap.${
             layer._path.classList.contains('excluded') ? 'excluded' : 'included'
           }`
         );
 
-        this.listPlaces(citiesWrap, cities, shapeId, state);
+        this.listPlaces(citiesWrap, cities, shapeId, state, notification);
       })
       .catch((err) => {
         console.error('Error querying Overpass API:', err);
+        notification.textContent = 'Error querying Overpass API.';
+        setTimeout(() => notification.remove(), 3000);
       });
   }
 
-  async listPlaces(citiesWrap, cities, shapeId, stateName) {
+  async listPlaces(citiesWrap, cities, shapeId, stateName, notification) {
     if (citiesWrap && cities.length > 0) {
       const totalCities = cities.length;
 
       for (let i = 0; i < totalCities; i++) {
         const city = cities[i];
         const { tags } = city;
-
         const cityName = tags.name;
         let state;
 
-        // Check if "wikipedia" is available
         if (tags.wikipedia) {
           state =
             tags.wikipedia.split(', ').length > 1
               ? tags.wikipedia.split(', ')[1]
               : tags.wikipedia.split(', ')[0].replaceAll('en:', '');
         } else {
-          // Use Overpass API to fetch state information
+          // Overpass query to fetch state
           try {
             const query = `
-                        [out:json];
-                        is_in(${city.lat}, ${city.lon});
-                        area._[admin_level~"4"];
-                        out tags;
-                    `;
+              [out:json];
+              is_in(${city.lat}, ${city.lon});
+              area._[admin_level~"4"];
+              out tags;
+            `;
             const response = await fetch(
               `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(
                 query
@@ -134,7 +145,6 @@ export default class Place {
             const data = await response.json();
 
             if (data.elements.length > 0) {
-              // Find the most relevant administrative boundary
               const adminBoundary = data.elements.find(
                 (element) => element.tags && element.tags.admin_level === '4'
               );
@@ -149,7 +159,7 @@ export default class Place {
           }
         }
 
-        // Return if we are getting border places from another state
+        // If we have a target stateName, skip cities in other states
         if (stateName && state !== stateName) {
           continue;
         }
@@ -182,37 +192,30 @@ export default class Place {
                 <path d="M0.242183 5.60752L4.32998 9.69531L5.03511 8.99018L1.56265 5.51771L12 5.51771V4.51988L1.56265 4.51988L5.03511 1.04741L4.32998 0.342276L0.242183 4.43007C-0.0804501 4.75271 -0.0804501 5.28156 0.242183 5.60752Z" fill="currentColor"></path>
             `;
 
-        // Append the name text and SVG to the state-row
         stateRow.appendChild(stateNameText);
         stateRow.appendChild(svg);
-
-        // Append the state-row to the citiesWrap container
         citiesWrap.appendChild(stateRow);
 
-        // Calculate and update the progress percentage
+        // Update progress just for this shape
         const percentage = Math.round(((i + 1) / totalCities) * 100);
-        document.querySelector(
-          '.notification'
-        ).textContent = `List is generating - ${percentage}%`;
+        notification.textContent = `List is generating - ${percentage}%`;
       }
 
-      // Update the placeholders and show the section only after all cities are listed
+      // Update placeholders
       document.querySelector('.included-num__placeholder').textContent =
         document.querySelectorAll('.states_wrap.included .state-row').length;
       document.querySelector('.excluded-num__placeholder').textContent =
         document.querySelectorAll('.states_wrap.excluded .state-row').length;
-      document
-        .querySelector('.excluded-included__section')
-        .classList.remove('hidden');
+      document.querySelector('.excluded-included__section').classList.remove('hidden');
 
-      document.querySelector('.notification').classList.add('hidden');
+      // Remove this shape's notification (or you could say notification.textContent = 'Done!')
+      notification.remove();
     } else {
-      document.querySelector(
-        '.notification'
-      ).textContent = `No cities found in this area.`;
-      setTimeout(() => {
-        document.querySelector('.notification').classList.add('hidden');
-      }, 3000);
+      // Only show "No cities found" if we're not already at 100%
+      if (notification.textContent !== 'List is generating - 100%') {
+        notification.textContent = 'No cities found in this area.';
+        setTimeout(() => notification.remove(), 3000);
+      }
     }
   }
 
