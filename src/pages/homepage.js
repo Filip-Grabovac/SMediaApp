@@ -63,8 +63,8 @@ icons.forEach(function (icon) {
     if (toolWrapper.classList.contains('active')) {
       toolWrapper.classList.remove('active');
       
-      const activeChildren = toolWrapper.querySelectorAll('.active');
-      activeChildren.forEach(child => child.classList.remove('active'));
+      const activeChildren = wrapper.querySelectorAll('[data-active="true"]');
+      activeChildren.forEach(child => child.setAttribute('data-active', 'false'));
       
       return;
     }
@@ -72,8 +72,8 @@ icons.forEach(function (icon) {
     document.querySelectorAll('.tool-wrapper').forEach(wrapper => {
       wrapper.classList.remove('active');
       
-      const activeChildren = wrapper.querySelectorAll('.active');
-      activeChildren.forEach(child => child.classList.remove('active'));
+      const activeChildren = wrapper.querySelectorAll('[data-active="true"]');
+      activeChildren.forEach(child => child.setAttribute('data-active', 'false'));
     });
 
     // Add 'active' to the clicked one

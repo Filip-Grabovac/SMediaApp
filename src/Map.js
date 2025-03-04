@@ -141,31 +141,33 @@ export default class Map {
     };
     
     Object.keys(tools).forEach((toolId) => {
-      document.getElementById(toolId).addEventListener(
-        'click',
-        function (event) {
-          if (event.currentTarget.classList.contains('active')) {
-            event.currentTarget.classList.remove('active');
-            this.tool.disableActiveTool();
-          } else {
-            // Deactivate all tools before activating the new one
-            Object.keys(tools).forEach((id) => {
-              document.getElementById(id).classList.remove('active');
-            });
+      document.getElementById(toolId).addEventListener('click', function (event) {
+        const clickedButton = event.currentTarget;
     
-            event.currentTarget.classList.add('active');
-            this.tool.disableActiveTool();
+        if (clickedButton.getAttribute('data-active') === 'true') {
+          clickedButton.setAttribute('data-active', 'false');
+          this.tool.disableActiveTool();
+        } else {
+          // Deactivate all tools first
+          Object.keys(tools).forEach((id) => {
+            document.getElementById(id).setAttribute('data-active', 'false');
+          });
     
-            if (tools[toolId]) {
-              this.activeTool = new tools[toolId](window.map); // Activate the new tool
-              this.activeTool.enable();
-            } else if (toolId === "edit") {
-              this.tool.edit(); // Enable editing mode
-            }
+          clickedButton.setAttribute('data-active', 'true');
+          this.tool.disableActiveTool();
+    
+          if (tools[toolId]) {
+            this.activeTool = new tools[toolId](window.map);
+            this.activeTool.enable();
+          } else if (toolId === "edit") {
+            this.tool.edit();
           }
-        }.bind(this)
-      );
+        }
+    
+        console.log('Active state:', clickedButton.getAttribute('data-active'));
+      }.bind(this));
     });
+    
     
     // Modify the custom trash control to delete shapes by selecting them
     document.getElementById('trash').addEventListener(
@@ -334,6 +336,9 @@ export default class Map {
   disableTools() {
     if (map && map.dragging) {
       document.querySelectorAll('.tool-wrapper').forEach((wrapper) => {
+        const activeChildren = wrapper.querySelectorAll('[data-active="true"]');
+        activeChildren.forEach(child => child.setAttribute('data-active', 'false'));
+
         wrapper.classList.remove('active');
       });
 
