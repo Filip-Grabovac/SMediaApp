@@ -19,10 +19,6 @@ export default class Place {
     document.body.appendChild(this.notificationWrapper);
   }
 
-  /**
-   * Called once per shape. Instead of immediate processing,
-   * we enqueue the shape to be processed in order.
-   */
   processLayer(layer, shapeId, state, isZip) {
     // Enqueue shape info
     this.shapeQueue.push({ layer, shapeId, state, isZip });
@@ -33,10 +29,6 @@ export default class Place {
     }
   }
 
-  /**
-   * Dequeue the next shape and process it.
-   * When it's done, process the next one, etc.
-   */
   async processNextShape() {
     // No shapes left?
     if (this.shapeQueue.length === 0) {
@@ -56,11 +48,6 @@ export default class Place {
     this.processNextShape();
   }
 
-  /**
-   * Internal method that does the actual creation of the notification,
-   * Overpass fetch, listing places, etc. 
-   * Resolves once shape is fully processed and its notification is removed.
-   */
   _processSingleShape(layer, shapeId, state, isZip) {
     return new Promise((resolve, reject) => {
       let query = null;
@@ -169,10 +156,6 @@ export default class Place {
     });
   }
 
-  /**
-   * The same listPlaces method, but returns a Promise
-   * so we know when it's finished (and can continue queue).
-   */
   async listPlaces(citiesWrap, cities, shapeId, stateName, notification) {
     return new Promise(async (resolve) => {
       if (citiesWrap && cities.length > 0) {
@@ -184,6 +167,7 @@ export default class Place {
           const cityName = tags.name;
           let state;
 
+          // (A) First fetch or set the state name
           if (tags.wikipedia) {
             state =
               tags.wikipedia.split(', ').length > 1
@@ -220,12 +204,24 @@ export default class Place {
             }
           }
 
-          // If a specific state was requested, skip if city is outside that state
+          // (B) If a specific state was requested, skip if city is outside that state
           if (stateName && state !== stateName) {
             continue;
           }
 
-          // Create a new row in the citiesWrap
+          // (C) CHECK FOR DUPLICATES
+          // Use any consistent unique key you like:
+          // e.g. cityName + state or city.id or city.id + state
+          const uniqueKey = `${cityName}--${state}`;
+          if (this.displayedCities.has(uniqueKey)) {
+            // Already listed - skip
+            console.log('Skipping duplicate city:', uniqueKey);
+            continue;
+          }
+          // Mark it as displayed
+          this.displayedCities.add(uniqueKey);
+
+          // (D) Create a new row in the citiesWrap
           const stateRow = document.createElement('div');
           stateRow.classList.add('state-row');
           stateRow.setAttribute('data-lat', city.lat);
@@ -254,7 +250,7 @@ export default class Place {
           stateRow.appendChild(svg);
           citiesWrap.appendChild(stateRow);
 
-          // Update progress for this shape
+          // (E) Update progress for this shape
           const percentage = Math.round(((i + 1) / totalCities) * 100);
           notification.textContent = `List is generating - ${percentage}%`;
         }
@@ -273,7 +269,6 @@ export default class Place {
         resolve();
       } else {
         // No cities found
-        // But let's avoid overwriting if it was "List is generating - 100%" ...
         if (notification.textContent !== 'List is generating - 100%') {
           notification.textContent = 'No cities found in this area.';
         }
@@ -285,7 +280,6 @@ export default class Place {
     });
   }
 
-  // The rest remains unchanged
   searchIncludedExcludedPlaces(inputSelector, wrapperSelector) {
     const inputElement = document.querySelector(inputSelector);
     const wrapperElement = document.querySelector(wrapperSelector);
@@ -318,5 +312,6 @@ export default class Place {
     const wb = XLSX.utils.table_to_book(table, { sheet: 'Sheet 1' });
 
     // Write the workbook to a file with the provided filename
-    XLSX.writeFile(wb, filename);}
+    XLSX.writeFile(wb, filename);
+  }
 }
