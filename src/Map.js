@@ -336,7 +336,7 @@ export default class Map {
   disableTools() {
     if (map && map.dragging) {
       document.querySelectorAll('.tool-wrapper').forEach((wrapper) => {
-        const activeChildren = wrapper.querySelectorAll('[data-active="true"]');
+        const activeChildren = wrapper && wrapper.querySelectorAll('[data-active="true"]');
         activeChildren.forEach(child => child.setAttribute('data-active', 'false'));
 
         wrapper.classList.remove('active');
