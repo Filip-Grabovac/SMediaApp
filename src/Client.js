@@ -799,7 +799,7 @@ export default class Client {
               dropdown.innerHTML = ''; // Clear the dropdown after selection
               window.isCitySelected = true;
 
-              this.validateForm(form, nextStepButton);
+              // this.validateForm(form, nextStepButton);
 
               // Add custom properties to the input element (latitude and longitude)
               inputElement.dataset.latitude = item.lat;
