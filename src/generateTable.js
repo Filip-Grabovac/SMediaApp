@@ -151,7 +151,7 @@ $(document).ready(function () {
         s_family_home: singleFamilyHomes,
         avg_home_value:
           medianHomeValue === 'No data' ? 'No data' : '$' + medianHomeValue,
-        closest_office: `${distanceInMiles} miles`,
+        closest_office: `${distanceInMiles}`,
       };
 
       // Make the POST request
