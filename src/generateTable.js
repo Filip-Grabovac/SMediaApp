@@ -70,6 +70,7 @@ $(document).ready(function () {
       const placeData = data.find((item) => item[0].includes(placeName));
 
       console.log(placeData);
+      console.log(placeName);
 
       if (!placeData) {
         console.error('Place not found!');
