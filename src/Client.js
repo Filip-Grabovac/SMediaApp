@@ -97,7 +97,7 @@ export default class Client {
           data.clients.items.forEach((client) => {
             rows += `
           <tr>
-            <td class="dark"><a href="/?client_id=${
+            <td class="dark"><a href="/map?client_id=${
               client.id
             }" class="client-table__link">${
               client.image
