@@ -61,9 +61,9 @@ export default class User {
 
           // Redirect to page
           if (result.clients_length === 0) {
-            window.location.href = '/clients';
-          } else {
             window.location.href = '/';
+          } else {
+            window.location.href = '/map';
           }
         } else {
           // Error: show the error message and apply the invalid class
