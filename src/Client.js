@@ -630,11 +630,21 @@ export default class Client {
         const phone = document.getElementById('profile-phone');
         const companyTitle = document.querySelector('.client_name_text');
         const { client_offices } = data;
-        const populationFactor = document.getElementById('profile-population_factor');
-        const avgHouseholdIncomeFactor = document.getElementById('profile-avg_household_income_factor');
-        const singleFamilyHomesFactor = document.getElementById('profile-single_family_homes_factor');
-        const avgHomeValueFactor = document.getElementById('profile-avg_home_value_factor');
-        const distanceFromHQFactor = document.getElementById('profile-distance_from_hq_factor');
+        const populationFactor = document.getElementById(
+          'profile-population_factor'
+        );
+        const avgHouseholdIncomeFactor = document.getElementById(
+          'profile-avg_household_income_factor'
+        );
+        const singleFamilyHomesFactor = document.getElementById(
+          'profile-single_family_homes_factor'
+        );
+        const avgHomeValueFactor = document.getElementById(
+          'profile-avg_home_value_factor'
+        );
+        const distanceFromHQFactor = document.getElementById(
+          'profile-distance_from_hq_factor'
+        );
 
         const img = document.getElementById('client-img');
 
@@ -799,7 +809,9 @@ export default class Client {
               dropdown.innerHTML = ''; // Clear the dropdown after selection
               window.isCitySelected = true;
 
-              // this.validateForm(form, nextStepButton);
+              if (window.location.pathname !== '/client') {
+                this.validateForm(form, nextStepButton);
+              }
 
               // Add custom properties to the input element (latitude and longitude)
               inputElement.dataset.latitude = item.lat;
@@ -980,11 +992,21 @@ export default class Client {
     );
     const website = document.querySelector('#profile-website').value;
     const companyName = document.querySelector('#profile-company').value;
-    const populationFactor = document.getElementById('profile-population_factor').value;
-    const avgHouseholdIncomeFactor = document.getElementById('profile-avg_household_income_factor').value;
-    const singleFamilyHomesFactor = document.getElementById('profile-single_family_homes_factor').value;
-    const avgHomeValueFactor = document.getElementById('profile-avg_home_value_factor').value;
-    const distanceFromHQFactor = document.getElementById('profile-distance_from_hq_factor').value;
+    const populationFactor = document.getElementById(
+      'profile-population_factor'
+    ).value;
+    const avgHouseholdIncomeFactor = document.getElementById(
+      'profile-avg_household_income_factor'
+    ).value;
+    const singleFamilyHomesFactor = document.getElementById(
+      'profile-single_family_homes_factor'
+    ).value;
+    const avgHomeValueFactor = document.getElementById(
+      'profile-avg_home_value_factor'
+    ).value;
+    const distanceFromHQFactor = document.getElementById(
+      'profile-distance_from_hq_factor'
+    ).value;
 
     // Get the bearer token from localStorage
     const authToken = localStorage.getItem('authToken');
