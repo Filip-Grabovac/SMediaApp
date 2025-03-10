@@ -1,5 +1,5 @@
 export default class User {
-  authenticate(successRedirect = '/map', failureRedirect = '/login') {
+  authenticate(successRedirect = '/', failureRedirect = '/login') {
     const authToken = localStorage.getItem('authToken');
 
     // If there's no auth token, redirect to the failure page if not already there
@@ -28,7 +28,10 @@ export default class User {
           }
         } else {
           // If the token is valid and on the `/clients` page, stay on `/clients`
-          if (window.location.pathname === '/' || window.location.pathname === '/client') {
+          if (
+            window.location.pathname === '/' ||
+            window.location.pathname === '/client'
+          ) {
             return; // Do nothing, remain on `/clients`
           }
 
@@ -59,6 +62,8 @@ export default class User {
           // Save the token to localStorage
           localStorage.setItem('authToken', result.authToken);
 
+          // Redirect to page
+          window.location.href = '/';
         } else {
           // Error: show the error message and apply the invalid class
           const errorMessage = document.querySelector('.error-message');
