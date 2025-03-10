@@ -1,5 +1,5 @@
 export default class User {
-  authenticate(successRedirect = '/', failureRedirect = '/login') {
+  authenticate(successRedirect = '/map', failureRedirect = '/login') {
     const authToken = localStorage.getItem('authToken');
 
     // If there's no auth token, redirect to the failure page if not already there
