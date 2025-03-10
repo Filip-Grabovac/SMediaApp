@@ -1,48 +1,48 @@
 export default class User {
-  authenticate(successRedirect = '/', failureRedirect = '/login') {
-    const authToken = localStorage.getItem('authToken');
+  // authenticate(successRedirect = '/', failureRedirect = '/login') {
+  //   const authToken = localStorage.getItem('authToken');
 
-    // If there's no auth token, redirect to the failure page if not already there
-    if (!authToken) {
-      if (window.location.pathname !== failureRedirect) {
-        window.location.href = failureRedirect;
-      }
-      return;
-    }
+  //   // If there's no auth token, redirect to the failure page if not already there
+  //   if (!authToken) {
+  //     if (window.location.pathname !== failureRedirect) {
+  //       window.location.href = failureRedirect;
+  //     }
+  //     return;
+  //   }
 
-    // If there is a token, verify it with the API
-    fetch('https://xrux-avyn-v7a8.n7d.xano.io/api:7eX5OyVa/auth/me', {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.code === 'ERROR_CODE_UNAUTHORIZED') {
-          // If the token is invalid, remove it and redirect to the failure page if not there already
-          localStorage.removeItem('authToken');
-          if (window.location.pathname !== failureRedirect) {
-            window.location.href = failureRedirect;
-          }
-        } else {
-          // If the token is valid and on the `/clients` page, stay on `/clients`
-          // if (window.location.pathname === '/' || window.location.pathname === '/client') {
-          //   return; // Do nothing, remain on `/clients`
-          // }
+  //   // If there is a token, verify it with the API
+  //   fetch('https://xrux-avyn-v7a8.n7d.xano.io/api:7eX5OyVa/auth/me', {
+  //     method: 'GET',
+  //     headers: {
+  //       Authorization: `Bearer ${authToken}`,
+  //       'Content-Type': 'application/json',
+  //     },
+  //   })
+  //     .then((response) => response.json())
+  //     .then((result) => {
+  //       if (result.code === 'ERROR_CODE_UNAUTHORIZED') {
+  //         // If the token is invalid, remove it and redirect to the failure page if not there already
+  //         localStorage.removeItem('authToken');
+  //         if (window.location.pathname !== failureRedirect) {
+  //           window.location.href = failureRedirect;
+  //         }
+  //       } else {
+  //         // If the token is valid and on the `/clients` page, stay on `/clients`
+  //         if (window.location.pathname === '/' || window.location.pathname === '/client') {
+  //           return; // Do nothing, remain on `/clients`
+  //         }
 
-          // Otherwise, redirect to the success page if not already there
-          if (window.location.pathname !== successRedirect) {
-            window.location.href = successRedirect;
-          }
-        }
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        // Optionally handle errors, such as displaying a message to the user
-      });
-  }
+  //         // Otherwise, redirect to the success page if not already there
+  //         if (window.location.pathname !== successRedirect) {
+  //           window.location.href = successRedirect;
+  //         }
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error:', error);
+  //       // Optionally handle errors, such as displaying a message to the user
+  //     });
+  // }
 
   logIn(data) {
     // Call the Xano API

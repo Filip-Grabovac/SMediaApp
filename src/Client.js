@@ -962,7 +962,7 @@ export default class Client {
             localStorage.setItem('notification', 'Client deleted successfully');
 
             // Redirect to the /clients page
-            window.location.href = '/clients';
+            window.location.href = '/';
           })
           .catch((error) => {
             console.error('Error:', error);
