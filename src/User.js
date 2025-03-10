@@ -28,7 +28,7 @@ export default class User {
           }
         } else {
           // If the token is valid and on the `/clients` page, stay on `/clients`
-          if (window.location.pathname === '/clients' || window.location.pathname === '/client') {
+          if (window.location.pathname === '/' || window.location.pathname === '/client') {
             return; // Do nothing, remain on `/clients`
           }
 
@@ -59,12 +59,6 @@ export default class User {
           // Save the token to localStorage
           localStorage.setItem('authToken', result.authToken);
 
-          // Redirect to page
-          if (result.clients_length === 0) {
-            window.location.href = '/';
-          } else {
-            window.location.href = '/map';
-          }
         } else {
           // Error: show the error message and apply the invalid class
           const errorMessage = document.querySelector('.error-message');
