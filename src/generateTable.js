@@ -121,7 +121,7 @@ $(document).ready(function () {
             ? 'No data'
             : '$' + formatNumber(Number(medianHomeValue)), // Avg. Home Value
           totalHomeValue, // Total Home Value
-          `${closestOffice} - ${distanceInMiles} miles`, // Closest Office
+          `${distanceInMiles} miles`, // Closest Office
           '', // % of Total Pop
           '', // Cumulative Pop %
           '', // Total Population
