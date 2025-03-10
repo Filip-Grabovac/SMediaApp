@@ -77,7 +77,6 @@ $(document).ready(function () {
         return;
       }
 
-      const fullPlaceName = placeData[0]; // Full name of the place
       const placeFipsCode = placeData[2]; // Place FIPS code
 
       // Fetch additional data (population, income, home value, etc.)
@@ -113,7 +112,7 @@ $(document).ready(function () {
       table.row
         .add([
           '',
-          fullPlaceName.split(',')[0].trim(), // City
+          placeName, // City
           stateName, // State
           formatNumber(Number(population)), // Population
           medianHouseholdIncome === 'No data'
@@ -144,7 +143,7 @@ $(document).ready(function () {
       // Static data to be sent in the request body
       const requestBody = {
         client_id: currentClientId,
-        place: fullPlaceName.split(',')[0].trim(),
+        place: placeName,
         state: stateName,
         population: population,
         household_income:
