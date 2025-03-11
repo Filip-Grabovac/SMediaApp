@@ -110,7 +110,12 @@ $(document).ready(function () {
             )}`;
 
       const placeTypeMatch = placeData[0].match(/\b(city|town|village|CDP)\b/i);
-      const placeType = placeTypeMatch ? placeTypeMatch[0] : "";
+      const placeType = placeTypeMatch
+        ? placeTypeMatch[0] === 'CDP'
+          ? 'CDP'
+          : placeTypeMatch[0].charAt(0).toUpperCase() +
+            placeTypeMatch[0].slice(1).toLowerCase()
+        : '';
 
       // Insert the data into the table
       table.row
