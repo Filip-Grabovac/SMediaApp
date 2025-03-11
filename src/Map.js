@@ -628,10 +628,10 @@ export default class Map {
     table.rows().every(function () {
       const data = this.data();
 
-      const population = parseInt(data[4].replace(/,/g, ''), 10);
-      const avgHouseholdIncome = parseInt(data[5].replace(/[^0-9]/g, ''), 10);
-      const singleFamilyHomes = parseInt(data[6].replace(/,/g, ''), 10);
-      const avgHomeValue = parseInt(data[7].replace(/[^0-9]/g, ''), 10);
+      const population = parseInt(data[5].replace(/,/g, ''), 10);
+      const avgHouseholdIncome = parseInt(data[6].replace(/[^0-9]/g, ''), 10);
+      const singleFamilyHomes = parseInt(data[7].replace(/,/g, ''), 10);
+      const avgHomeValue = parseInt(data[8].replace(/[^0-9]/g, ''), 10);
 
       const percentage = population / totalPopulation;
       cumulativePercentage += percentage;
