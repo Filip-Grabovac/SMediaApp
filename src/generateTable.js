@@ -321,10 +321,10 @@ $(document).ready(function () {
 
     const dataRows = table.rows().data();
     dataRows.each((row) => {
-      const population = parseInt(row[3].replace(/,/g, ''), 10); // Population
-      const avgHouseholdIncome = parseInt(row[4].replace(/[^0-9]/g, ''), 10); // Avg. Household Income
-      const singleFamilyHomes = parseInt(row[5].replace(/,/g, ''), 10); // Approx. # of Single Family Homes
-      const avgHomeValue = parseInt(row[6].replace(/[^0-9]/g, ''), 10); // Avg. Home Value
+      const population = parseInt(row[4].replace(/,/g, ''), 10); // Population
+      const avgHouseholdIncome = parseInt(row[5].replace(/[^0-9]/g, ''), 10); // Avg. Household Income
+      const singleFamilyHomes = parseInt(row[6].replace(/,/g, ''), 10); // Approx. # of Single Family Homes
+      const avgHomeValue = parseInt(row[7].replace(/[^0-9]/g, ''), 10); // Avg. Home Value
 
       // Extract the distance in miles from data[8]
       const distanceMatch = row[9]?.match(/([\d.]+) miles$/);
