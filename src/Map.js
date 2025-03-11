@@ -615,10 +615,10 @@ export default class Map {
     table.rows().every(function () {
       const data = this.data();
 
-      const population = parseInt(data[3].replace(/,/g, ''), 10);
-      const avgHouseholdIncome = parseInt(data[4].replace(/[^0-9]/g, ''), 10);
-      const singleFamilyHomes = parseInt(data[5].replace(/,/g, ''), 10);
-      const avgHomeValue = parseInt(data[6].replace(/[^0-9]/g, ''), 10);
+      const population = parseInt(data[4].replace(/,/g, ''), 10);
+      const avgHouseholdIncome = parseInt(data[5].replace(/[^0-9]/g, ''), 10);
+      const singleFamilyHomes = parseInt(data[6].replace(/,/g, ''), 10);
+      const avgHomeValue = parseInt(data[7].replace(/[^0-9]/g, ''), 10);
 
       const percentage = population / totalPopulation;
       cumulativePercentage += percentage;
@@ -640,21 +640,21 @@ export default class Map {
           (normalizedSingleFamilyHomes || 0) +
         userFactors.avg_home_value_factor * (normalizedAvgHomeValue || 0);
 
-      data[9] = `${(percentage * 100).toFixed(2)}%`; // % of Total Pop
-      data[10] = `${(cumulativePercentage * 100).toFixed(2)}%`; // Cumulative Pop %
-      data[12] = normalizedPopulation; // Norm. Pop
-      data[13] = normalizedAvgIncome; // Norm. Avg. Household Income
-      data[14] = normalizedSingleFamilyHomes; // Norm. Single Family Homes
-      data[15] = isNaN(normalizedAvgHomeValue)
+      data[10] = `${(percentage * 100).toFixed(2)}%`; // % of Total Pop
+      data[11] = `${(cumulativePercentage * 100).toFixed(2)}%`; // Cumulative Pop %
+      data[13] = normalizedPopulation; // Norm. Pop
+      data[14] = normalizedAvgIncome; // Norm. Avg. Household Income
+      data[15] = normalizedSingleFamilyHomes; // Norm. Single Family Homes
+      data[16] = isNaN(normalizedAvgHomeValue)
         ? 'No data'
         : normalizedAvgHomeValue; // Norm. Avg. Home Value
-      data[17] = weightedScore || 0; // Weighted Score
+      data[18] = weightedScore || 0; // Weighted Score
 
       this.data(data);
     });
 
     // Sort table by weighted score
-    table.order([17, 'desc']).draw();
+    table.order([18, 'desc']).draw();
   }
 
   toggleStateRow = () => {
