@@ -361,6 +361,10 @@ $(document).ready(function () {
       const percentage = population / totalPopulation;
       cumulativePercentage += percentage;
 
+      console.log(population);
+      console.log(minPopulation);
+      console.log(maxPopulation);
+
       const normalizedPopulation =
         (population - minPopulation) / (maxPopulation - minPopulation);
       const normalizedAvgIncome =
