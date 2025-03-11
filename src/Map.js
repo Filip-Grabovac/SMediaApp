@@ -621,6 +621,9 @@ export default class Map {
       const singleFamilyHomes = parseInt(data[6].replace(/,/g, ''), 10);
       const avgHomeValue = parseInt(data[7].replace(/[^0-9]/g, ''), 10);
 
+      console.log(population);
+      console.log(totalPopulation);
+
       const percentage = population / totalPopulation;
       cumulativePercentage += percentage;
 
