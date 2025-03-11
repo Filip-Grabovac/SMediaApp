@@ -69,9 +69,6 @@ $(document).ready(function () {
       // Find the place
       const placeData = data.find((item) => item[0].includes(placeName));
 
-      console.log(placeData);
-      console.log(placeName);
-
       if (!placeData) {
         console.error('Place not found!');
         return;
@@ -87,7 +84,11 @@ $(document).ready(function () {
       const [headers, values] = detailedData; // Destructure response into headers and values
 
       // Skip if No Data
-      if (String(values[1]).includes('-666') || String(values[2]).includes('-666')) return;
+      if (
+        String(values[1]).includes('-666') ||
+        String(values[2]).includes('-666')
+      )
+        return;
 
       const population = values[0]; // Total population (B01003_001E)
       const medianHouseholdIncome = String(values[1]).includes('-666')
@@ -108,12 +109,15 @@ $(document).ready(function () {
               Number(medianHomeValue) * Number(singleFamilyHomes)
             )}`;
 
+      const placeTypeMatch = placeData[0].match(/\b(city|town|village|CDP)\b/i);
+      const placeType = placeTypeMatch ? placeTypeMatch[0] : "";
+
       // Insert the data into the table
       table.row
         .add([
           '',
           placeName, // City
-          'Place Type', // City
+          placeType, // City
           stateName, // State
           formatNumber(Number(population)), // Population
           medianHouseholdIncome === 'No data'
@@ -145,6 +149,7 @@ $(document).ready(function () {
       const requestBody = {
         client_id: currentClientId,
         place: placeName,
+        place_type: placeType,
         state: stateName,
         population: population,
         household_income:
@@ -264,7 +269,6 @@ $(document).ready(function () {
     let renderedPlaces = [];
 
     for (let i = 0; i < stateRows.length; i++) {
-
       notificationElement.textContent = `Generating city/town data - ${i} of ${stateRows.length}`;
       const stateRow = $(stateRows[i]);
 
@@ -278,8 +282,8 @@ $(document).ready(function () {
       renderedPlaces.push(stateNameWithPlace);
 
       const [placeName, stateName] = stateNameWithPlace
-          .split(',')
-          .map((part) => part.trim());
+        .split(',')
+        .map((part) => part.trim());
 
       // Extract lat and lon
       const placeLat = parseFloat(stateRow.attr('data-lat'));

@@ -534,7 +534,7 @@ export default class Map {
             .add([
               '',
               item.place, // City
-              'Place Type',
+              item.place_type,
               item.state, // State
               this.formatNumber(Number(item.population)), // Population
               item.household_income, // Avg. Household Income
