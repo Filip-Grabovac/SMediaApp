@@ -667,7 +667,7 @@ export default class Map {
     });
 
     // Sort table by weighted score
-    table.order([18, 'desc']).draw();
+    // table.order([18, 'desc']).draw();
   }
 
   toggleStateRow = () => {
