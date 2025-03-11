@@ -113,6 +113,7 @@ $(document).ready(function () {
         .add([
           '',
           placeName, // City
+          "Place Type", // City
           stateName, // State
           formatNumber(Number(population)), // Population
           medianHouseholdIncome === 'No data'
