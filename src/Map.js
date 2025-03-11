@@ -661,13 +661,13 @@ export default class Map {
       data[16] = isNaN(normalizedAvgHomeValue)
         ? 'No data'
         : normalizedAvgHomeValue; // Norm. Avg. Home Value
-      data[18] = weightedScore || 0; // Weighted Score
+      data[17] = weightedScore || 0; // Weighted Score
 
       this.data(data);
     });
 
     // Sort table by weighted score
-    // table.order([18, 'desc']).draw();
+    table.order([17, 'desc']).draw();
   }
 
   toggleStateRow = () => {

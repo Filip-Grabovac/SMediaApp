@@ -397,12 +397,12 @@ $(document).ready(function () {
       data[15] = normalizedSingleFamilyHomes; // Norm. Single Family Homes
       data[16] = normalizedAvgHomeValue; // Norm. Avg. Home Value
       data[17] = normalizedDistance || 0; // Norm. Distance (new column)
-      data[18] = weightedScore || 0; // Weighted Score
+      data[17] = weightedScore || 0; // Weighted Score
 
       this.data(data);
     });
 
-    table.order([18, 'desc']).draw();
+    table.order([17, 'desc']).draw();
     notificationElement.classList.add('hidden');
   });
 });
