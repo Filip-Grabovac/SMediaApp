@@ -596,10 +596,10 @@ export default class Map {
 
     // Calculate min/max values and total population
     dataRows.each((row) => {
-      const population = parseInt(row[3].replace(/,/g, ''), 10);
-      const avgHouseholdIncome = parseInt(row[4].replace(/[^0-9]/g, ''), 10);
-      const singleFamilyHomes = parseInt(row[5].replace(/,/g, ''), 10);
-      const avgHomeValue = parseInt(row[6].replace(/[^0-9]/g, ''), 10);
+      const population = parseInt(row[5].replace(/,/g, ''), 10);
+      const avgHouseholdIncome = parseInt(row[6].replace(/[^0-9]/g, ''), 10);
+      const singleFamilyHomes = parseInt(row[7].replace(/,/g, ''), 10);
+      const avgHomeValue = parseInt(row[8].replace(/[^0-9]/g, ''), 10);
 
       totalPopulation += population;
 
