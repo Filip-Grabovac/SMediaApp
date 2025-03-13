@@ -542,6 +542,8 @@ export default class Map {
               ? (distance - minDistance) / (maxDistance - minDistance)
               : 0;
 
+          console.log(item.place);
+
           table.row
             .add([
               '',
@@ -572,7 +574,6 @@ export default class Map {
             ])
             .draw();
         });
-        console.log(item.place);
         this.calculateAndNormalizeTableData(table);
       })
       .catch((error) => {
