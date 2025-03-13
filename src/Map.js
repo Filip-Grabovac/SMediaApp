@@ -137,45 +137,50 @@ export default class Map {
       polygon: L.Draw.Polygon,
       square: L.Draw.Rectangle,
       circle: L.Draw.Circle,
-      edit: null // Special case, handled separately
+      edit: null, // Special case, handled separately
     };
-    
+
     Object.keys(tools).forEach((toolId) => {
-      document.getElementById(toolId).addEventListener('click', function (event) {
-        const clickedButton = event.currentTarget;
-    
-        if (clickedButton.getAttribute('data-active') === 'true') {
-          clickedButton.setAttribute('data-active', 'false');
-          this.tool.disableActiveTool();
-        } else {
-          // Deactivate all tools first
-          Object.keys(tools).forEach((id) => {
-            document.getElementById(id).setAttribute('data-active', 'false');
-          });
-    
-          clickedButton.setAttribute('data-active', 'true');
-          this.tool.disableActiveTool();
-    
-          if (tools[toolId]) {
-            this.activeTool = new tools[toolId](window.map);
-            this.activeTool.enable();
-          } else if (toolId === "edit") {
-            this.tool.edit();
+      document.getElementById(toolId).addEventListener(
+        'click',
+        function (event) {
+          const clickedButton = event.currentTarget;
+
+          if (clickedButton.getAttribute('data-active') === 'true') {
+            clickedButton.setAttribute('data-active', 'false');
+            this.tool.disableActiveTool();
+          } else {
+            // Deactivate all tools first
+            Object.keys(tools).forEach((id) => {
+              document.getElementById(id).setAttribute('data-active', 'false');
+            });
+
+            clickedButton.setAttribute('data-active', 'true');
+            this.tool.disableActiveTool();
+
+            if (tools[toolId]) {
+              this.activeTool = new tools[toolId](window.map);
+              this.activeTool.enable();
+            } else if (toolId === 'edit') {
+              this.tool.edit();
+            }
           }
-        }
-    
-        console.log('Active state:', clickedButton.getAttribute('data-active'));
-      }.bind(this));
+
+          console.log(
+            'Active state:',
+            clickedButton.getAttribute('data-active')
+          );
+        }.bind(this)
+      );
     });
-    
-    
+
     // Modify the custom trash control to delete shapes by selecting them
     document.getElementById('trash').addEventListener(
       'click',
       function () {
         this.tool.deleteElement();
       }.bind(this)
-    );    
+    );
 
     // Handle the draw:created event to keep the drawn shapes on the map
     window.map.on(
@@ -336,8 +341,11 @@ export default class Map {
   disableTools() {
     if (map && map.dragging) {
       document.querySelectorAll('.tool-wrapper').forEach((wrapper) => {
-        const activeChildren = wrapper && wrapper.querySelectorAll('[data-active="true"]');
-        activeChildren.forEach(child => child.setAttribute('data-active', 'false'));
+        const activeChildren =
+          wrapper && wrapper.querySelectorAll('[data-active="true"]');
+        activeChildren.forEach((child) =>
+          child.setAttribute('data-active', 'false')
+        );
 
         wrapper.classList.remove('active');
       });
@@ -519,7 +527,11 @@ export default class Map {
           if (renderedPlaces.includes(item.place + ',' + item.state)) return;
           renderedPlaces.push(item.place + ',' + item.state);
 
-          if (item.household_income === 'No data' || item.avg_home_value === 'No data') return;
+          if (
+            item.household_income === 'No data' ||
+            item.avg_home_value === 'No data'
+          )
+            return;
 
           const distanceMatch = item.closest_office?.match(/([\d.]+) miles$/);
           const distance = distanceMatch ? parseFloat(distanceMatch[1]) : 0;
@@ -560,7 +572,7 @@ export default class Map {
             ])
             .draw();
         });
-
+        console.log(item.place);
         this.calculateAndNormalizeTableData(table);
       })
       .catch((error) => {
@@ -631,6 +643,10 @@ export default class Map {
       const normalizedSingleFamilyHomes =
         (singleFamilyHomes - minSingleFamilyHomes) /
         (maxSingleFamilyHomes - minSingleFamilyHomes);
+      console.log();
+      console.log(avgHomeValue);
+      console.log(minAvgHomeValue);
+      console.log(maxAvgHomeValue);
       const normalizedAvgHomeValue =
         (avgHomeValue - minAvgHomeValue) / (maxAvgHomeValue - minAvgHomeValue);
 
@@ -665,16 +681,16 @@ export default class Map {
       const stateRow = $(event.currentTarget).closest('.state-row'); // Get the clicked state-row element
       const includedWrapper = $('.states_wrap.included');
       const excludedWrapper = $('.states_wrap.excluded');
-  
+
       const lat = parseFloat(stateRow.attr('data-lat'));
       const lon = parseFloat(stateRow.attr('data-lon'));
-  
+
       const shapeId = `excluded-${stateRow.attr('shapeid')}`; // Unique ID for the circle
-  
+
       if (stateRow.closest('.states_wrap').hasClass('included')) {
         // Move the state-row to the excluded wrapper
         excludedWrapper.append(stateRow);
-  
+
         // Add a red circle to the map
         if (typeof map.addLayer === 'function') {
           const circle = L.circle([lat, lon], {
@@ -683,24 +699,24 @@ export default class Map {
             fillOpacity: 0.5,
             radius: 500, // Adjust radius as needed
           }).addTo(map);
-  
+
           // Store the circle on the stateRow for easy removal
           stateRow.data('circle', circle);
         }
-  
+
         // Update included and excluded numbers
         updateCount();
       } else {
         // Move the state-row back to the included wrapper
         includedWrapper.append(stateRow);
-  
+
         // Remove the red circle from the map if it exists
         const circle = stateRow.data('circle');
         if (circle) {
           map.removeLayer(circle);
           stateRow.removeData('circle'); // Clear the reference
         }
-  
+
         // Update included and excluded numbers
         updateCount();
       }
@@ -710,11 +726,10 @@ export default class Map {
     function updateCount() {
       const includedCount = $('.states_wrap.included .state-row').length;
       const excludedCount = $('.states_wrap.excluded .state-row').length;
-    
+
       // Update the placeholder numbers
       $('.included-num__placeholder').text(includedCount);
       $('.excluded-num__placeholder').text(excludedCount);
     }
   };
-  
 }
