@@ -166,10 +166,6 @@ export default class Map {
             }
           }
 
-          console.log(
-            'Active state:',
-            clickedButton.getAttribute('data-active')
-          );
         }.bind(this)
       );
     });

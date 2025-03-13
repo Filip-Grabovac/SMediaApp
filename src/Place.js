@@ -215,7 +215,6 @@ export default class Place {
           const uniqueKey = `${cityName}--${state}`;
           if (this.displayedCities.has(uniqueKey)) {
             // Already listed - skip
-            console.log('Skipping duplicate city:', uniqueKey);
             continue;
           }
           // Mark it as displayed
