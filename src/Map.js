@@ -541,9 +541,6 @@ export default class Map {
             maxDistance !== minDistance
               ? (distance - minDistance) / (maxDistance - minDistance)
               : 0;
-
-          console.log(item.place);
-
           table.row
             .add([
               '',
@@ -649,7 +646,7 @@ export default class Map {
       console.log(minAvgHomeValue);
       console.log(maxAvgHomeValue);
       const normalizedAvgHomeValue =
-        (avgHomeValue - minAvgHomeValue) / (maxAvgHomeValue - minAvgHomeValue);
+        (maxAvgHomeValue - avgHomeValue) / (maxAvgHomeValue - minAvgHomeValue);
 
       const weightedScore =
         userFactors.population_factor * (normalizedPopulation || 0) +
