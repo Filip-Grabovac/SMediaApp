@@ -641,10 +641,6 @@ export default class Map {
       const normalizedSingleFamilyHomes =
         (singleFamilyHomes - minSingleFamilyHomes) /
         (maxSingleFamilyHomes - minSingleFamilyHomes);
-      console.log();
-      console.log(avgHomeValue);
-      console.log(minAvgHomeValue);
-      console.log(maxAvgHomeValue);
       const normalizedAvgHomeValue =
         (maxAvgHomeValue - avgHomeValue) / (maxAvgHomeValue - minAvgHomeValue);
 
