@@ -551,7 +551,6 @@ export default class Tool {
           map.fitBounds(boundaryPolygon.getBounds());
           window.nonEditableItems.addLayer(boundaryPolygon);
 
-          console.log(`✅ ZIP ${zipCode} processed successfully.`);
           resolve(); // Resolve after everything inside is done
         } else {
           console.error(`❌ No features found for ZIP ${zipCode}`);
