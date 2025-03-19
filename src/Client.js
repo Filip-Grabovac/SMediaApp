@@ -674,6 +674,7 @@ export default class Client {
         } else {
           document.querySelector('.clients-table__loader').remove();
           document.getElementById('single-client-section').style.opacity = '1';
+          document.querySelector('.client_img_wrapp').style.display = 'none';
         }
       });
   }
