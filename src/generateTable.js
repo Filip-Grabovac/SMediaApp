@@ -67,9 +67,12 @@ $(document).ready(function () {
       const data = await response.json();
 
       console.log(data);
+      console.log(placeName);
 
       // Find the place
       const placeData = data.find((item) => item[0].includes(placeName));
+
+      console.log(placeData);
 
       if (!placeData) {
         console.error('Place not found!');
