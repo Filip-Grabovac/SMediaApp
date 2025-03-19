@@ -69,8 +69,29 @@ $(document).ready(function () {
       console.log(data);
       console.log(placeName);
 
-      // Find the place
-      const placeData = data.find((item) => item[0].includes(placeName));
+      // Prioritized place types (case-insensitive)
+      const preferredTypes = ['city', 'CDP', 'town'];
+
+      // Convert place types to lowercase for case-insensitive matching
+      const placeData = data.find((item) => {
+        const placeNameLower = item[0].toLowerCase(); // Convert to lowercase
+        return (
+          placeNameLower.startsWith(placeName.toLowerCase()) &&
+          preferredTypes.some((type) =>
+            placeNameLower.includes(` ${type.toLowerCase()},`)
+          )
+        );
+      });
+
+      // If no preferred match is found, fall back to the first match
+      const fallbackData = data.find((item) =>
+        item[0].toLowerCase().includes(placeName.toLowerCase())
+      );
+
+      // Use placeData if found, otherwise fallback to the first match
+      const finalPlaceData = placeData || fallbackData;
+
+      console.log(finalPlaceData);
 
       console.log(placeData);
 
