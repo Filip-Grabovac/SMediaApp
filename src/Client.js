@@ -668,11 +668,12 @@ export default class Client {
           document.querySelector('.clients-table__loader').remove();
         };
 
-        // Set the image source to start loading
+        // Set the image source to start loading, if not then remove loader
         if (data.image) {
           img.src = data.image.url;
         } else {
           document.querySelector('.clients-table__loader').remove();
+          document.getElementById('single-client-section').style.opacity = '1';
         }
       });
   }
