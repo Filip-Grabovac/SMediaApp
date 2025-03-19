@@ -136,7 +136,9 @@ export default class Place {
           const cities = data.elements.filter((el) => el.tags && el.tags.name);
           const citiesWrap = document.querySelector(
             `.states_wrap.${
-              layer._path.classList.contains('excluded') ? 'excluded' : 'included'
+              layer._path.classList.contains('excluded')
+                ? 'excluded'
+                : 'included'
             }`
           );
 
@@ -163,6 +165,7 @@ export default class Place {
 
         for (let i = 0; i < totalCities; i++) {
           const city = cities[i];
+          console.log(city);
           const { tags } = city;
           const cityName = tags.name;
           let state;
@@ -237,7 +240,7 @@ export default class Place {
           );
           svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
           svg.setAttribute('width', '100%');
-          svg.setAttribute('viewBox', '0 0 12 18');        
+          svg.setAttribute('viewBox', '0 0 12 18');
           svg.setAttribute('fill', 'none');
           svg.classList.add('toggle-arrow-svg');
           svg.innerHTML = `
