@@ -379,11 +379,11 @@ $(document).ready(function () {
       const normalizedSingleFamilyHomes =
         (singleFamilyHomes - minSingleFamilyHomes) /
         (maxSingleFamilyHomes - minSingleFamilyHomes);
-      // const normalizedAvgHomeValue =
-      //   (avgHomeValue - minAvgHomeValue) / (maxAvgHomeValue - minAvgHomeValue);
-
       const normalizedAvgHomeValue =
-        (maxAvgHomeValue - avgHomeValue) / (maxAvgHomeValue - minAvgHomeValue);
+        (avgHomeValue - minAvgHomeValue) / (maxAvgHomeValue - minAvgHomeValue);
+
+      // const normalizedAvgHomeValue =
+      //   (maxAvgHomeValue - avgHomeValue) / (maxAvgHomeValue - minAvgHomeValue);
 
       // Extract and normalize distance
       const distanceMatch = data[9]?.match(/([\d.]+) miles$/);
