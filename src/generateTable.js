@@ -379,6 +379,7 @@ $(document).ready(function () {
         (maxSingleFamilyHomes - minSingleFamilyHomes);
       // const normalizedAvgHomeValue =
       //   (avgHomeValue - minAvgHomeValue) / (maxAvgHomeValue - minAvgHomeValue);
+      console.log(data);
       console.log(maxAvgHomeValue);
       console.log(avgHomeValue);
       console.log(minAvgHomeValue);
