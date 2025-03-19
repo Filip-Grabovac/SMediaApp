@@ -66,6 +66,8 @@ $(document).ready(function () {
       const response = await fetch(apiUrl);
       const data = await response.json();
 
+      console.log(response);
+
       // Find the place
       const placeData = data.find((item) => item[0].includes(placeName));
 
@@ -379,10 +381,7 @@ $(document).ready(function () {
         (maxSingleFamilyHomes - minSingleFamilyHomes);
       // const normalizedAvgHomeValue =
       //   (avgHomeValue - minAvgHomeValue) / (maxAvgHomeValue - minAvgHomeValue);
-      console.log(data);
-      console.log(maxAvgHomeValue);
-      console.log(avgHomeValue);
-      console.log(minAvgHomeValue);
+
       const normalizedAvgHomeValue =
         (maxAvgHomeValue - avgHomeValue) / (maxAvgHomeValue - minAvgHomeValue);
 
