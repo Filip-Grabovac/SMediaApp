@@ -671,6 +671,8 @@ export default class Client {
         // Set the image source to start loading
         if (data.image) {
           img.src = data.image.url;
+        } else {
+          document.querySelector('.clients-table__loader').remove();
         }
       });
   }
