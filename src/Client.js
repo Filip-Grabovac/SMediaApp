@@ -669,7 +669,9 @@ export default class Client {
         };
 
         // Set the image source to start loading
-        img.src = data.image.url;
+        if (data.image) {
+          img.src = data.image.url;
+        }
       });
   }
 
