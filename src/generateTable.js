@@ -312,6 +312,8 @@ $(document).ready(function () {
       if (renderedPlaces.includes(stateNameWithPlace)) return;
       renderedPlaces.push(stateNameWithPlace);
 
+      console.log(stateNameWithPlace);
+
       const [placeName, stateName] = stateNameWithPlace
         .split(',')
         .map((part) => part.trim());
