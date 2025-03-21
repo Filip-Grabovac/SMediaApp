@@ -4,7 +4,7 @@ let map = new Map();
 
 $(document).ready(function () {
   let totalPopulation = 0;
-  console.log("Test");
+  console.log('Test');
 
   // Initialize DataTable
   const table = $('#main-data-table').DataTable({
@@ -43,6 +43,8 @@ $(document).ready(function () {
 
   // Function to fetch FIPS code for the state
   const getStateFipsCode = (stateName) => {
+    console.log(stateName);
+    console.log(statesFips[stateName]);
     return statesFips[stateName]; // Assuming statesFips is accessible
   };
 
@@ -54,8 +56,11 @@ $(document).ready(function () {
     distanceInMiles
   ) => {
     try {
+      console.log(stateName.replaceAll(' ', '_'));
       // Get the state FIPS code
       const stateFipsCode = getStateFipsCode(stateName.replaceAll(' ', '_'));
+
+      console.log(stateFipsCode);
 
       if (!stateFipsCode) {
         console.error('State FIPS code not found!');
@@ -66,9 +71,6 @@ $(document).ready(function () {
       const apiUrl = `https://api.census.gov/data/2022/acs/acs5?get=NAME&for=place:*&in=state:${stateFipsCode}&key=8195bcdd0a5f928ee30123f92fdf728a3247dc1c`;
       const response = await fetch(apiUrl);
       const data = await response.json();
-
-      console.log(data);
-      console.log(placeName);
 
       // Find the place with suffix matching
       let placeData = data.find((item) => {
@@ -93,8 +95,6 @@ $(document).ready(function () {
 
         placeData = data.find((item) => item[0].includes(placeName));
       }
-
-      console.log(placeData);
 
       if (!placeData) {
         console.error('Place not found!');
