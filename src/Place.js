@@ -79,7 +79,7 @@ export default class Place {
           query = `
             [out:json];
             (
-              node["place"~"city|town|village"](${bbox});
+              node["place"~"city|town|village|neighbourhood"](${bbox});
             );
             out body;
           `;
@@ -91,7 +91,7 @@ export default class Place {
         query = `
           [out:json];
           (
-            node["place"~"city|town|village"](around:${radius}, ${center.lat}, ${center.lng});
+            node["place"~"city|town|village|neighbourhood"](around:${radius}, ${center.lat}, ${center.lng});
           );
           out body;
         `;
@@ -102,7 +102,7 @@ export default class Place {
         query = `
           [out:json];
           (
-            node["place"~"city|town|village"](${bbox});
+            node["place"~"city|town|village|neighbourhood"](${bbox});
           );
           out body;
         `;
