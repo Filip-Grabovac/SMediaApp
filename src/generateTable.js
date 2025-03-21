@@ -4,7 +4,8 @@ let map = new Map();
 
 $(document).ready(function () {
   let totalPopulation = 0;
-  console.log('Test2');
+  let previousStateFipsCode = null;
+  console.log('Test3');
 
   // Initialize DataTable
   const table = $('#main-data-table').DataTable({
@@ -43,9 +44,14 @@ $(document).ready(function () {
 
   // Function to fetch FIPS code for the state
   const getStateFipsCode = (stateName) => {
-    console.log(stateName);
-    console.log(statesFips[stateName]);
-    return statesFips[stateName]; // Assuming statesFips is accessible
+    const fipsCode = statesFips[stateName.replaceAll(' ', '_')];
+
+    if (fipsCode) {
+      previousStateFipsCode = fipsCode; // Update previous valid FIPS code
+      return fipsCode;
+    }
+
+    return previousStateFipsCode; // Fallback to last known valid FIPS code
   };
 
   // Step 2: Function to fetch data for the place
@@ -56,7 +62,6 @@ $(document).ready(function () {
     distanceInMiles
   ) => {
     try {
-      console.log(stateName.replaceAll(' ', '_'));
       // Get the state FIPS code
       const stateFipsCode = getStateFipsCode(stateName.replaceAll(' ', '_'));
 
