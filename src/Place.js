@@ -160,6 +160,7 @@ export default class Place {
 
   async listPlaces(citiesWrap, cities, shapeId, stateName, notification) {
     return new Promise(async (resolve) => {
+      console.log(cities);
       if (citiesWrap && cities.length > 0) {
         const totalCities = cities.length;
 
