@@ -69,8 +69,8 @@ $(document).ready(function () {
       console.log(data);
       console.log(placeName);
 
-      // Find the place
-      const placeData = data.find((item) => {
+      // Find the place with suffix matching
+      let placeData = data.find((item) => {
         const censusPlace = item[0].toLowerCase();
         const osmPlace = placeName.toLowerCase();
 
@@ -86,13 +86,21 @@ $(document).ready(function () {
         );
       });
 
+      // If no match, try a simple search
+      if (!placeData) {
+        console.warn('Exact match not found! Trying a simple search...');
+
+        placeData = data.find((item) =>
+          item[0].toLowerCase().includes(placeName.toLowerCase())
+        );
+      }
+
       console.log(placeData);
 
       if (!placeData) {
         console.error('Place not found!');
         return;
       }
-
       const placeFipsCode = placeData[2]; // Place FIPS code
 
       // Fetch additional data (population, income, home value, etc.)
