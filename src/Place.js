@@ -192,6 +192,8 @@ export default class Place {
               );
               const data = await response.json();
 
+              console.log(data);
+
               if (data.elements.length > 0) {
                 const adminBoundary = data.elements.find(
                   (element) => element.tags && element.tags.admin_level === '4'
