@@ -5,7 +5,7 @@ let map = new Map();
 $(document).ready(function () {
   let totalPopulation = 0;
   let previousStateFipsCode = null;
-  console.log('Test3');
+  console.log('Test4');
 
   // Initialize DataTable
   const table = $('#main-data-table').DataTable({
@@ -72,10 +72,15 @@ $(document).ready(function () {
         return;
       }
 
+      console.log(stateName);
+      console.log(placeName);
+
       // Fetch all places in the state
       const apiUrl = `https://api.census.gov/data/2022/acs/acs5?get=NAME&for=place:*&in=state:${stateFipsCode}&key=8195bcdd0a5f928ee30123f92fdf728a3247dc1c`;
       const response = await fetch(apiUrl);
       const data = await response.json();
+
+      console.log(data);
 
       // Find the place with suffix matching
       let placeData = data.find((item) => {
