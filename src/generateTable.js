@@ -70,7 +70,18 @@ $(document).ready(function () {
       console.log(placeName);
 
       // Find the place
-      const placeData = data.find((item) => item[0].includes(placeName));
+      const placeData = data.find((item) => {
+        // Normalize both names to lower case for comparison
+        const censusPlace = item[0].toLowerCase();
+        const osmPlace = placeName.toLowerCase();
+
+        // Ensure the match is exact and not a substring match
+        return (
+          censusPlace === osmPlace ||
+          censusPlace.startsWith(`${osmPlace} city`) ||
+          censusPlace.startsWith(`${osmPlace} CDP`)
+        );
+      });
 
       console.log(placeData);
 
