@@ -62,7 +62,7 @@ $(document).ready(function () {
       }
 
       // Fetch all places in the state
-      const apiUrl = `https://api.census.gov/data/2022/acs/acs5?get=NAME,B01003_001E&for=place:*&in=state:${stateFipsCode}&key=8195bcdd0a5f928ee30123f92fdf728a3247dc1c`;
+      const apiUrl = `https://api.census.gov/data/2022/acs/acs5?get=NAME&for=place:*&in=state:${stateFipsCode}&key=8195bcdd0a5f928ee30123f92fdf728a3247dc1c`;
       const response = await fetch(apiUrl);
       const data = await response.json();
 
