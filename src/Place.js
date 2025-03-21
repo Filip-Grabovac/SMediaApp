@@ -133,6 +133,7 @@ export default class Place {
       })
         .then((response) => response.json())
         .then((data) => {
+          console.log(data);
           const cities = data.elements.filter((el) => el.tags && el.tags.name);
           const citiesWrap = document.querySelector(
             `.states_wrap.${
