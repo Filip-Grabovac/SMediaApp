@@ -71,15 +71,18 @@ $(document).ready(function () {
 
       // Find the place
       const placeData = data.find((item) => {
-        // Normalize both names to lower case for comparison
         const censusPlace = item[0].toLowerCase();
         const osmPlace = placeName.toLowerCase();
 
-        // Ensure the match is exact and not a substring match
+        // Common place type suffixes from the Census API
+        const placeTypes = [' city', ' town', ' village', ' CDP'];
+
+        // Check if it's an exact match or matches with a place type
         return (
           censusPlace === osmPlace ||
-          censusPlace.startsWith(`${osmPlace} city`) ||
-          censusPlace.startsWith(`${osmPlace} CDP`)
+          placeTypes.some((type) =>
+            censusPlace.startsWith(`${osmPlace}${type}`)
+          )
         );
       });
 
