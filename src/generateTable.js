@@ -90,9 +90,7 @@ $(document).ready(function () {
       if (!placeData) {
         console.warn('Exact match not found! Trying a simple search...');
 
-        placeData = data.find((item) =>
-          item[0].toLowerCase().includes(placeName.toLowerCase())
-        );
+        placeData = data.find((item) => item[0].includes(placeName));
       }
 
       console.log(placeData);
