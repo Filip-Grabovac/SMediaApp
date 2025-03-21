@@ -4,7 +4,7 @@ let map = new Map();
 
 $(document).ready(function () {
   let totalPopulation = 0;
-  console.log('Test');
+  console.log('Test2');
 
   // Initialize DataTable
   const table = $('#main-data-table').DataTable({
