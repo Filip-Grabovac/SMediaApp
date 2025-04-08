@@ -638,7 +638,8 @@ export default class Map {
         (singleFamilyHomes - minSingleFamilyHomes) /
         (maxSingleFamilyHomes - minSingleFamilyHomes);
       const normalizedAvgHomeValue =
-        (maxAvgHomeValue - avgHomeValue) / (maxAvgHomeValue - minAvgHomeValue);
+        // (maxAvgHomeValue - avgHomeValue) / (maxAvgHomeValue - minAvgHomeValue);
+        (avgHomeValue - minAvgHomeValue) / (maxAvgHomeValue - minAvgHomeValue);
 
       const weightedScore =
         userFactors.population_factor * (normalizedPopulation || 0) +
