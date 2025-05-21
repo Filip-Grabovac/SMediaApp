@@ -177,7 +177,7 @@ export default class Place {
             state =
               tags.wikipedia.split(', ').length > 1
                 ? tags.wikipedia.split(', ')[1]
-                : tags.wikipedia.split(', ')[0].replaceAll('en:', '');
+                : tags.wikipedia.split(', ')[0].replaceAll('en:', '').replaceAll('fr:', '');
           } else {
             // Overpass query to fetch state
             try {
